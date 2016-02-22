@@ -13,7 +13,7 @@
 	 
 **2. 下载jumpserver**
 	
-> git clone https://github.com/ibuler/jumpserver.git
+> git clone https://github.com/Cheukdarsy/cmb_jumpserver.git
 
 **3. 执行快速安装脚本**
 
