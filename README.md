@@ -9,7 +9,6 @@
  
  1. jumpserver的安装
    具体教程请参考[jumpserver安装](https://github.com/ibuler/jumpserver/tree/master/docs)［最近jumpserver项目刚好迁移地址，再更新］
-   
 2. IDE根据个人喜好，个人目前用pycharm，可用sublime等～
 3. 关于git协同作业，具体教程可参考[廖雪峰git教程](http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000)
 4. [python django框架知识](http://www.ziqiangxuetang.com/django/django-tutorial.html)
