@@ -18,4 +18,5 @@
 4.[python django框架知识](http://www.ziqiangxuetang.com/django/django-tutorial.html)
 
 ####测试平台
- 1. 测试申请流程图
+ 1. 测试申请流程图:
+     ![流程图](https://github.com/Cheukdarsy/learngit/blob/master/xmid.png)
