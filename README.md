@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## 写在前面
  - 目前本版本处于beta阶段，请不要用于生产环境，除非你知道你在做什么
  - 本版本暂时没加入LDAP接口，稳定版会将LDAP和无Agent方式抽象成API，2.x版本支持LDAP，请移步release中下载
@@ -77,3 +78,6 @@ Web批量执行命令
 
 
 # cmb_jumpserver
+这是基于jumpserver学习的一个小项目，关于jumpserver请联系[jumpserver](http://www.jumpserver.org)
+
+此次主要是基于jumpserver进行测试类云平台功能的二次开发
