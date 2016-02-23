@@ -1,4 +1,4 @@
-# cmb_jumpserver
+# VMmanager
 这是基于jumpserver学习的一个小项目，关于jumpserver请联系[jumpserver](http://www.jumpserver.org)
 
 此次主要是基于jumpserver进行测试类云平台功能的二次开发
@@ -17,6 +17,6 @@
 
 4.[python django框架知识](http://www.ziqiangxuetang.com/django/django-tutorial.html)
 
-####测试平台
+####测试平台：
  1. 测试申请流程图:
      ![流程图](https://github.com/Cheukdarsy/learngit/blob/master/xmid.png)
