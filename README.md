@@ -9,7 +9,7 @@
 ####准备工作：
  
  1.jumpserver的安装
-   具体教程请参考[jumpserver安装](https://github.com/ibuler/jumpserver/tree/master/docs)［最近jumpserver项目刚好迁移地址，再更新］
+   具体教程请参考[jumpserver安装](https://github.com/jumpserver/jumpserver/wiki/Quickinstall)
 
 2.IDE根据个人喜好，个人目前用pycharm，可用sublime等～
 
