@@ -14,7 +14,8 @@
 2.IDE根据个人喜好，个人目前用pycharm，可用sublime等～
 
 3.关于git协同作业，具体教程可参考[廖雪峰git教程](http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000)
- [git协同作业例子](http://www.cnblogs.com/wangkangluo1/archive/2011/09/02/2164313.html)
+
+ [git协同作业例子](http://blog.csdn.net/daydring/article/details/25065419)
 
 4.[python django框架知识](http://www.ziqiangxuetang.com/django/django-tutorial.html)
 
