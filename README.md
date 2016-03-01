@@ -52,7 +52,6 @@
 |申请人ID(apply_userid)|IntegerField|20|||
 |序号(apply_id)|IntegerField|100||主键|
 |申请机器ID(verify_id)|IntegerField|100||外键|
-|环境名称(env_name)|CharField|120|用户自定义||
 | 环境类型(env_type) | CharField | 120 | 生产环境｜开发环境｜测试环境 || 
 | 主机类型(maintence_type) | CharField | 80 | 标准型(2cpu/4G mem)｜高IO型(2 cpu/8G mem) |tips：was应用选择标准型。数据库 选择高IO型。|
 | CPU(cpu) | IntegerField | 10 | 2｜4｜8｜16 ||
@@ -79,11 +78,8 @@
 |操作系统(operation_system)|CharField|80|windows｜SUSE|此项为可编辑参数，具体选项待定|
 |系统盘(system_disk)|IntegerField|10|50G(不可选)||
 |数据盘(data_disk)|IntegerField|10|0G(default)|用户自填|
-|申请数量(apply_num)|IntegerField|5|1(defualt)~6|1~6区间|
 |环境名称(env_name)|CharField|120|用户自定义||
-|申请原因(apply_reason)|TextField|||根据申请数量显示申请原因表格行数|
 |状态(machine_status)|BoolenField||True｜False(default)|机器激活与否|
-|审核状态(verify_status)|IntegerField|10| 1｜2｜3｜4 |审批中，已审批，环境生成中，已处理|  
 |IP地址(IP_address)|CharField|200|||
 |生成log(gen_log)|TextField|||VM生成log，用于展示|
 |生成时间(gen_time)|TimeField|||用于记录机器生成时间及进度|
