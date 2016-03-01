@@ -31,6 +31,7 @@
 | 名称  | 数据类型 | 长度 | 可选项 |注释 | 
 | ----- | :------:|:----:| :-----:| :----: |
 |申请人(apply_username)|CharField|120|不可选，系统获取||
+|申请人ID(apply_userid)|IntergerField|20|||
 |序号(ID)|IntergerField|100|系统自动递增|主键|
 |申请机器ID(machine_ID)|CharField|100|(不显示)| 类：李四_3 外键|
 |环境名称(env_name)|CharField|120|用户自定义||
@@ -48,6 +49,7 @@
 | 名称  | 数据类型 | 长度 | 可选项 |注释 | 
 | ----- | :------:|:----:| :-----:| :----: |
 |申请人(apply_username)|CharField|120|||
+|申请人ID(apply_userid)|IntergerField|20|||
 |序号(ID)|IntergerField|100|系统自动递增|主键|
 |申请机器ID(machine_ID)|CharField|100|(不显示)| 类：李四_3 外键|
 |环境名称(env_name)|CharField|120|用户自定义||
