@@ -34,7 +34,6 @@
 |申请人ID(apply_userid)|IntergerField|20|||
 |序号(ID)|IntergerField|100|系统自动递增|主键|
 |申请机器ID(machine_ID)|CharField|100|(不显示)| 类：李四_3 外键|
-|环境名称(env_name)|CharField|120|用户自定义||
 | 环境类型(env_type) | CharField | 120 | 生产环境｜开发环境｜测试环境 || 
 | 主机类型(maintence_type) | CharField | 80 | 标准型(2cpu/4G mem)｜高IO型(2 cpu/8G mem) |tips：was应用选择标准型。数据库 选择高IO型。|
 | CPU(cpu) | IntergerField | 10 | 2｜4｜8｜16 ||
@@ -43,6 +42,7 @@
 |系统盘(system_disk)|IntergerField|10|50G(不可选)||
 |数据盘(data_disk)|IntergerField|10|0G(default)|用户自填|
 |申请数量(apply_num)|IntergerField|5|1(defualt)~6|1~6区间|
+|申请用途(env_name)|CharField|120|用户自定义||
 |申请原因(apply_reason)|TextField|||根据申请数量显示申请原因表格行数|
 |状态(machine_status)|BoolenField||True｜False(default)|机器激活与否|
 
@@ -62,6 +62,7 @@
 |系统盘(system_disk)|IntergerField|10|50G(不可选)||
 |数据盘(data_disk)|IntergerField|10|0G(default)|用户自填|
 |申请数量(apply_num)|IntergerField|5|1(defualt)~6|1~6区间|
+|环境名称(env_name)|CharField|120|用户自定义||
 |申请原因(apply_reason)|TextField|||根据申请数量显示申请原因表格行数|
 |状态(machine_status)|BoolenField||True｜False(default)|机器激活与否|
 |审核状态(verify_status)|IntergerField|10| 1｜2｜3｜4 |审批中，已审批，环境生成中，已处理|  
@@ -72,7 +73,6 @@
 |申请人(apply_username)|CharField|120|||
 |序号(ID)|IntergerField|100|系统自动递增|主键|
 |申请机器ID(machine_ID)|CharField|100|(不显示)| 类：李四_3 外键|
-|环境名称(env_name)|CharField|120|用户自定义||
 | 环境类型(env_type) | CharField | 120 | 生产环境｜开发环境｜测试环境 || 
 | 主机类型(maintence_type) | CharField | 80 | 标准型(2cpu/4G mem)｜高IO型(2 cpu/8G mem) |tips：was应用选择标准型。数据库 选择高IO型。|
 | CPU(cpu) | IntergerField | 10 | 2｜4｜8｜16 ||
@@ -81,6 +81,7 @@
 |系统盘(system_disk)|IntergerField|10|50G(不可选)||
 |数据盘(data_disk)|IntergerField|10|0G(default)|用户自填|
 |申请数量(apply_num)|IntergerField|5|1(defualt)~6|1~6区间|
+|环境名称(env_name)|CharField|120|用户自定义||
 |申请原因(apply_reason)|TextField|||根据申请数量显示申请原因表格行数|
 |状态(machine_status)|BoolenField||True｜False(default)|机器激活与否|
 |审核状态(verify_status)|IntergerField|10| 1｜2｜3｜4 |审批中，已审批，环境生成中，已处理|  
