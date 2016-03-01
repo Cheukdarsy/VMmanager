@@ -82,3 +82,12 @@
 |IP地址(IP_address)|CharField|200|||
 |生成log(gen_log)|TextField|||VM生成log，用于展示|
 |生成时间(gen_time)|TimeField|||用于记录机器生成时间及进度|
+
+
+## UI界面概览
+#### 用户申请资源
+![用户申请页面](https://github.com/Cheukdarsy/learngit/blob/master/VMmanager-2.png)
+#### 用户资源管理
+![用户管理页面](https://github.com/Cheukdarsy/learngit/blob/master/user_sources.png)
+#### 管理者资源管理
+![管理者资源管理](https://github.com/Cheukdarsy/learngit/blob/master/manager_page.png)
