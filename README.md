@@ -50,7 +50,8 @@
 | ----- | :------:|:----:| :-----:| :----: |
 |申请人(apply_username)|CharField|120|||
 |申请人ID(apply_userid)|IntergerField|20|||
-|序号(verify_id)|IntergerField|100||主键 外键|
+|序号(apply_id)|IntergerField|100||主键|
+|申请机器ID(verify_id)|IntergerField|100||外键|
 |环境名称(env_name)|CharField|120|用户自定义||
 | 环境类型(env_type) | CharField | 120 | 生产环境｜开发环境｜测试环境 || 
 | 主机类型(maintence_type) | CharField | 80 | 标准型(2cpu/4G mem)｜高IO型(2 cpu/8G mem) |tips：was应用选择标准型。数据库 选择高IO型。|
