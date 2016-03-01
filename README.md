@@ -38,6 +38,7 @@
 | 环境类型(env_type) | CharField | 120 | 生产环境｜开发环境｜测试环境 || 
 | 主机类型(maintence_type) | CharField | 80 | 标准型(2cpu/4G mem)｜高IO型(2 cpu/8G mem) |tips：was应用选择标准型。数据库 选择高IO型。|
 | CPU(cpu) | IntergerField | 10 | 2｜4｜8｜16 ||
+| 内存(memory) | IntergerField | 10 | 4｜8｜16｜32 ||
 |操作系统(operation_system)|CharField|80|windows｜SUSE|此项为可编辑参数，具体选项待定|
 |系统盘(system_disk)|IntergerField|10|50G(不可选)||
 |数据盘(data_disk)|IntergerField|10|0G(default)|用户自填|
@@ -56,6 +57,7 @@
 | 环境类型(env_type) | CharField | 120 | 生产环境｜开发环境｜测试环境 || 
 | 主机类型(maintence_type) | CharField | 80 | 标准型(2cpu/4G mem)｜高IO型(2 cpu/8G mem) |tips：was应用选择标准型。数据库 选择高IO型。|
 | CPU(cpu) | IntergerField | 10 | 2｜4｜8｜16 ||
+| 内存(memory) | IntergerField | 10 | 4｜8｜16｜32 ||
 |操作系统(operation_system)|CharField|80|windows｜SUSE|此项为可编辑参数，具体选项待定|
 |系统盘(system_disk)|IntergerField|10|50G(不可选)||
 |数据盘(data_disk)|IntergerField|10|0G(default)|用户自填|
@@ -74,6 +76,7 @@
 | 环境类型(env_type) | CharField | 120 | 生产环境｜开发环境｜测试环境 || 
 | 主机类型(maintence_type) | CharField | 80 | 标准型(2cpu/4G mem)｜高IO型(2 cpu/8G mem) |tips：was应用选择标准型。数据库 选择高IO型。|
 | CPU(cpu) | IntergerField | 10 | 2｜4｜8｜16 ||
+| 内存(memory) | IntergerField | 10 | 4｜8｜16｜32 ||
 |操作系统(operation_system)|CharField|80|windows｜SUSE|此项为可编辑参数，具体选项待定|
 |系统盘(system_disk)|IntergerField|10|50G(不可选)||
 |数据盘(data_disk)|IntergerField|10|0G(default)|用户自填|
