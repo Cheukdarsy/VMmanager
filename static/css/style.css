@@ -3069,7 +3069,7 @@ table.table-mail tr td {
 }
 .ibox .open > .dropdown-menu {
   left: auto;
-  right: 0;
+  right: auto;
 }
 /* BACKGROUNDS */
 .gray-bg {

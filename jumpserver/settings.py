@@ -73,7 +73,7 @@ INSTALLED_APPS = (
     'jasset',
     'jperm',
     'jlog',
-    'jtest',
+    'jVM',
 )
 
 MIDDLEWARE_CLASSES = (

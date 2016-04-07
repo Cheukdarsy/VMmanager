@@ -212,9 +212,6 @@ def Login(request):
 def Logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
-@require_role('admin')
-def test_list(request):
-    return my_render('test_manage.html', locals(), request)
 
 @require_role('admin')
 def setting(request):

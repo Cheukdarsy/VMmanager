@@ -152,3 +152,48 @@ function getIDall() {
     });
     return check_array.join(",");
 }
+
+//滑块
+$("#slider").slider({
+            range:"min",
+            min:0,
+            max:100,
+            value:60,
+            slide:function(event,ui){
+                $("#data_volume").val(ui.value);
+            }
+        });
+        $("#data_volume").val($("#slider").slider("value"));
+        $("#slider1").slider({
+            value:0,
+            min:0,
+            max:6,
+            step:1,
+            slide:function(event,ui){
+                $("#amount").val(ui.value);
+                
+                $("#apply_reason").children("li").remove();
+                for(var i=1;i<=parseInt(ui.value);i++){
+                    $("#apply_reason").append("<li class='list-group-item'><label>"+ i +"&nbsp;&nbsp;"+"</label>"+"<input type='text' name='app_name' placeholder='标题'>"+"<input type='text' name='apply_reason' placeholder='原因' style='margin:5px;width:300px;'>"+"</li>");
+                }                
+            }
+        });
+
+        $("#amount").val($("#slider1").slider("value"));
+
+        /*下拉框选择*/
+      /*下拉框选择*/
+        function selectMenu(factor,name){
+            factor.next().find("a").click(function(){
+            factor.text($(this).text()).append('&nbsp;<span class="caret"></span>');
+            name.val($(this).text());
+        })
+        }
+        
+        selectMenu($("#dropdownMenu1"),$("#env_type"));
+        selectMenu($("#dropdownMenu2"),$("#os_type"));
+
+        //submit or save
+        $("#submit_btn").click(function(){
+            $("#submit").val("submit")
+        })

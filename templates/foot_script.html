@@ -5,7 +5,7 @@
 <script src="/static/js/mindmup-editabletable.js"></script>
 <script src="/static/js/plugins/fullcalendar/moment.min.js"></script>
 <script src="/static/js/plugins/fullcalendar/fullcalendar.min.js"></script>
-
+<script type="text/javascript" src="/static/js/jquery-ui-1.10.4.min.js"></script>
 <!-- Custom and plugin javascript -->
 <script src="/static/js/inspinia.js"></script>
 <script src="/static/js/plugins/pace/pace.min.js"></script>
@@ -36,6 +36,7 @@
     } else {
         $("#"+s1).addClass('active');
         $('#'+s1+' .'+s2).addClass('active');
-        console.log(s1)
+        $('#'+s1+s2).addClass('active');
+        console.log(s1+s2)
     }
 </script>
