@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% load mytags %}
+
+
+{% block content %}
+    {% include 'nav_cat_bar.html' %}
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+
+    <div class="col-sm-10">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>审批页面</h5>
+          <div class="ibox-tools">
+            <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
+            </a>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="ibox-content">
+          <div class="panel blank-panel">
+            <div class="panel-heading">
+              <div class="panel-options">
+                <ul class="nav nav-tabs">
+                  <li id="tab1" class="active">
+                    <a data-toggle="tab" href="#tab-default" aria-expanded="true">已提交申请</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <div class="tab-content">
+                <div id="tab-default" class="tab-pane active">
+                  <table class="table table-striped table-bordered table-hover" >
+                    <thead>
+                      <tr>
+
+                        <th class="text-center">序号</th>
+                        <th class="text-center">环境类型</th>
+                        <th class="text-center">主机类型</th>
+                        <th class="text-center">CPU</th>
+                        <th class="text-center">memory</th>
+                        <th class="text-center">处理</th>
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for key in applylist %}
+                      <tr>
+                        <td class="text-center">{{ key.id }}</td>
+                        <td class="text-center">{{ key.env_type}}</td>
+                        <td class="text-center">{{ key.fun_type}}</td>
+                        <td class="text-center">{{ key.cpu}} C</td>
+                        <td class="text-center">{{ key.memory}} G</td>
+                        <td class="text-center">
+                          <div >
+                            <button class="btn btn-primary btn-xs" type="submit" data-toggle="modal" data-target="#myModal">修改</button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">修改配置</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                    <!-- 用户表单 -->
+
+                                    <div class="ibox-content">
+                                      <form class="form-horizontal">
+                                        <div class="panel panel-default">
+                                          <div class="panel-heading">基本配置：</div>
+                                          <div class="panel-body">
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
+
+                                              <div class="dropdown col-sm-9">
+                                                <button class="btn  btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="env_list">
+                                                  测试环境
+                                                  <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+
+                                                  <li>
+                                                    <a href="#">测试环境</a>
+                                                  </li>
+                                                  <li>
+                                                    <a href="#">开发环境</a>
+                                                  </li>
+
+                                                  <li>
+                                                    <a href="#">生产环境</a>
+                                                  </li>
+                                                  <li>
+                                                    <a href="#">灾备环境</a>
+                                                  </li>
+                                                </ul>
+
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
+                                              <div class="btn-group col-sm-9" data-toggle="buttons">
+                                                <label class="btn btn-success">
+                                                  <input type="radio" name="options" id="option1" autocomplete="off" checked>普通型</label>
+                                                <label class="btn btn-success active">
+                                                  <input type="radio" name="options" id="option2" autocomplete="off">WAS</label>
+                                                <label class="btn btn-success">
+                                                  <input type="radio" name="options" id="option2" autocomplete="off">数据库型</label>
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">CPU:&nbsp;</label>
+                                              <div class ="btn-group col-sm-9" data-toggle="buttons">
+                                                <label class="btn btn-success">
+                                                  <input type="radio" name="options" id="option1" autocomplete="off" checked>2C</label>
+                                                <label class="btn btn-success active">
+                                                  <input type="radio" name="options" id="option2" autocomplete="off">4C</label>
+
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">内存:&nbsp;</label>
+                                              <div class ="btn-group col-sm-9" data-toggle="buttons">
+                                                <label class="btn btn-success">
+                                                  <input type="radio" name="options" id="option1" autocomplete="off" checked>2G</label>
+                                                <label class="btn btn-success active">
+                                                  <input type="radio" name="options" id="option2" autocomplete="off">4G</label>
+                                                <label class="btn btn-success">
+                                                  <input type="radio" name="options" id="option2" autocomplete="off">8G</label>
+                                                <label class="btn btn-success">
+                                                  <input type="radio" name="options" id="option2" autocomplete="off">16G</label>
+
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
+                                              <div class="dropdown col-sm-9">
+                                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                  WINDOWS 2008 R2
+                                                  <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+                                                  <li class="dropdown-header">windows系统</li>
+                                                  <li>
+                                                    <a href="#">windows 2008 R2</a>
+                                                  </li>
+                                                  <li>
+                                                    <a href="#">windows 2003 R2</a>
+                                                  </li>
+                                                  <li role="separator" class="divider"></li>
+                                                  <li class="dropdown-header">linux系统</li>
+                                                  <li>
+                                                    <a href="#">SUSE 11</a>
+                                                  </li>
+                                                  <li>
+                                                    <a href="#">SUSE 10</a>
+                                                  </li>
+                                                </ul>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="panel-heading">磁盘配置：</div>
+                                          <div class="panel-body">
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">系统盘:&nbsp;</label>
+                                              <div class="col-sm-9">
+                                                <p style="margin:5px">
+                                                  <label for="amount">&nbsp;50G</label>
+                                                </p>
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
+                                              <div class="col-sm-9">
+                                                <div id="slider" ></div>
+                                                <p>
+                                                  <input type="text" id="data_volume" style="width:30px;">
+                                                  <label for="data_volume">&nbsp;G</label>
+                                                </p>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="panel-heading">参数配置：</div>
+                                          <div class="panel-body">
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">申请数量:&nbsp;</label>
+                                              <div class="col-sm-9">
+                                                <div id="slider1"></div>
+                                                <p style="float:left">
+                                                  <input type="text" id="amount" style="width:30px;">
+                                                  <label for="amount">&nbsp;台</label>
+                                                </p>
+
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label class="col-sm-3 control-label">申请原因:&nbsp;</label>
+                                              <div class="col-sm-9">
+                                                <ul id="apply_reason" class="list-group"></ul>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </form>
+                                    </div>
+
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary">保存</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <button class="btn btn-success btn-xs" type="submit" id="approved">同意</button>
+                            <button class="btn btn-danger btn-xs" type="submit" id="delete">删除</button>
+                          </div>
+                        </td>
+                      </tr>
+                      {% endfor %}
+
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="panel blank-panel">
+            <div class="panel-heading">
+              <div class="panel-options">
+                <ul class="nav nav-tabs">
+                  <li id="tab1" class="active">
+                    <a data-toggle="tab" href="#tab-default" aria-expanded="true">已通过申请</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="panel-body">
+              <tab-content>
+                <div id="tab-default" class="tab-pane active">
+                  <table class="table table-striped table-bordered table-hover" >
+                    <thead>
+                      <tr>
+                        <th class="text-center">序号</th>
+                        <th class="text-center">申请人</th>
+                        <th class="text-center">主机名称</th>
+                        <th class="text-center">选择</th>
+                        <th class="text-center">生成进度</th>
+                        <th class="text-center">生成日志</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-center">1</td>
+                        <td class="text-center">小明</td>
+                        <td class="text-center">WAS</td>
+                        <td class="text-center">
+                          <input type="checkbox" name="option1" id="check1"></td>
+                        <td class="text-center">20%</td>
+                        <td class="text-center">success</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div style="margin:0 auto;width:100px;">
+                  <button class="btn btn-primary btn-lg">生成资源</button>
+                </div>
+
+              </tab-content>
+            </div>
+          </div>
+        </div>
+        <div class="ibox-content">
+             <div class="panel panel-default">
+                 <div class="panel-heading">已生成列表概览：</div>
+                 <div class="panel-body"></div>
+                 </div>
+         </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block self_footer_js %}
+<style type="text/css">
+  #slider,#slider1{
+    float: left;
+    clear: left;
+    width: 200px;
+    margin: 10px;
+  }
+  #slider .ui-slider-range { background: #729fcf; }
+  #slider .ui-slider-handle { border-color: #729fcf; }
+</style>
+<script>
+  $(function(){
+    $("#approved").click(function(){
+
+    })
+  })
+</script>
+{% endblock %}

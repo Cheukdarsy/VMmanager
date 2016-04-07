@@ -1,0 +1,10 @@
+2016-02-17 11:40:36,536 - run_websocket.py - DEBUG - Websocket: session_key: riybj15jxm9qavi5vw8x2zx0yprxn0a3
+2016-02-17 11:40:36,780 - run_websocket.py - DEBUG - Websocket: session: Session object
+2016-02-17 11:40:36,828 - run_websocket.py - DEBUG - Websocket: user [ admin ] request websocket
+2016-02-17 11:40:36,828 - run_websocket.py - DEBUG - Websocket: Open request
+2016-02-17 11:40:36,879 - run_websocket.py - DEBUG - Websocket: Close request
+2016-02-20 23:59:35,176 - perm_api.py - DEBUG - 生成res: []
+2016-02-20 23:59:35,568 - ansible_api.py - DEBUG - {'dark': {}, 'contacted': {}}
+2016-02-20 23:59:35,614 - views.py - DEBUG - {'failed': {}, 'ok': {}}
+2016-03-11 10:28:14,293 - user_api.py - DEBUG - 生成ssh key， 并设置authorized_keys
+2016-04-05 15:27:05,468 - user_api.py - DEBUG - 生成ssh key， 并设置authorized_keys

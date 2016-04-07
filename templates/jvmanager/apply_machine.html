@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load mytags %}
+
+
+{% block content %}
+    {% include 'nav_cat_bar.html' %}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+
+        <div class="col-sm-10">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>申请页面</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" id="userapply" method="POST" action="">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">基本配置：</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">环境类型:&nbsp;</label>
+
+                                    <div class="dropdown col-sm-10">
+                                    <input type="text" name="env_type" id="env_type" style="display:none" value="测试环境">
+                                        <button class="btn  btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="env_list">
+                                            测试环境
+                                           <span class="caret"></span>
+                                        </button> 
+                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                           
+                                            <li>
+                                                <a href="#">测试环境</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">开发环境</a>
+                                            </li>
+                                            
+                                            <li>
+                                                <a href="#">生产环境</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">灾备环境</a>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">主机类型:&nbsp;</label>
+                                    <div class="btn-group col-sm-10" data-toggle="buttons">
+                                         <label class="btn btn-success">
+                                            <input type="radio" name="fun_type" id="option1" autocomplete="off" checked value="normal">普通型</label>
+                                        <label class="btn btn-success active">
+                                            <input type="radio" name="fun_type" id="option2" autocomplete="off" value="was">WAS</label>
+                                         <label class="btn btn-success">
+                                            <input type="radio" name="fun_type" id="option2" autocomplete="off" value="database">数据库型</label>   
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">CPU:&nbsp;</label>
+                                    <div class ="btn-group col-sm-10" data-toggle="buttons">
+                                        <label class="btn btn-success">
+                                            <input type="radio" name="cpu" id="2c" autocomplete="off" checked value="2">2C</label>
+                                        <label class="btn btn-success active">
+                                            <input type="radio" name="cpu" id="4c" autocomplete="off" value="4">4C</label>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">内存:&nbsp;</label>
+                                    <div class ="btn-group col-sm-10" data-toggle="buttons">
+                                        <label class="btn btn-success">
+                                            <input type="radio" name="memory" id="2G" autocomplete="off" value="2">2G</label>
+                                        <label class="btn btn-success active">
+                                            <input type="radio" name="memory" id="4G" autocomplete="off" checked value="4">4G</label>
+                                            <label class="btn btn-success">
+                                            <input type="radio" name="memory" id="8G" autocomplete="off" value="8">8G</label>
+                                            <label class="btn btn-success">
+                                            <input type="radio" name="memory" id="16G" autocomplete="off" value="16">16G</label>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">操作系统:&nbsp;</label>
+                                    <div class="dropdown col-sm-10">
+                                     <input type="text" name="os_type" id="os_type" style="display:none" value="WINDOWS 2008 R2">
+                                        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"　name="os_type">
+                                           WINDOWS 2008 R2
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+                                            <li class="dropdown-header">windows系统</li>
+                                            <li>
+                                                <a href="#">windows 2008 R2</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">windows 2003 R2</a>
+                                            </li>
+                                            <li role="separator" class="divider"></li>
+                                            <li class="dropdown-header">linux系统</li>
+                                            <li>
+                                                <a href="#">SUSE 11</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">SUSE 10</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-heading">磁盘配置：</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">系统盘:&nbsp;</label>
+                                    <div class="col-sm-10">
+                                        <p style="margin:5px">
+                                            <label for="amount">&nbsp;50G</label>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">数据盘:&nbsp;</label>
+                                    <div class="col-sm-10">
+                                        <div id="slider" ></div>
+                                        <p>
+                                            <input type="text" id="data_volume" style="width:30px;" name="data_disk">
+                                            <label for="data_volume">&nbsp;G</label>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-heading">参数配置：</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">申请数量:&nbsp;</label>
+                                    <div class="col-sm-10">
+                                        <div id="slider1"></div>
+                                        <p style="float:left">
+                                            <input type="text" id="amount" style="width:30px;" name="request_num">
+                                            <label for="amount">&nbsp;台</label>
+                                        </p>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">申请原因:&nbsp;</label>
+                                    <div class="col-sm-10">
+                                        <ul id="apply_reason" class="list-group"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                             <input type="text" name="submitt" id="submit" style="display:none" value="save">
+                                <div class="col-sm-offset-5 col-sm-7">
+                                    <button type="submit" class="btn btn-default">保存</button>
+                                    <button type="submit" class="btn btn-success"  id="submit_btn">提交</button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block self_footer_js %}
+<!-- 滑块效果　待整合 -->
+<style type="text/css">
+  #slider,#slider1{
+    float: left;
+    clear: left;
+    width: 300px;
+    margin: 10px;
+  }
+  #slider .ui-slider-range { background: #729fcf; }
+  #slider .ui-slider-handle { border-color: #729fcf; }
+</style>
+{% endblock %}

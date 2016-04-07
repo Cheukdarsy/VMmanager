@@ -1,0 +1,2 @@
+doker run -d -p 3306 --name:db -e MYSQL_ROOT_PASSWORD=12345  mysql
+docker run -v /home/darsycheuk/jumpserver:/opt/test --link mysqlserver:db -ti jump2:20160205 /bin/bash
