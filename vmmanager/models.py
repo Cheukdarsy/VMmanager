@@ -16,7 +16,7 @@ from juser.models import User, UserGroup
 # Create your models here.
 
 
-class sheet_field(models.Model):
+class SheetField(models.Model):
     sheet_name = models.CharField(max_length=45)
     field_name = models.CharField(max_length=45)
     option = models.CharField(max_length=45, null=True)
@@ -328,7 +328,8 @@ class IPUsage(models.Model):
                 ipusage.save(update_fields=['use_unknown'])
                 continue
             else:
-                ipusage.occupy()
+                if occupy:
+                    ipusage.occupy()
                 return ipusage
 
 
@@ -342,7 +343,7 @@ class Datastore(VMObject):
         (MT_TOMT, 'entering maintenance')
     )
     multi_hosts_access = models.BooleanField()
-    url = models.CharField(max_length=200, null=True)
+    url = models.CharField(max_length=80, null=True)
     total_space_mb = models.BigIntegerField(null=True)
     # dynamic field
     accessible = models.BooleanField()
@@ -393,7 +394,7 @@ class HostSystem(VMObject):
     vmotion_enable = models.BooleanField()
     total_cpu_cores = models.PositiveSmallIntegerField()
     total_cpu_mhz = models.PositiveIntegerField()
-    total_mem_mb = models.BigIntegerField()
+    total_mem_mb = models.PositiveIntegerField()
     # dynamic fields
     connection_state = models.CharField(max_length=30)
     in_maintenance_mode = models.BooleanField()
@@ -405,7 +406,7 @@ class HostSystem(VMObject):
     datastores = models.ManyToManyField('Datastore')
 
     def cpu_total(self):
-        return self.cpu_mhz * self.cpu_core_num
+        return self.total_cpu_mhz * self.total_cpu_cores
 
     def free_mem_mb(self):
         return self.total_mem_mb - self.usage_mem_mb
@@ -582,7 +583,29 @@ class VirtualMachine(VMObject):
         return new_obj, created
 
 
-class userapply(models.Model):
+class Template(VirtualMachine):
+    USG_CHOICE = (
+        ('WAS', 'Web Application Server'),
+        ('ORA', 'Oracle Database'),
+        ('BASE', 'Operation System Only')
+    )
+    usage = models.CharField(max_length=30, choices=USG_CHOICE)
+
+    @classmethod
+    def select_template(cls, vc, usage, guestos):
+        match_os = cls.objects.filter(vcenter=vc, guestos_shorname=guestos)
+        match_all = match_os.filter(usage=usage)
+        if match_all.exists():
+            return match_all
+        elif match_os.filter(usage='BASE').exists():
+            return match_os.filter(usage='BASE')
+        elif match_os.exists():
+            return match_os
+        else:
+            return None
+
+
+class Application(models.Model):
     """用户申请表"""
     APPLY_STATUS_CHOICE = (
         ('SM', 'submit'),
@@ -593,10 +616,10 @@ class userapply(models.Model):
     fun_type = models.CharField(max_length=20)
     # master_type = models.CharField(max_length=80)
     cpu = models.SmallIntegerField()
-    memory = models.IntegerField()
+    memory_gb = models.IntegerField()
     os_type = models.CharField(max_length=20)
-    data_disk = models.IntegerField(null=True)
-    request_num = models.IntegerField()
+    datadisk_gb = models.IntegerField(null=True)
+    request_vm_num = models.IntegerField()
     apply_status = models.CharField(max_length=20, choices=APPLY_STATUS_CHOICE)
     app_name = models.CharField(max_length=20)
     apply_reason = models.TextField()
@@ -610,42 +633,43 @@ class userapply(models.Model):
         return self.env_type
 
 
-class userapply_confirm(models.Model):
+class Approvel(models.Model):
     """审核表"""
     APPROVE_STATUS = (
         ('AP', 'approved'),
         ('RB', 'return back')
     )
-    request_id = models.OneToOneField(userapply)
-    approving_env_type = models.CharField(max_length=20)
-    approving_fun_type = models.CharField(max_length=20)
-    approving_cpu_num = models.SmallIntegerField()
-    approving_memory_num = models.IntegerField()
-    approving_os_type = models.CharField(max_length=20)
-    approving_data_disk = models.IntegerField()
-    approving_appply_num = models.IntegerField()
-    approving_status = models.CharField(max_length=20, choices=APPROVE_STATUS)
-    approving_datetime = models.DateTimeField()
+    application = models.OneToOneField('Application')
+    appro_env_type = models.CharField(max_length=20)
+    appro_fun_type = models.CharField(max_length=20)
+    appro_cpu = models.SmallIntegerField()
+    appro_memory_gb = models.IntegerField()
+    appro_os_type = models.CharField(max_length=20)
+    appro_datadisk_gb = models.IntegerField()
+    appro_vm_num = models.IntegerField()
+    appro_status = models.CharField(max_length=20, choices=APPROVE_STATUS)
+    appro_date = models.DateTimeField()
 
     # approving_des = models.ForeignKey(computerresource)
     def __unicode__(self):
-        return self.approving_env_type
+        return self.appro_env_type
 
 
-class userapply_generate(models.Model):
+class VMOrder(models.Model):
     """生成表"""
     GEN_STATUS = (
         ('FAIL', 'failed'),
         ('SUCCESS', 'success'),
         ('RUNNING', 'running')
     )
-    apply_id = models.ForeignKey(userapply)
-    vm_gen_hostname = models.CharField(max_length=20)
-    vm_gen_ip = models.ForeignKey(IPUsage)
-    vm_gen_host = models.ForeignKey(HostSystem)
-    vm_gen_storage = models.ForeignKey(Datastore)
-    vm_gen_status = models.CharField(max_length=20, choices=GEN_STATUS)
-    vm_gen_task = models.CharField(max_length=20)
-    vm_gen_log = models.TextField(null=True)
-    vm_gen_datetime = models.DateTimeField(null=True)
-    vm_gen_progress = models.PositiveIntegerField()
+    approvel = models.ForeignKey('Approvel')
+    src_template = models.ForeignKey('Template')
+    loc_hostname = models.CharField(max_length=20)
+    loc_ip = models.ForeignKey('IPUsage')
+    loc_cluster = models.ForeignKey('ComputeResource')
+    loc_resp = models.ForeignKey('ResourcePool', null=True)
+    loc_storage = models.ForeignKey('Datastore')
+    gen_status = models.CharField(max_length=20, choices=GEN_STATUS)
+    gen_log = models.TextField(null=True)
+    gen_time = models.DateTimeField(null=True)
+    gen_progress = models.PositiveIntegerField()

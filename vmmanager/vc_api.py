@@ -7,7 +7,7 @@ import time
 
 from pyVmomi import vim
 
-from jVM.models import *
+from vmmanager.models import *
 
 
 def _refresh_vim_objs(model, content, *args, **kwargs):
@@ -154,11 +154,23 @@ def wait_for_task(task):
         time.sleep(5)
 
 
+def vim_vm_poweron(vim_vm, host=None):
+    if isinstance(vim_vm, vim.VirtualMachine):
+        try:
+            if isinstance(host, vim.HostSystem):
+                vim_vm.PowerOn(host)
+            else:
+                vim_vm.PowerOn()
+            return True
+        except:
+            print("Can not power on the vm")
+
+
 DNS_LIST = []
 VM_TZ = "Asia/Shanghai"
 
 
-def _vim_gen_customize(is_windows, ipusage, hostname):
+def _vim_gen_spec_customize(is_windows, ipusage=None, hostname=None):
     custspec = vim.vm.customization.Specification
     # ipsettings
     if ipusage:
@@ -200,7 +212,7 @@ def _vim_set_customize(vim_vm, *args, **kwargs):
         is_windows = True
     else:
         is_windows = False
-    vim_vm.Customize(_vim_gen_customize(is_windows, *args, **kwargs))
+    vim_vm.Customize(_vim_gen_spec_customize(is_windows, *args, **kwargs))
 
 
 def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_on=False):
@@ -225,7 +237,7 @@ def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_o
     clonespec.location = relospec
     clonespec.powerOn = power_on
     clonespec.template = False
-    clonespec.customization = _vim_gen_customize(is_windows, ipusage, vm_name)
+    clonespec.customization = _vim_gen_spec_customize(is_windows, ipusage, vm_name)
     # start clone task
     try:
         task = vim_src_vm.Clone(folder=vm_folder, name=vm_name, spec=clonespec)
@@ -234,7 +246,7 @@ def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_o
     return task, ""
 
 
-def clone_vm(content, src_vm, vm_name, datastore, cluster, resourcepool, power_on=False):
+def clone_vm(content, src_vm, vm_name, ipusage, datastore, cluster=None, resourcepool=None, power_on=False):
     task = None
     errmsg = ""
     if not isinstance(src_vm, VirtualMachine):
@@ -272,12 +284,60 @@ def clone_vm(content, src_vm, vm_name, datastore, cluster, resourcepool, power_o
     else:
         errmsg = "Neither Cluster nor ResourcePool is given as a parameter"
         return task, errmsg
-    return _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resourcepool, power_on)
+    return _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resourcepool, ipusage, power_on)
 
 
-def _vim_vm_power_on(vim_vm, host):
-    if isinstance(vim_vm, vim.VirtualMachine):
-        try:
-            task = vim_vm.PowerOn()
-        except:
-            pass
+def _vim_gen_spec_disk(disk_size, unit_number, controller_key, thin_disk=False):
+    new_disk_kb = int(disk_size) * 1024 * 1024
+    disk_spec = vim.vm.device.VirtualDeviceSpec()
+    disk_spec.fileOperation = "create"
+    disk_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+    disk_spec.device = vim.vm.device.VirtualDisk()
+    disk_spec.device.backing = vim.vm.device.VirtualDisk.FlatVer2BackingInfo()
+    disk_spec.device.backing.thinProvisioned = thin_disk
+    disk_spec.device.backing.diskMode = 'persistent'
+    disk_spec.device.unitNumber = unit_number
+    disk_spec.device.capacityInKB = new_disk_kb
+    disk_spec.device.controllerKey = controller_key
+    return disk_spec
+
+
+def vim_vm_reconfig(vim_vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, tg_mem_mb=-1, tg_datadisk_gb=-1):
+    configspec = vim.vm.ConfigSpec
+    if tg_annotation:
+        configspec.annotation = tg_annotation
+    if tg_cpu_num > 0:
+        configspec.numCPUs = tg_cpu_num
+    if tg_cpu_cores > 0:
+        configspec.numCoresPerSocket = tg_cpu_cores
+    if tg_mem_mb > 0:
+        configspec.memoryMB = tg_mem_mb
+    if tg_datadisk_gb > 0:
+        # get all disks on a VM, set unit_number to the next available, and get controller
+        controller_key = None
+        unit_number = 0
+        for dev in vim_vm.config.hardware.device:
+            if hasattr(dev.backing, 'fileName'):
+                unit_number = int(dev.unitNumber) + 1
+                # unit_number 7 reserved for scsi controller
+                if unit_number == 7:
+                    unit_number += 1
+            if isinstance(dev, vim.vm.device.VirtualSCSIController):
+                controller_key = dev.key
+        disk_spec = _vim_gen_spec_disk(tg_datadisk_gb, unit_number, controller_key)
+        configspec.deviceChange = [disk_spec]
+    return vim_vm.Reconfigure(spec=configspec), ""
+
+
+def reconfig_vm(content, vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, tg_mem_mb=-1, tg_datadisk_gb=-1):
+    task = None
+    errmsg = ""
+    if not isinstance(vm, VirtualMachine):
+        errmsg = "Src_vm not a VirtualMachine instance"
+        return task, errmsg
+    if vm.vcenter.uuid != content.about.instanceUuid:
+        errmsg = "Src_vm not belong to the connected vcenter"
+        return task, errmsg
+    # Get vim_vm_obj
+    vim_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=str(vm.moid))
+    return _vim_vm_reconfig(vim_vm, tg_annotation, tg_cpu_num, tg_cpu_cores, tg_mem_mb, tg_datadisk_gb)

@@ -2,9 +2,9 @@
 
 from jumpserver.api import *
 from jumpserver.models import Setting
-from jVM.models import userapply,userapply_confirm
+from vmmanager.models import Application, Approvel
 from juser.models import User
-from jVM.jvm_api import *
+from vmmanager.jvm_api import *
 from django.db.models import Q
 import datetime
 
@@ -14,8 +14,8 @@ import datetime
 @require_role('admin')
 def VM_list(request):
     username = request.user.username
-    applylist = userapply.objects.filter(apply_status='SM')
-    apply_confirm_list = userapply_confirm.objects.filter(approving_status='AP')
+    applylist = Application.objects.filter(apply_status='SM')
+    apply_confirm_list = Approvel.objects.filter(appro_status='AP')
     return my_render('jvmanager/test_manage.html', locals(), request)
 
 
@@ -44,7 +44,8 @@ def apply_machine(request):
             apply_status = "HD"
 
         try:
-            db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory=memory, os_type=os_type, data_disk=data_disk, request_num=request_num,
+            db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory, os_type=os_type,
+                             datadisk_gb=data_disk, request_vm_num=request_num,
                              apply_status=apply_status, app_name=app_name, apply_reason=apply_reason, apply_date=datetime.datetime.now(), user=user)
         except ServerError:
             pass
@@ -60,6 +61,6 @@ def resource_view(request):
     用户资源概览
     """
     username = request.user.username
-    applylist = userapply.objects.all()
+    applylist = Application.objects.all()
 
     return my_render('jvmanager/resource_view.html', locals(), request)

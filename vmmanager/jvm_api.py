@@ -2,15 +2,15 @@
 
 
 from jumpserver.api import *
-from jVM.models import userapply
+from vmmanager.models import Application
 
 
 def db_add_userapply(**kwargs):
     """添加用戶申請到數據庫"""
-    applylist = userapply(**kwargs)
+    applylist = Application(**kwargs)
     applylist.save()
 
 
 def get_userapply(**kwargs):
-    applylist = get_object(userapply, **kwargs)
+    applylist = get_object(Application, **kwargs)
     return applylist

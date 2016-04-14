@@ -73,7 +73,9 @@ INSTALLED_APPS = (
     'jasset',
     'jperm',
     'jlog',
-    'jVM',
+    'vmmanager',
+    'djcelery',
+    'kombu.transport.django',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -155,3 +157,6 @@ BOOTSTRAP_COLUMN_COUNT = 10
 CRONJOBS = [
     ('0 1 * * *', 'jasset.asset_api.asset_ansible_update_all')
 ]
+
+# Celery settings
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
