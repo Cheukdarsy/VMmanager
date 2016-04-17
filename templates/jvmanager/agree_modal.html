@@ -1,0 +1,77 @@
+                           <div class="modal fade" id="{{ key.id }}AGModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                             <div class="modal-dialog" role="document">
+                               <div class="modal-content">
+                                 <div class="modal-header">
+                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                     <span aria-hidden="true">&times;</span>
+                                   </button>
+                                   <h4 class="modal-title" id="myModalLabel">确认表单</h4>
+                                 </div>
+                                 <div class="modal-body">
+                                   <!-- 用户表单 -->                           
+                                   <div class="ibox-content">
+                                     <form class="form-horizontal">
+                                       <div class="panel panel-default">
+                                         <div class="panel-heading">基本配置：</div>
+                                         <div class="panel-body">
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
+
+                                             <div class="dropdown col-sm-9">
+                                               <input type="text" name="env_type" id="{{ key.id }}env_type" disabled value="{{ key.env_type }}">
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
+                                             <div class="btn-group col-sm-9" data-toggle="buttons">
+                                              <input type="text" name="fun_type" id="{{ key.id }}fun_type" disabled value="{{ key.fun_type }}">                                               
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">CPU:&nbsp;</label>
+                                             <div class ="col-sm-9" >
+                                              <input type="text" name="cpu" id="{{ key.id }}cpu" disabled value="{{ key.cpu }}">
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">内存:&nbsp;</label>
+                                             <div class ="col-sm-9" >
+                                               <input type="text" name="memory" id="{{ key.id }}memory" disabled value="{{ key.memory }}">  
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <input type="text" name="os" id="{{ key.id }}os_type" disabled value="{{ key.os_type }}">
+                                             </div>
+                                           </div>
+                                         </div>
+                                         <div class="panel-heading">磁盘配置：</div>
+                                         <div class="panel-body">
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">系统盘:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <p style="margin:5px">
+                                                 <label for="amount">&nbsp;50G</label>
+                                               </p>
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <input type="text" name="datadisk" id="{{ key.id }}data_disk" disabled value="{{ key.data_disk }}">
+                                             </div>
+                                           </div>
+                                         </div>
+                                       </div>
+                                     </form>
+                                   </div>
+
+                                 </div>
+                                 <div class="modal-footer">
+                                   <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                   <button type="button" class="btn btn-primary conf-agree-btn">提交</button>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>

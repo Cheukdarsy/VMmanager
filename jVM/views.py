@@ -1,24 +1,111 @@
 #-*- coding:utf-8 -*-
-
+from django.utils import simplejson
+from django.core import serializers
 from jumpserver.api import *
 from jumpserver.models import Setting
-from jVM.models import userapply,userapply_confirm
+from jVM.models import userapply, userapply_confirm
 from juser.models import User
 from jVM.jvm_api import *
 from django.db.models import Q
 import datetime
-
 # Create your views here.
 
 
 @require_role('admin')
 def VM_list(request):
     username = request.user.username
-    applylist = userapply.objects.filter(apply_status='SM')
-    apply_confirm_list = userapply_confirm.objects.filter(approving_status='AP')
+    applylist = userapply.objects.filter(apply_status='SM').order_by('-id')
+    apply_confirm_list = userapply_confirm.objects.filter(
+        approving_status='AP').order_by('-approving_datetime')
+    applylist, p, applys, page_range, current_page, show_first, show_end = pages(applylist, request)
+
     return my_render('jvmanager/test_manage.html', locals(), request)
 
 
+@require_role('admin')
+def confirm_machine_detail(request, *call_args):
+    """
+    修改用户单个机器详细信息
+    """
+    if request.method == "POST":
+        request_id = int(request.POST.get('request_id', ''))
+        saving_env_type = request.POST.get('saving_env_type', '')
+        saving_fun_type = request.POST.get('saving_fun_type', '')
+        saving_cpu_num = int(request.POST.get('saving_cpu_num', ''))
+        saving_memory_num = int(request.POST.get('saving_memory_num', ''))
+        saving_os_type = request.POST.get('saving_os_type', '')
+        saving_data_disk = int(request.POST.get('saving_data_disk', ''))
+        saving_apply_num = 1
+        saving_apply_status = 'SM'
+        saving_datetime = datetime.datetime.now()
+        try:
+            userapply.objects.filter(id=request_id).update(fun_type=saving_fun_type, os_type=saving_os_type,
+                                                           cpu=saving_cpu_num, memory=saving_memory_num, data_disk=saving_data_disk, apply_date=saving_datetime)
+        except Exception, e:
+            raise e
+        else:
+            info_dict = {'success': "ajax post successfully!"}
+            return JsonResponse(info_dict)
+    else:
+        error_dict = {'error': 'ajax post not good!'}
+        return JsonResponse(error_dict)
+
+
+@require_role('admin')
+def agree_apply(request):
+    """
+    同意申请
+    """
+    if request.method == "POST":
+        request_id = int(request.POST.get('request_id', ''))
+        approving_env_type = request.POST.get('confirm_env_type', '')
+        approving_fun_type = request.POST.get('confirm_fun_type', '')
+        approving_cpu_num = int(request.POST.get('confirm_cpu_num', ''))
+        approving_memory_num = int(request.POST.get('confirm_memory_num', ''))
+        approving_os_type = request.POST.get('confirm_os_type', '')
+        approving_data_disk = int(request.POST.get('confirm_data_disk', ''))
+        approving_apply_num = 1
+        approving_status = "AP"
+        approving_datetime = datetime.datetime.now()
+        try:
+            userapply.objects.filter(id=request_id).update(apply_status=approving_status)
+            confirm_apply = userapply_confirm(request_id_id=request_id, approving_env_type=approving_env_type, approving_fun_type=approving_fun_type,
+                                              approving_cpu_num=approving_cpu_num, approving_memory_num=approving_memory_num, approving_os_type=approving_os_type, approving_data_disk=approving_data_disk, approving_appply_num=approving_apply_num, approving_status=approving_status, approving_datetime=approving_datetime)
+            confirm_apply.save()
+        except Exception, e:
+            raise e
+        else:
+
+            confirmlist = userapply_confirm.objects.filter(request_id_id=request_id)
+            list_dict = simplejson.dumps(confirmlist, cls=QuerySetEncoder)
+            return JsonResponse(list_dict)
+    else:
+        error_dict = {'error': 'pajax post not good'}
+        return JsonResponse(error_dict)
+        
+@require_role('admin')
+def delete_apply(request):
+    """删除申请"""
+    if request.method == 'POST':
+        id = int(request.POST.get("id", ""))
+        reason = request.POST.get("reason", "")
+        try:
+            userapply.objects.filter(id=id).update(apply_status='RB')
+        except Exception, e:
+            raise e
+        else:
+            success_dict = {"info": "success"}
+            return JsonResponse(success_dict)
+    else:
+        error_dict = {"error":"ajax not good"}
+        return JsonResponse(error_dict)
+
+@require_role('admin')
+def agree_apply_list(request):
+    """
+    通过列表
+    """
+    pass
 @require_role(role='user')
 def apply_machine(request):
     """
@@ -60,6 +147,32 @@ def resource_view(request):
     用户资源概览
     """
     username = request.user.username
-    applylist = userapply.objects.all()
-
+    applylist = userapply.objects.filter(apply_status="SM")
+    applylist, p, applys, page_range, current_page, show_first, show_end = pages(
+        applylist, request)
     return my_render('jvmanager/resource_view.html', locals(), request)
+
+
+@require_role('user')
+def saving_resource_view(request):
+    s_apply_list = userapply.objects.filter(apply_status="HD")
+    s_apply_list, p, s_applys, page_range, current_page, show_first, show_end = pages(
+        s_apply_list, request)
+    return my_render('jvmanager/savingresource_view.html', locals(), request)
+
+
+@require_role('user')
+def submit_saving_resource(request):
+    """ajax提交保存资源"""
+    if request.method == 'POST':
+        id = int(request.POST.get('id', ''))
+        try:
+            userapply.objects.filter(id=id).update(apply_status="SM")
+        except Exception, e:
+            raise e
+        else:
+            success_dict = {"info": "success"}
+            return JsonResponse(success_dict)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)

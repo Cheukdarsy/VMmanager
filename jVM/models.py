@@ -93,7 +93,9 @@ class userapply(models.Model):
     """用户申请表"""
     APPLY_STATUS_CHOICE = (
         ('SM', 'submit'),
-        ('HD', 'hold')
+        ('HD', 'hold'),
+        ('AP', 'approved'),
+        ('RB', 'return back')
         )
 
     env_type = models.CharField(max_length=20)
@@ -114,7 +116,6 @@ class userapply(models.Model):
 
     def __unicode__(self):
         return self.env_type
-
 
 class userapply_confirm(models.Model):
 

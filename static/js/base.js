@@ -190,10 +190,31 @@ $("#slider").slider({
         })
         }
         
-        selectMenu($("#dropdownMenu1"),$("#env_type"));
-        selectMenu($("#dropdownMenu2"),$("#os_type"));
+        selectMenu($(".dropdownMenu1"),$(".env_type"));
+        selectMenu($(".dropdownMenu2"),$(".os_type"));
 
         //submit or save
         $("#submit_btn").click(function(){
-            $("#submit").val("submit")
+            $("#submit").val("submit");
         })
+//绑定数据
+function select_binding(type,cpu,memory){
+         type.click(function(event) {
+         /* Act on the event */
+             $("."+cpu+"C").parent("label").addClass('active').siblings('label').removeClass('active');
+             $("."+cpu+"C").val(cpu)
+             $("."+memory+"G").parent("label").addClass('active').siblings('label').removeClass('active');
+             $("."+memory+"G").val(memory)
+     });
+}
+
+     select_binding($(".normal-type"),2,4);
+     select_binding($(".was-type"),4,8);
+     select_binding($(".database-type"),4,16);
+
+//全选
+$("#selectall").click(function () {//反选  
+         $("#agree-table :checkbox").each(function () {  
+         $(this).prop("checked", !$(this).prop("checked"));  
+     });  
+});

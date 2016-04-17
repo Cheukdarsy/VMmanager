@@ -12,7 +12,8 @@ import subprocess
 import uuid
 import json
 import logging
-
+from django.utils import simplejson
+from django.core import serializers
 from settings import *
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import HttpResponse, Http404
@@ -129,7 +130,7 @@ def pages(post_objects, request):
     page public function , return page's object tuple
     分页公用函数，返回分页的对象元组
     """
-    paginator = Paginator(post_objects, 20)
+    paginator = Paginator(post_objects, 10)
     try:
         current_page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -504,6 +505,30 @@ def get_mac_address():
     node = uuid.getnode()
     mac = uuid.UUID(int=node).hex[-12:]
     return mac
+
+
+class QuerySetEncoder(simplejson.JSONEncoder):
+    """
+    Encoding QuerySet into JSON format.
+    """
+    def default(self, object):
+        try:
+            return serializers.serialize("json", object, ensure_ascii = False)
+        except:
+            return simplejson.JSONEncoder.default(self, object)
+
+class JsonResponse(HttpResponse):
+    def __init__(self,
+            content={},
+            mimetype=None,
+            status=None,
+            content_type='application/json'):
+ 
+        super(JsonResponse, self).__init__(
+            json.dumps(content),
+            mimetype=mimetype,
+            status=status,
+            content_type=content_type)
 
 
 CRYPTOR = PyCrypt(KEY)

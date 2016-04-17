@@ -30,8 +30,8 @@
                                     <label class="col-sm-2 control-label">环境类型:&nbsp;</label>
 
                                     <div class="dropdown col-sm-10">
-                                    <input type="text" name="env_type" id="env_type" style="display:none" value="测试环境">
-                                        <button class="btn  btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="env_list">
+                                    <input type="text" name="env_type" class="env_type" style="display:none" value="测试环境">
+                                        <button class="btn  btn-success dropdown-toggle dropdownMenu1" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="env_list">
                                             测试环境
                                            <span class="caret"></span>
                                         </button> 
@@ -57,21 +57,21 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">主机类型:&nbsp;</label>
                                     <div class="btn-group col-sm-10" data-toggle="buttons">
-                                         <label class="btn btn-success">
-                                            <input type="radio" name="fun_type" id="option1" autocomplete="off" checked value="normal">普通型</label>
-                                        <label class="btn btn-success active">
-                                            <input type="radio" name="fun_type" id="option2" autocomplete="off" value="was">WAS</label>
-                                         <label class="btn btn-success">
-                                            <input type="radio" name="fun_type" id="option2" autocomplete="off" value="database">数据库型</label>   
+                                         <label class="btn btn-success normal-type">
+                                            <input type="radio" name="fun_type"  autocomplete="off" checked value="normal">普通型</label>
+                                        <label class="btn btn-success active was-type">
+                                            <input type="radio" name="fun_type"  autocomplete="off" value="was">WAS</label>
+                                         <label class="btn btn-success database-type">
+                                            <input type="radio" name="fun_type"  autocomplete="off" value="database">数据库型</label>   
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">CPU:&nbsp;</label>
                                     <div class ="btn-group col-sm-10" data-toggle="buttons">
                                         <label class="btn btn-success">
-                                            <input type="radio" name="cpu" id="2c" autocomplete="off" checked value="2">2C</label>
+                                            <input type="radio" name="cpu" class="2C" autocomplete="off" checked value="2">2C</label>
                                         <label class="btn btn-success active">
-                                            <input type="radio" name="cpu" id="4c" autocomplete="off" value="4">4C</label>
+                                            <input type="radio" name="cpu" class="4C" autocomplete="off" value="4">4C</label>
 
                                     </div>
                                 </div>
@@ -79,21 +79,21 @@
                                     <label class="col-sm-2 control-label">内存:&nbsp;</label>
                                     <div class ="btn-group col-sm-10" data-toggle="buttons">
                                         <label class="btn btn-success">
-                                            <input type="radio" name="memory" id="2G" autocomplete="off" value="2">2G</label>
-                                        <label class="btn btn-success active">
-                                            <input type="radio" name="memory" id="4G" autocomplete="off" checked value="4">4G</label>
+                                            <input type="radio" name="memory" class="2G" autocomplete="off" value="2">2G</label>
+                                        <label class="btn btn-success">
+                                            <input type="radio" name="memory" class="4G" autocomplete="off" checked value="4">4G</label>
+                                            <label class="btn btn-success  active">
+                                            <input type="radio" name="memory" class="8G" autocomplete="off" value="8">8G</label>
                                             <label class="btn btn-success">
-                                            <input type="radio" name="memory" id="8G" autocomplete="off" value="8">8G</label>
-                                            <label class="btn btn-success">
-                                            <input type="radio" name="memory" id="16G" autocomplete="off" value="16">16G</label>
+                                            <input type="radio" name="memory" class="16G" autocomplete="off" value="16">16G</label>
 
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">操作系统:&nbsp;</label>
                                     <div class="dropdown col-sm-10">
-                                     <input type="text" name="os_type" id="os_type" style="display:none" value="WINDOWS 2008 R2">
-                                        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"　name="os_type">
+                                     <input type="text" name="os_type" class="os_type" style="display:none" value="WINDOWS 2008 R2">
+                                        <button class="btn btn-success dropdown-toggle dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"　name="os_type">
                                            WINDOWS 2008 R2
                                             <span class="caret"></span>
                                         </button>
@@ -159,7 +159,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                             <input type="text" name="submitt" id="submit" style="display:none" value="save">
+                             <input type="text" name="submit" id="submit" style="display:none" value="save">
                                 <div class="col-sm-offset-5 col-sm-7">
                                     <button type="submit" class="btn btn-default">保存</button>
                                     <button type="submit" class="btn btn-success"  id="submit_btn">提交</button>
@@ -184,7 +184,7 @@
     width: 300px;
     margin: 10px;
   }
-  #slider .ui-slider-range { background: #729fcf; }
+  #slider .ui-slider-range { background: #2496DE; }
   #slider .ui-slider-handle { border-color: #729fcf; }
 </style>
 {% endblock %}

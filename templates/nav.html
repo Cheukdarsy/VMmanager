@@ -66,20 +66,11 @@
             <li id="juser">
                <a href="{% url 'user_detail' %}"><i class="fa fa-dashboard"></i> <span class="nav-label">仪表盘</span><span class="label label-info pull-right"></span></a>
             </li>
-            <li id="jasset">
-               <a href="{% url 'asset_list' %}"><i class="fa fa-inbox"></i> <span class="nav-label">查看主机</span><span class="label label-info pull-right"></span></a>
-            </li>
-            <li id="file">
-                <a href="#"><i class="fa fa-download"></i> <span class="nav-label">上传下载</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li class="upload"><a href="{% url 'file_upload' %}">文件上传</a></li>
-                    <li class="download"><a href="{% url 'file_download' %}">文件下载</a></li>
-                </ul>
-            </li>
             <li id="jVMapply"><a href={% url 'apply_machine' %}><i class="fa fa-cloud"></i><span class="nav-label">机器申请</span></a></li>
 
-            <li id="jVMresource"><a href={% url 'resource_view' %}><i class="fa fa-th"></i><span class="nav-label">资源概览</span></a></li>
+            <li id="jVMresource"><a href={% url 'resource_view' %}><i class="fa fa-th"></i><span class="nav-label">已申请资源</span></a></li>
 
+            <li id="jVMsaving-resource"><a href={% url 'saving_resource_view' %}><i class="fa fa-save"></i><span class="nav-label">已保存资源</span></a></li>
         </ul>
     </div>
 </nav>
