@@ -45,184 +45,34 @@
                         <th class="text-center">环境类型</th>
                         <th class="text-center">主机类型</th>
                         <th class="text-center">CPU</th>
-                        <th class="text-center">memory</th>
+                        <th class="text-center">内存</th>
+                        <th class="text-center">数量</th>
                         <th class="text-center">处理</th>
 
                       </tr>
                     </thead>
                     <tbody>
-                    {% for key in applylist %}
-                      <tr>
-                        <td class="text-center">{{ key.id }}</td>
+                    {% for key in applys %}
+                      <tr class="detail-table"  id="{{ key.id }}tr">
+                        <td class="text-center" id="{{ key.id }}">{{ key.id }}</td>
                         <td class="text-center">{{ key.env_type}}</td>
-                        <td class="text-center">{{ key.fun_type}}</td>
-                        <td class="text-center">{{ key.cpu}} C</td>
-                        <td class="text-center">{{ key.memory}} G</td>
+                        <td class="text-center">{% ifequal key.fun_type "normal"  %}
+                          普通型
+                        {% endifequal %} {% ifequal key.fun_type "was" %}
+                          WAS型
+                        {% endifequal %} {% ifequal key.fun_type "database" %}
+                          数据库型
+                        {% endifequal %}</td>
+                        <td class="text-center">{{ key.cpu}}C</td>
+                        <td class="text-center">{{ key.memory}}G</td>
+                        <td class="text-center">{{ key.request_num}}台</td>
                         <td class="text-center">
                           <div >
-                            <button class="btn btn-primary btn-xs" type="submit" data-toggle="modal" data-target="#myModal">修改</button>
-                            <!-- Modal -->
-                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    <h4 class="modal-title" id="myModalLabel">修改配置</h4>
-                                  </div>
-                                  <div class="modal-body">
-                                    <!-- 用户表单 -->
-
-                                    <div class="ibox-content">
-                                      <form class="form-horizontal">
-                                        <div class="panel panel-default">
-                                          <div class="panel-heading">基本配置：</div>
-                                          <div class="panel-body">
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
-
-                                              <div class="dropdown col-sm-9">
-                                                <button class="btn  btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="env_list">
-                                                  测试环境
-                                                  <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-
-                                                  <li>
-                                                    <a href="#">测试环境</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#">开发环境</a>
-                                                  </li>
-
-                                                  <li>
-                                                    <a href="#">生产环境</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#">灾备环境</a>
-                                                  </li>
-                                                </ul>
-
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
-                                              <div class="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success">
-                                                  <input type="radio" name="options" id="option1" autocomplete="off" checked>普通型</label>
-                                                <label class="btn btn-success active">
-                                                  <input type="radio" name="options" id="option2" autocomplete="off">WAS</label>
-                                                <label class="btn btn-success">
-                                                  <input type="radio" name="options" id="option2" autocomplete="off">数据库型</label>
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">CPU:&nbsp;</label>
-                                              <div class ="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success">
-                                                  <input type="radio" name="options" id="option1" autocomplete="off" checked>2C</label>
-                                                <label class="btn btn-success active">
-                                                  <input type="radio" name="options" id="option2" autocomplete="off">4C</label>
-
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">内存:&nbsp;</label>
-                                              <div class ="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success">
-                                                  <input type="radio" name="options" id="option1" autocomplete="off" checked>2G</label>
-                                                <label class="btn btn-success active">
-                                                  <input type="radio" name="options" id="option2" autocomplete="off">4G</label>
-                                                <label class="btn btn-success">
-                                                  <input type="radio" name="options" id="option2" autocomplete="off">8G</label>
-                                                <label class="btn btn-success">
-                                                  <input type="radio" name="options" id="option2" autocomplete="off">16G</label>
-
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
-                                              <div class="dropdown col-sm-9">
-                                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                  WINDOWS 2008 R2
-                                                  <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
-                                                  <li class="dropdown-header">windows系统</li>
-                                                  <li>
-                                                    <a href="#">windows 2008 R2</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#">windows 2003 R2</a>
-                                                  </li>
-                                                  <li role="separator" class="divider"></li>
-                                                  <li class="dropdown-header">linux系统</li>
-                                                  <li>
-                                                    <a href="#">SUSE 11</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#">SUSE 10</a>
-                                                  </li>
-                                                </ul>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="panel-heading">磁盘配置：</div>
-                                          <div class="panel-body">
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">系统盘:&nbsp;</label>
-                                              <div class="col-sm-9">
-                                                <p style="margin:5px">
-                                                  <label for="amount">&nbsp;50G</label>
-                                                </p>
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
-                                              <div class="col-sm-9">
-                                                <div id="slider" ></div>
-                                                <p>
-                                                  <input type="text" id="data_volume" style="width:30px;">
-                                                  <label for="data_volume">&nbsp;G</label>
-                                                </p>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="panel-heading">参数配置：</div>
-                                          <div class="panel-body">
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">申请数量:&nbsp;</label>
-                                              <div class="col-sm-9">
-                                                <div id="slider1"></div>
-                                                <p style="float:left">
-                                                  <input type="text" id="amount" style="width:30px;">
-                                                  <label for="amount">&nbsp;台</label>
-                                                </p>
-
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">申请原因:&nbsp;</label>
-                                              <div class="col-sm-9">
-                                                <ul id="apply_reason" class="list-group"></ul>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </form>
-                                    </div>
-
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary">保存</button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <button class="btn btn-success btn-xs" type="submit" id="approved">同意</button>
-                            <button class="btn btn-danger btn-xs" type="submit" id="delete">删除</button>
+                          <button class="btn btn-primary btn-xs modify-btn" id="{{ key.id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
+                        {% include 'jvmanager/modify_modal.html' %}  
+                            <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.id }}approved" data-toggle="modal" data-target="#{{ key.id}}AGModal">同意</button>
+                        {% include 'jvmanager/agree_modal.html' %}                  
+                            <button class="btn btn-danger btn-xs delete-btn" type="submit" id="delete">删除</button>
                           </div>
                         </td>
                       </tr>
@@ -230,7 +80,14 @@
 
                     </tbody>
                   </table>
-
+                   <div class="row">
+                        <div class="col-sm-6">
+                            <div class="dataTables_info" id="editable_info" role="status" aria-live="polite">
+                                Showing {{ applys.start_index }} to {{ applys.end_index }} of {{ p.count }} entries
+                            </div>
+                        </div>
+                        {% include 'paginator.html' %}
+                    </div>
                 </div>
 
               </div>
@@ -258,39 +115,38 @@
                         <th class="text-center">序号</th>
                         <th class="text-center">申请人</th>
                         <th class="text-center">主机名称</th>
-                        <th class="text-center">选择</th>
+                        <th class="text-center"><input type="checkbox" name="selectall" id="selectall" checked=""></th>
                         <th class="text-center">生成进度</th>
                         <th class="text-center">生成日志</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td class="text-center">1</td>
-                        <td class="text-center">小明</td>
-                        <td class="text-center">WAS</td>
+                    <tbody id="agree-table">
+                      {% for list in apply_confirm_list %}
+                      <tr id="{{list.id}}tr">
+                        <td class="text-center">{{list.id}}</td>
+                        <td class="text-center">{{list.request_id_id}}</td>
+                        <td class="text-center">{{list.approving_env_type}}/{{list.approving_fun_type}}/{{list.approving_os_type}}</td>
                         <td class="text-center">
-                          <input type="checkbox" name="option1" id="check1"></td>
-                        <td class="text-center">20%</td>
+                          <input type="checkbox" name="option1" id="{{list.id}}check"></td>
+                        <td class="text-center">{% if list.approving_status == "AP" %}
+                              待生成
+                        {% else %}
+                          　　显示进度
+                        {% endif %} </td>
                         <td class="text-center">success</td>
                       </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
                 </div>
                 <div style="margin:0 auto;width:100px;">
-                  <button class="btn btn-primary btn-lg">生成资源</button>
+                  <button class="btn btn-primary btn-lg gen-btn">生成资源</button>
                 </div>
 
               </tab-content>
             </div>
           </div>
         </div>
-        <div class="ibox-content">
-             <div class="panel panel-default">
-                 <div class="panel-heading">已生成列表概览：</div>
-                 <div class="panel-body"></div>
-                 </div>
-         </div>
-
       </div>
     </div>
   </div>
@@ -298,20 +154,169 @@
 {% endblock %}
 {% block self_footer_js %}
 <style type="text/css">
-  #slider,#slider1{
+  .modifyslider{
     float: left;
     clear: left;
     width: 200px;
     margin: 10px;
   }
-  #slider .ui-slider-range { background: #729fcf; }
-  #slider .ui-slider-handle { border-color: #729fcf; }
+  .modifyslider .ui-slider-range { background: #2496DE; }
+  .modifyslider .ui-slider-handle { border-color: #729fcf; }
+  .num_type{width:40px; padding-left: 10px;}
+  .text_type{width: 80px;padding-left: 10px;}
 </style>
 <script>
-  $(function(){
-    $("#approved").click(function(){
+$(function(){
+var request_id,id;
+$(".modify-btn").click(function(event) {
+     request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
 
-    })
-  })
+     $.post('{% url "show_apply_machinedetail" %}', { "id": request_id}, function(data) {
+       var detail_list = eval($.parseJSON(data));
+       //数据获取
+       $(".dropdownMenu1").text(detail_list[0].fields.env_type).append('&nbsp;<span class="caret"></span>');
+       $("#"+request_id+"modal input[value='"+detail_list[0].fields.fun_type+"']").prop("checked",true).parent("label").addClass('active').siblings('label').removeClass('active');
+       $(".dropdownMenu2").text(detail_list[0].fields.os_type).append('&nbsp;<span class="caret"></span>');
+       $("#"+request_id+"modal ."+detail_list[0].fields.cpu+"C").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');
+       $("#"+request_id+"modal ."+detail_list[0].fields.memory+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
+       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.data_disk);
+       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.request_num);
+     });
+     var saving_data_disk = $("#"+request_id+"data_volume").val();
+     var saving_request_num = $("#"+request_id+"request_num").val();
+
+     $("#"+request_id+"modifyslider").slider({
+            range:"min",
+            min:0,
+            max:100,
+            value:parseInt(saving_data_disk),
+            slide:function(event,ui){
+                $("#"+request_id+"data_volume").val(ui.value);
+            }
+        });
+      $("#"+request_id+"modifyslider_num").slider({
+            value:parseInt(saving_request_num),
+            min:0,
+            max:6,
+            step:1,
+            slide:function(event,ui){
+               $("#"+request_id+"request_num").val(ui.value);
+            }
+        }); 
+});
+
+$(".agree-btn").click(function(event) {
+     id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+});
+$(".delete-btn").click(function(event) {
+     id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+     var reason = prompt("确认删除？填写原因，将会退回给申请人哦")
+     if(reason){
+       reason = $.trim(reason);
+       var dict = {
+        "id":id,
+        "reason":reason,
+       }
+       $.post('{% url "delete_apply" %}', dict, function(data) {
+         alert("删除成功");
+        setTimeout(function(e){
+            $("#"+id+"tr").remove()
+          },200);
+       });
+     }
+});
+$(".modify-save-btn").click(function(event) {
+      var saving_fun_type = $("#"+request_id+"modal input[name='fun_type']:checked").val();
+      var saving_env_type = $("#"+request_id+"modal input[name='env_type']").val();
+      var saving_cpu_num = $("#"+request_id+"modal input[name='cpu']:checked").val();
+      var saving_memory_num = $("#"+request_id+"modal input[name='memory']:checked").val();
+    　　var saving_os_type = $("#"+request_id+"modal input[name='os_type']").val();
+      var saving_data_disk = $("#"+request_id+"modal input[name='data_volume']").val();
+      var saving_request_num = $("#"+request_id+"modal input[name='request_num']").val();
+      var saving_form = {
+        "request_id":request_id,
+        "saving_fun_type":saving_fun_type,
+        "saving_env_type":saving_env_type,
+        "saving_cpu_num":saving_cpu_num,
+        "saving_memory_num":saving_memory_num,
+        "saving_os_type":saving_os_type,
+        "saving_data_disk":saving_data_disk,
+        "saving_request_num":saving_request_num,
+      }
+      $.post('{% url "modify_machine_detail" %}', saving_form, function(data) {
+          alert("保存成功！");
+          setTimeout(function(e){
+            location.href = '{% url "VM_list" %}'
+          },200);
+      });
+
+});
+$(".conf-agree-btn").click(function(event) {
+      var confirm_fun_type = $("#"+id+"fun_type").val();
+      var confirm_env_type = $("#"+id+"env_type").val();
+      var confirm_cpu_num = $("#"+id+"cpu").val();
+      var confirm_memory_num = $("#"+id+"memory").val();
+    　　var confirm_os_type = $("#"+id+"os_type").val();
+      var confirm_data_disk = $("#"+id+"data_disk").val();
+      var confirm_form = {
+        "request_id":id,
+        "confirm_fun_type":confirm_fun_type,
+        "confirm_env_type":confirm_env_type,
+        "confirm_cpu_num":confirm_cpu_num,
+        "confirm_memory_num":confirm_memory_num,
+        "confirm_os_type":confirm_os_type,
+        "confirm_data_disk":confirm_data_disk,
+      }
+      $.post('{% url "agree_apply" %}', confirm_form, function(data) {
+          var list = eval($.parseJSON(data));
+          alert("提交成功！");
+          $("#"+id+"AGModal").modal("hide")
+          var html = "<tr><td class='text-center'>"+list[0].pk+"</td><td class='text-center'>"+list[0].fields.request_id+"</td><td class='text-center'>"+list[0].fields.approving_env_type+'/'+list[0].fields.approving_fun_type+'/'+list[0].fields.approving_os_type+"</td><td class='text-center'><input type='checkbox' name='option1' id=''></td><td class='text-center'>"+list[0].fields.approving_status+"</td><td class='text-center'></td></tr>"
+          setTimeout(function(e){
+            $("#agree-table").prepend(html)
+            $("#"+id+"tr").remove()
+          },200);          
+      });
+});
+$(".gen-btn").click(function(event) {
+  $(".gen-btn").text('正在生成资源');
+  var count = 0;
+  setInterval(function(){
+    $(".gen-btn").append('<span>.</span>');
+    count+=1;
+    if(count == 4){
+       $(".gen-btn span").remove();
+      count = 0;
+    }
+  },200)
+});
+function selectMenu(factor,name){
+            factor.next().find("a").click(function(){
+            factor.text($(this).text()).append('&nbsp;<span class="caret"></span>');
+            name.val($(this).text());
+        })}
+        
+selectMenu($(".dropdownMenu1"),$(".env_type"));
+selectMenu($(".dropdownMenu2"),$(".os_type"));
+$("#selectall").click(function () {
+    if($("#selectall").prop("checked")){
+        $("#agree-table :checkbox").prop("checked",true);
+    }else{
+        $("#agree-table :checkbox").prop("checked",false);
+    }
+});
+function select_binding(type,cpu,memory){
+         type.click(function(event) {
+         /* Act on the event */
+             $("."+cpu+"C").parent("label").addClass('active').siblings('label').removeClass('active');
+             $("."+cpu+"C").val(cpu)
+             $("."+memory+"G").parent("label").addClass('active').siblings('label').removeClass('active');
+             $("."+memory+"G").val(memory)
+     });
+}
+select_binding($(".normal-type"),2,4);
+select_binding($(".was-type"),4,8);
+select_binding($(".database-type"),4,16);
+});
 </script>
 {% endblock %}

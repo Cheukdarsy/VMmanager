@@ -78,8 +78,9 @@ h5 {
   box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
   display: none;
   float: left;
-  font-size: 12px;
-  left: 0;
+  font-size: 15px;
+  left: auto;
+  right:auto;
   list-style: none outside none;
   padding: 0;
   position: absolute;
@@ -463,7 +464,7 @@ fieldset[disabled] .btn-primary.active {
   border-color: #1dc5a3;
 }
 .btn-success {
-  background-color: #1c84c6;
+  background-color: #2496DE;
   border-color: #1c84c6;
   color: #FFFFFF;
 }
@@ -472,7 +473,7 @@ fieldset[disabled] .btn-primary.active {
 .btn-success:active,
 .btn-success.active,
 .open .dropdown-toggle.btn-success {
-  background-color: #1a7bb9;
+  background-color: #0A8ADD;
   border-color: #1a7bb9;
   color: #FFFFFF;
 }

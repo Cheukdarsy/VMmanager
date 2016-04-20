@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> 登录 | JumpServer</title>
+    <title> 登录 | VM管理平台</title>
     <link rel="shortcut icon" href="/static/img/facio.ico" type="image/x-icon">
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -21,7 +21,7 @@
             {% if error %}
                 <div class="alert alert-danger text-center">{{ error }}</div>
             {% endif %}
-            <h2>Welcome to JumpServer</h2>
+            <h2>VM管理平台</h2>
             <form class="m-t" role="form" method="post" action="">
                 <div class="form-group">
                     <input type="text" name="username" class="form-control" placeholder="Username" required="length[6~50]">
@@ -33,7 +33,7 @@
 
                 <a href="{% url 'password_forget' %}"><small>Forgot password? </small></a>
             </form>
-            <p class="m-t"> <small><b>Copyright</b> Jumpserver.org Organization © 2014-2015</small> </p>
+            <p class="m-t"> <small><b>Copyright</b>CMB DevOps team base on Jumpserver.org Organization © 2016-2016</small> </p>
         </div>
     </div>
 

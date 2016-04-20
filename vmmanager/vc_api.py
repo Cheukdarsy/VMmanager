@@ -340,4 +340,5 @@ def reconfig_vm(content, vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, t
         return task, errmsg
     # Get vim_vm_obj
     vim_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=str(vm.moid))
-    return _vim_vm_reconfig(vim_vm, tg_annotation, tg_cpu_num, tg_cpu_cores, tg_mem_mb, tg_datadisk_gb)
+    return vim_vm_reconfig(vim_vm, tg_annotation, tg_cpu_num, tg_cpu_cores, tg_mem_mb, tg_datadisk_gb)
+

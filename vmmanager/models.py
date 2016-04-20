@@ -14,8 +14,6 @@ from juser.models import User, UserGroup
 
 
 # Create your models here.
-
-
 class SheetField(models.Model):
     sheet_name = models.CharField(max_length=45)
     field_name = models.CharField(max_length=45)
@@ -481,7 +479,7 @@ class HostSystem(VMObject):
 
 
 class VirtualMachine(VMObject):
-    template = models.BooleanField()
+    istemplate = models.BooleanField()
     annotation = models.TextField()
     cpu_num = models.PositiveSmallIntegerField()
     cpu_cores = models.PositiveSmallIntegerField()
@@ -590,6 +588,9 @@ class Template(VirtualMachine):
         ('BASE', 'Operation System Only')
     )
     usage = models.CharField(max_length=30, choices=USG_CHOICE)
+
+    class Meta:
+        pass
 
     @classmethod
     def select_template(cls, vc, usage, guestos):

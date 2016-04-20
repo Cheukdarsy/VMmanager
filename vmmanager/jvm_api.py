@@ -2,7 +2,7 @@
 
 
 from jumpserver.api import *
-from vmmanager.models import Application
+from vmmanager.models import Approvel, Application
 
 
 def db_add_userapply(**kwargs):
@@ -14,3 +14,9 @@ def db_add_userapply(**kwargs):
 def get_userapply(**kwargs):
     applylist = get_object(Application, **kwargs)
     return applylist
+
+
+def db_add_confirmapply(**kwargs):
+    """添加确认申请单到数据库"""
+    confirm_apply = Approvel(**kwargs)
+    confirm_apply.save()
