@@ -127,7 +127,7 @@
                         <td class="text-center">{{list.request_id_id}}</td>
                         <td class="text-center">{{list.approving_env_type}}/{{list.approving_fun_type}}/{{list.approving_os_type}}</td>
                         <td class="text-center">
-                          <input type="checkbox" name="option1" id="{{list.id}}check"></td>
+                          <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.request_id_id}}"></td>
                         <td class="text-center">{% if list.approving_status == "AP" %}
                               待生成
                         {% else %}
@@ -279,6 +279,14 @@ $(".conf-agree-btn").click(function(event) {
       });
 });
 $(".gen-btn").click(function(event) {
+  var str=""
+  $("#agree-table input[name='checkbox']:checkbox").each(function() {
+      if($(this).prop("checked")){
+        str += $(this).val()+","
+      }
+  });
+  //ajax传输数据
+  
   $(".gen-btn").text('正在生成资源');
   var count = 0;
   setInterval(function(){
