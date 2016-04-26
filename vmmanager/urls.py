@@ -1,6 +1,6 @@
 # coding:utf-8
 from django.conf.urls import patterns, include, url
-from jVM.views import *
+from vmmanager.views import *
 
 urlpatterns = patterns('',
                        url(r'^list/$', VM_list, name='VM_list'),
