@@ -200,7 +200,9 @@ def submit_saving_resource(request):
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
 
-
+@require_role('admin')
+def set_vm(request):
+	return my_render('jvmanager/set_vm.html',locals(),request)
 
 """
     邱老板需填充函数如下
