@@ -26,4 +26,5 @@ urlpatterns = patterns('',
                        url(r'^ajax_get_storage/$',ajax_get_storage,name='ajax_get_storage'),
                        url(r'^ajax_add_template/$',ajax_add_template,name='ajax_add_template'),
                        url(r'^get_templates/$',get_templates,name='get_templates'),
+                       url(r'^set_vm/$',set_vm,name='set_vm'),
                        )
