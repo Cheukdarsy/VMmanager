@@ -2836,7 +2836,7 @@ body.body-small .footer.fixed {
   margin: 0;
 }
 .blank-panel .panel-heading {
-  padding-bottom: 0;
+  padding-bottom: 10px;
 }
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover,

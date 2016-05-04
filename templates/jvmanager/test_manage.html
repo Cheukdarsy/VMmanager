@@ -45,7 +45,8 @@
                         <th class="text-center">环境类型</th>
                         <th class="text-center">主机类型</th>
                         <th class="text-center">CPU</th>
-                        <th class="text-center">memory</th>
+                        <th class="text-center">内存</th>
+                        <th class="text-center">数量</th>
                         <th class="text-center">处理</th>
 
                       </tr>
@@ -55,9 +56,16 @@
                       <tr class="detail-table"  id="{{ key.id }}tr">
                         <td class="text-center" id="{{ key.id }}">{{ key.id }}</td>
                         <td class="text-center">{{ key.env_type}}</td>
-                        <td class="text-center">{{ key.fun_type}}</td>
+                        <td class="text-center">{% ifequal key.fun_type "normal"  %}
+                          普通型
+                        {% endifequal %} {% ifequal key.fun_type "was" %}
+                          WAS型
+                        {% endifequal %} {% ifequal key.fun_type "database" %}
+                          数据库型
+                        {% endifequal %}</td>
                         <td class="text-center">{{ key.cpu}}C</td>
                         <td class="text-center">{{ key.memory}}G</td>
+                        <td class="text-center">{{ key.request_num}}台</td>
                         <td class="text-center">
                           <div >
                           <button class="btn btn-primary btn-xs modify-btn" id="{{ key.id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
@@ -119,7 +127,7 @@
                         <td class="text-center">{{list.request_id_id}}</td>
                         <td class="text-center">{{list.approving_env_type}}/{{list.approving_fun_type}}/{{list.approving_os_type}}</td>
                         <td class="text-center">
-                          <input type="checkbox" name="option1" id="{{list.id}}check"></td>
+                          <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.request_id_id}}"></td>
                         <td class="text-center">{% if list.approving_status == "AP" %}
                               待生成
                         {% else %}
@@ -132,7 +140,7 @@
                   </table>
                 </div>
                 <div style="margin:0 auto;width:100px;">
-                  <button class="btn btn-primary btn-lg">生成资源</button>
+                  <button class="btn btn-primary btn-lg gen-btn">生成资源</button>
                 </div>
 
               </tab-content>
@@ -146,21 +154,57 @@
 {% endblock %}
 {% block self_footer_js %}
 <style type="text/css">
-  #slider,#slider1{
+  .modifyslider{
     float: left;
     clear: left;
     width: 200px;
     margin: 10px;
   }
-  #slider .ui-slider-range { background: #2496DE; }
-  #slider .ui-slider-handle { border-color: #729fcf; }
+  .modifyslider .ui-slider-range { background: #2496DE; }
+  .modifyslider .ui-slider-handle { border-color: #729fcf; }
+  .num_type{width:40px; padding-left: 10px;}
+  .text_type{width: 80px;padding-left: 10px;}
 </style>
 <script>
 $(function(){
 var request_id,id;
 $(".modify-btn").click(function(event) {
      request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+
+     $.post('{% url "show_apply_machinedetail" %}', { "id": request_id}, function(data) {
+       var detail_list = eval($.parseJSON(data));
+       //数据获取
+       $(".dropdownMenu1").text(detail_list[0].fields.env_type).append('&nbsp;<span class="caret"></span>');
+       $("#"+request_id+"modal input[value='"+detail_list[0].fields.fun_type+"']").prop("checked",true).parent("label").addClass('active').siblings('label').removeClass('active');
+       $(".dropdownMenu2").text(detail_list[0].fields.os_type).append('&nbsp;<span class="caret"></span>');
+       $("#"+request_id+"modal ."+detail_list[0].fields.cpu+"C").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');
+       $("#"+request_id+"modal ."+detail_list[0].fields.memory+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
+       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.data_disk);
+       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.request_num);
+     });
+     var saving_data_disk = $("#"+request_id+"data_volume").val();
+     var saving_request_num = $("#"+request_id+"request_num").val();
+
+     $("#"+request_id+"modifyslider").slider({
+            range:"min",
+            min:0,
+            max:100,
+            value:parseInt(saving_data_disk),
+            slide:function(event,ui){
+                $("#"+request_id+"data_volume").val(ui.value);
+            }
+        });
+      $("#"+request_id+"modifyslider_num").slider({
+            value:parseInt(saving_request_num),
+            min:0,
+            max:6,
+            step:1,
+            slide:function(event,ui){
+               $("#"+request_id+"request_num").val(ui.value);
+            }
+        }); 
 });
+
 $(".agree-btn").click(function(event) {
      id = $(this).parents(".detail-table").children('td:first-child').attr("id");
 });
@@ -188,6 +232,7 @@ $(".modify-save-btn").click(function(event) {
       var saving_memory_num = $("#"+request_id+"modal input[name='memory']:checked").val();
     　　var saving_os_type = $("#"+request_id+"modal input[name='os_type']").val();
       var saving_data_disk = $("#"+request_id+"modal input[name='data_volume']").val();
+      var saving_request_num = $("#"+request_id+"modal input[name='request_num']").val();
       var saving_form = {
         "request_id":request_id,
         "saving_fun_type":saving_fun_type,
@@ -196,14 +241,16 @@ $(".modify-save-btn").click(function(event) {
         "saving_memory_num":saving_memory_num,
         "saving_os_type":saving_os_type,
         "saving_data_disk":saving_data_disk,
+        "saving_request_num":saving_request_num,
       }
-      $.post('{% url "confirm_machine_detail" %}', saving_form, function(data) {
+      $.post('{% url "modify_machine_detail" %}', saving_form, function(data) {
           alert("保存成功！");
           setTimeout(function(e){
             location.href = '{% url "VM_list" %}'
           },200);
       });
-    });   
+
+});
 $(".conf-agree-btn").click(function(event) {
       var confirm_fun_type = $("#"+id+"fun_type").val();
       var confirm_env_type = $("#"+id+"env_type").val();
@@ -230,8 +277,54 @@ $(".conf-agree-btn").click(function(event) {
             $("#"+id+"tr").remove()
           },200);          
       });
-}); 
-
-  })
+});
+$(".gen-btn").click(function(event) {
+  var str=""
+  $("#agree-table input[name='checkbox']:checkbox").each(function() {
+      if($(this).prop("checked")){
+        str += $(this).val()+","
+      }
+  });
+  //ajax传输数据
+  
+  $(".gen-btn").text('正在生成资源');
+  var count = 0;
+  setInterval(function(){
+    $(".gen-btn").append('<span>.</span>');
+    count+=1;
+    if(count == 4){
+       $(".gen-btn span").remove();
+      count = 0;
+    }
+  },200)
+});
+function selectMenu(factor,name){
+            factor.next().find("a").click(function(){
+            factor.text($(this).text()).append('&nbsp;<span class="caret"></span>');
+            name.val($(this).text());
+        })}
+        
+selectMenu($(".dropdownMenu1"),$(".env_type"));
+selectMenu($(".dropdownMenu2"),$(".os_type"));
+$("#selectall").click(function () {
+    if($("#selectall").prop("checked")){
+        $("#agree-table :checkbox").prop("checked",true);
+    }else{
+        $("#agree-table :checkbox").prop("checked",false);
+    }
+});
+function select_binding(type,cpu,memory){
+         type.click(function(event) {
+         /* Act on the event */
+             $("."+cpu+"C").parent("label").addClass('active').siblings('label').removeClass('active');
+             $("."+cpu+"C").val(cpu)
+             $("."+memory+"G").parent("label").addClass('active').siblings('label').removeClass('active');
+             $("."+memory+"G").val(memory)
+     });
+}
+select_binding($(".normal-type"),2,4);
+select_binding($(".was-type"),4,8);
+select_binding($(".database-type"),4,16);
+});
 </script>
 {% endblock %}

@@ -156,13 +156,26 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
                                               <div class="col-sm-9">
-                                                <div id="slider" ></div>
+                                                <div id="{{ key.id }}modifyslider" class="modifyslider"></div>
                                                 <p>
-                                                  <input type="text" id="data_volume" style="width:30px;" name="data_volume" value="{{ key.data_disk }}">
+                                                  <input type="text" id="{{ key.id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.data_disk }}">
                                                   <label for="data_volume">&nbsp;G</label>
                                                 </p>
                                               </div>
                                             </div>
+                                          </div>
+                                          <div class="panel-heading">数量配置：</div>
+                                          <div class="panel-body">
+                                          <div class="form-group">
+                                            <label class="col-sm-3 control-label">数量:&nbsp;</label>
+                                            <div class="col-sm-9">
+                                            <div id="{{ key.id }}modifyslider_num" class="modifyslider"></div>
+                                            <p style="float:left">
+                                            <input type="text" style="width:30px;" id="{{ key.id }}request_num" name="request_num" value="{{ key.request_num }}">
+                                            <label for="amount">&nbsp;台</label>
+                                        </p>
+                                          </div>
+                                        </div>
                                           </div>
                                         </div>
                                       </form>

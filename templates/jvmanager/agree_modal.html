@@ -18,25 +18,25 @@
                                              <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
 
                                              <div class="dropdown col-sm-9">
-                                               <input type="text" name="env_type" id="{{ key.id }}env_type" disabled value="{{ key.env_type }}">
+                                               <input type="text" name="env_type" class="text_type" id="{{ key.id }}env_type" disabled value="{{ key.env_type }}">
                                              </div>
                                            </div>
                                            <div class="form-group">
                                              <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
                                              <div class="btn-group col-sm-9" data-toggle="buttons">
-                                              <input type="text" name="fun_type" id="{{ key.id }}fun_type" disabled value="{{ key.fun_type }}">                                               
+                                              <input type="text" name="fun_type" class="text_type" id="{{ key.id }}fun_type" disabled value="{{ key.fun_type }}">                                               
                                              </div>
                                            </div>
                                            <div class="form-group">
                                              <label class="col-sm-3 control-label">CPU:&nbsp;</label>
                                              <div class ="col-sm-9" >
-                                              <input type="text" name="cpu" id="{{ key.id }}cpu" disabled value="{{ key.cpu }}">
+                                              <input type="text" name="cpu" class="num_type" id="{{ key.id }}cpu" disabled value="{{ key.cpu }}"><span>C</span>
                                              </div>
                                            </div>
                                            <div class="form-group">
                                              <label class="col-sm-3 control-label">内存:&nbsp;</label>
                                              <div class ="col-sm-9" >
-                                               <input type="text" name="memory" id="{{ key.id }}memory" disabled value="{{ key.memory }}">  
+                                               <input type="text" name="memory" class="num_type" id="{{ key.id }}memory" disabled value="{{ key.memory }}"><span>G</span>  
                                              </div>
                                            </div>
                                            <div class="form-group">
@@ -45,9 +45,6 @@
                                                <input type="text" name="os" id="{{ key.id }}os_type" disabled value="{{ key.os_type }}">
                                              </div>
                                            </div>
-                                         </div>
-                                         <div class="panel-heading">磁盘配置：</div>
-                                         <div class="panel-body">
                                            <div class="form-group">
                                              <label class="col-sm-3 control-label">系统盘:&nbsp;</label>
                                              <div class="col-sm-9">
@@ -59,7 +56,65 @@
                                            <div class="form-group">
                                              <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
                                              <div class="col-sm-9">
-                                               <input type="text" name="datadisk" id="{{ key.id }}data_disk" disabled value="{{ key.data_disk }}">
+                                               <input type="text" name="datadisk" class="num_type" id="{{ key.id }}data_disk" disabled value="{{ key.data_disk }}"><span>G</span>
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">数量:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <input type="text" name="datadisk" class="num_type" id="{{ key.id }}data_disk" disabled value="{{ key.request_num }}"><span>台</span>
+                                             </div>
+                                           </div>
+                                         </div>
+                                         <div class="panel-heading">参数配置：</div>
+                                         <div class="panel-body">
+                                           
+                                          <div class="form-group">
+                                             <label class="col-sm-3 control-label">IP段:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <select name="ip" id="{{ key.id }}ip">
+                                                 <option value="118.240.67.5">118.240.67.5</option>
+                                               </select>
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">hostname:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <select name="cluster" id="{{key.id}}hostname">
+                                                 <option value="cluster1">127.0.0.1</option>
+                                               </select>
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">群集:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <select name="cluster" id="{{key.id}}cluster1">
+                                                 <option value="cluster1">cluster1(综合判定:70%)</option>
+                                               </select>
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">资源:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <select name="cluster" id="{{key.id}}resource">
+                                                 <option value="cluster1">cluster1</option>
+                                               </select>
+                                             </div>
+                                           </div>
+                                           <div class="form-group"　 style="display:none">
+                                             <label class="col-sm-3 control-label">模板:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <select name="cluster" id="{{key.id}}template">
+                                                 <option value="cluster1">template1(suse 11+was)</option>
+                                               </select>
+                                             </div>
+                                           </div>
+                                           <div class="form-group">
+                                             <label class="col-sm-3 control-label">剩余容量:&nbsp;</label>
+                                             <div class="col-sm-9">
+                                               <select name="cluster" id="{{key.id}}storage">
+                                                 <option value="cluster1">560G(40%)</option>
+                                               </select>
                                              </div>
                                            </div>
                                          </div>

@@ -23,7 +23,20 @@ def VM_list(request):
 
 
 @require_role('admin')
-def confirm_machine_detail(request, *call_args):
+def show_apply_machinedetail(request):
+    """ajax获取机器详细信息"""
+    if request.method == "POST":
+        id = int(request.POST.get('id', ''))
+        applydetail = userapply.objects.filter(id=id)
+        applydetail_dict = simplejson.dumps(applydetail, cls=QuerySetEncoder)
+        return JsonResponse(applydetail_dict)
+    else:
+        error_dict = {'error': 'ajax not good'}
+        return JsonResponse(error_dict)
+
+
+
+def modify_machine_detail(request, *call_args):
     """
     修改用户单个机器详细信息
     """
@@ -35,12 +48,12 @@ def confirm_machine_detail(request, *call_args):
         saving_memory_num = int(request.POST.get('saving_memory_num', ''))
         saving_os_type = request.POST.get('saving_os_type', '')
         saving_data_disk = int(request.POST.get('saving_data_disk', ''))
-        saving_apply_num = 1
+        saving_apply_num = int(request.POST.get('saving_request_num', ''))
         saving_apply_status = 'SM'
         saving_datetime = datetime.datetime.now()
         try:
             userapply.objects.filter(id=request_id).update(fun_type=saving_fun_type, os_type=saving_os_type,
-                                                           cpu=saving_cpu_num, memory=saving_memory_num, data_disk=saving_data_disk, apply_date=saving_datetime)
+                                                           cpu=saving_cpu_num,env_type=saving_env_type,memory=saving_memory_num, data_disk=saving_data_disk,request_num=saving_apply_num,apply_date=saving_datetime)
         except Exception, e:
             raise e
         else:
@@ -82,7 +95,8 @@ def agree_apply(request):
     else:
         error_dict = {'error': 'pajax post not good'}
         return JsonResponse(error_dict)
-        
+
+
 @require_role('admin')
 def delete_apply(request):
     """删除申请"""
@@ -97,8 +111,9 @@ def delete_apply(request):
             success_dict = {"info": "success"}
             return JsonResponse(success_dict)
     else:
-        error_dict = {"error":"ajax not good"}
+        error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
+
 
 @require_role('admin')
 def agree_apply_list(request):
@@ -106,6 +121,8 @@ def agree_apply_list(request):
     通过列表
     """
     pass
+
+
 @require_role(role='user')
 def apply_machine(request):
     """
@@ -147,7 +164,7 @@ def resource_view(request):
     用户资源概览
     """
     username = request.user.username
-    applylist = userapply.objects.filter(apply_status="SM")
+    applylist = userapply.objects.exclude(apply_status="HD").order_by('-id')
     applylist, p, applys, page_range, current_page, show_first, show_end = pages(
         applylist, request)
     return my_render('jvmanager/resource_view.html', locals(), request)
@@ -176,3 +193,68 @@ def submit_saving_resource(request):
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
+@require_role('admin')
+def set_vm(request):
+	return my_render('jvmanager/set_vm.html',locals(),request)
+
+"""
+邱老板需填充函数如下
+"""
+#同意生成机器界面
+def generate_machine():
+	"""
+	前端返回一个ID列表{json}，然后根据ID去approv表获取相关参数生成机器，包括台数等
+	"""
+	pass
+
+def ajax_get_process():
+	"""
+	根据ID列表获取生成进度
+	"""
+	pass
+def ajax_get_generatestatus():
+	"""
+	根据ID列表获取生成日志
+	"""
+	pass
+def ajax_get_template():
+	"""
+	前端返回cluster名称clustername，获取对应的template
+	"""
+	pass
+def ajax_get_cluster():
+	"""
+	动态获取集群信息，需返回所有可用集群名称以及权重比(CPU+内存＋存储)
+	"""
+	pass
+def ajax_get_resource():
+	"""
+	获取资源称名称
+	"""
+	pass
+def ajax_get_storage():
+	"""
+	获取相关集群的剩余容量，前端返回集群名称clustername，需返回剩余容量值及百分比
+	"""
+	pass
+#VM参数配置页面
+def ajax_add_IP():
+	"""
+	动态激活IP段
+	"""
+	pass
+def ajax_get_IP():
+	"""
+	获取可用IP列表，用于下拉框选择
+	"""
+	pass
+def ajax_add_template():
+	"""
+	添加template
+	"""
+	pass	
+def get_templates():
+	"""
+	获取所有模板信息
+	"""
+	pass

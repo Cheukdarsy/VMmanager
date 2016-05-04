@@ -33,8 +33,10 @@
                   <th class="text-center">序号</th>
                   <th class="text-center">环境类型</th>
                   <th class="text-center">主机类型</th>
+                  <th class="text-center">系统类型</th>
                   <th class="text-center">CPU</th>
                   <th class="text-center">memory</th>
+                  <th class="text-center">数量</th>
                   <th class="text-center">处理结果</th> 
                   <th class="text-center">IP</th>
                       </tr>
@@ -44,10 +46,24 @@
                       <tr>
                         <td class="text-center">{{ key.id}}</td>
                         <td class="text-center">{{ key.env_type}}</td>
+                        <td class="text-center">{% ifequal key.fun_type "normal"  %}
+                          普通型
+                        {% endifequal %} {% ifequal key.fun_type "was" %}
+                          WAS型
+                        {% endifequal %} {% ifequal key.fun_type "database" %}
+                          数据库型
+                        {% endifequal %}</td>
                         <td class="text-center">{{ key.os_type}}</td>
                         <td class="text-center">{{ key.cpu}}</td>
                         <td class="text-center">{{ key.memory}}</td>
-                        <td class="text-center">{{ key.apply_status}}</td>
+                        <td class="text-center">{{ key.request_num}}</td>
+                        <td class="text-center">{% ifequal key.apply_status "SM"  %}
+                          待审核
+                        {% endifequal %} {% ifequal key.apply_status "RB"  %}
+                          被退回
+                        {% endifequal %} {% ifequal key.apply_status "SC" %}
+                          已生成
+                        {% endifequal %}</td>
                         <td class="text-center"></td>
                     </tr>
                      {% endfor %} 
@@ -67,5 +83,4 @@
         </div>
     </div>
 	</div>
-    </div>
 	{% endblock %}
