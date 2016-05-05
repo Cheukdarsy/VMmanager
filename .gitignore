@@ -1,3 +1,5 @@
 /docker/
 /.idea/
-/.py
+*.pyc
+/method
+/jumpserver.conf
