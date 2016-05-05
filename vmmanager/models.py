@@ -32,9 +32,7 @@ class VCenter(models.Model):
 
     @classmethod
     def discover(cls, ip='localhost', port=443, user='root', pwd='vmware'):
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        context.verify_mode = ssl.CERT_NONE
-        si = SmartConnect(host=ip, user=user, pwd=pwd, port=port, sslContext=context)
+        si = SmartConnect(host=ip, user=user, pwd=pwd, port=port)
         if not si:
             return None
         content = si.RetrieveContent()
@@ -47,10 +45,8 @@ class VCenter(models.Model):
         return vc
 
     def connect(self):
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        context.verify_mode = ssl.CERT_NONE
         warnings.filterwarnings("ignore")
-        si = SmartConnect(host=self.ip, user=self.user, pwd=self.password, port=self.port, sslContext=context)
+        si = SmartConnect(host=self.ip, user=self.user, pwd=self.password, port=self.port)
         if not si:
             self.last_connect = None
             self.save(force_update=True)

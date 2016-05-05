@@ -23,9 +23,9 @@ def vmtask_trace(vmtask, vmorder, begin_per=0, weight=100, parse_result=False, n
             if hasattr(nexttask, '__call__'):
                 kwargs = nexttask[1]
                 if parse_result:
-                    task_fun(from_result=vmtask.info.result, **kwargs)
+                    task_fun.delay(from_result=vmtask.info.result, **kwargs)
                 else:
-                    task_fun(**kwargs)
+                    task_fun.delay(**kwargs)
     elif status == 'error':
         pass
 
@@ -69,7 +69,7 @@ def vmtask_vm_reconfig(vmorder, from_result=None, virtualmachine=None, begin_per
     if adjust_disk:
         kwargs['tg_datadisk_gb'] = order_disk
     reconfig_task, errmsg = vim_vm_reconfig(vim_vm, tg_annotation=annotation, **kwargs)
-    vmtask_trace(reconfig_task, vmorder, begin_per=begin_per, weight=weight,
+    vmtask_trace.delay(reconfig_task, vmorder, begin_per=begin_per, weight=weight,
                  nexttask=(vim_vm_poweron, {'vim_vm': vim_vm}))
 
 
@@ -92,5 +92,6 @@ def vmtask_clone_vm(vmorder, begin_per=0, weight=100, parse_result=False, nextta
     clone_task, errmsg = clone_vm(content, vmorder.src_template, vmorder.loc_hostname, vmorder.loc_ip,
                                   vmorder.loc_storage,
                                   vmorder.loc_cluster, vmorder.loc_resp)
-    vmtask_trace(clone_task, vmorder, begin_per=0, weight=60, parse_result=True,
+    vmorder.update(gen_status='RUNNING')
+    vmtask_trace.delay(clone_task, vmorder, begin_per=0, weight=60, parse_result=True,
                  nexttask=(vmtask_vm_reconfig, {'vmorder': vmorder, 'begin_per': 60, 'weight': 40}))
