@@ -1,0 +1,60 @@
+<div class="modal fade" id="modify-vm-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">修改</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:10px">
+                <div class="ibox-content form-horizontal">
+                    <form method="post" action="" id="vc-modify-form">
+                        {% csrf_token %}
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                    <label class="col-sm-3 control-label">IP地址:&nbsp;</label>
+                                    <div class="dropdown col-sm-9">
+                                        <input type="text" name="vcip" id="vcip"></div>
+                                </div>
+                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                    <label class="col-sm-3 control-label">端口:&nbsp;</label>
+                                    <div class="dropdown col-sm-9">
+                                        <input type="text" name="vcport" id="vcport" placeholder="23"></div>
+                                </div>
+                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                    <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
+                                    <div class="col-sm-9 dropdown">
+                                        <select name='typeselect' id='typeselect' class='selectpicker'>
+                                            <option id='type1'>开发环境</option>
+                                            <option id='type2'>测试环境</option>
+                                            <option id='type3'>生产环境</option>
+                                            <option id='type4'>灾备环境</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                    <label class="col-sm-3 control-label">用户名:&nbsp;</label>
+                                    <div class="dropdown col-sm-9">
+                                        <input type="text" name="vcname" id="vcname"></div>
+                                </div>
+                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                    <label class="col-sm-3 control-label">密码:&nbsp;</label>
+                                    <div class="dropdown col-sm-9">
+                                        <input type="password"  name="vcpw" id="vcpw"></div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" id="vc-add-btn">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

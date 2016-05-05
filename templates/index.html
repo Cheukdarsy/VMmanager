@@ -3,7 +3,6 @@
 {% load humanize %}
 {% block content %}
 {% include 'nav_cat_bar.html' %}
-
 <div class="wrapper wrapper-content">
     <div class="row">
         <div class="col-sm-3">
@@ -13,7 +12,9 @@
                     <h5>用户总数</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins"><a href="{% url 'user_list' %}">{{ users.count}}</a></h1>
+                    <h1 class="no-margins">
+                        <a href="{% url 'user_list' %}">{{ users.count}}</a>
+                    </h1>
                     <small>All user</small>
                 </div>
             </div>
@@ -25,7 +26,9 @@
                     <h5>主机总数</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins"><a href="{% url 'asset_list' %}">{{ hosts.count }}</a></h1>
+                    <h1 class="no-margins">
+                        <a href="{% url 'asset_list' %}">{{ hosts.count }}</a>
+                    </h1>
                     <small>All host</small>
                 </div>
             </div>
@@ -38,8 +41,16 @@
                     <h5>在线用户</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins"><a href="{% url 'log_list' 'online' %}"> <span id="online_users">{{ online_user | length }}</span></a></h1>
-{#                    <div class="stat-percent font-bold text-navy">{{ percent_online_user }} <i class="fa fa-level-up"></i></div>#}
+                    <h1 class="no-margins">
+                        <a href="{% url 'log_list' 'online' %}">
+                            <span id="online_users">{{ online_user | length }}</span>
+                        </a>
+                    </h1>
+                    {#
+                    <div class="stat-percent font-bold text-navy">
+                        {{ percent_online_user }} <i class="fa fa-level-up"></i>
+                    </div>
+                    #}
                     <small>Online user</small>
                 </div>
             </div>
@@ -52,7 +63,11 @@
                     <h5>已连接服务器</h5>
                 </div>
                 <div class="ibox-content">
-                        <h1 class="no-margins"><a href="{% url 'log_list' 'online' %}"> <span id="online_hosts">{{ online_host | length }}</span></a></h1>
+                    <h1 class="no-margins">
+                        <a href="{% url 'log_list' 'online' %}">
+                            <span id="online_hosts">{{ online_host | length }}</span>
+                        </a>
+                    </h1>
                     <small>Connected host</small>
                 </div>
             </div>
@@ -60,254 +75,266 @@
     </div>
     <div class="row">
         <!-- <div class="col-sm-2 border-bottom white-bg dashboard-header" style="margin-left:15px;height: 346px">
-            <h2>活跃用户TOP5</h2>
-            <small>过去一周共有<span class="text-info">{{ week_users }}</span>位用户登录<span class="text-success">{{ week_hosts }}</span>次服务器.</small>
-            <ul class="list-group clear-list m-t">
-                {% for data in user_top_five %}
-                    <li class="list-group-item fist-item">
-                        <span class="pull-right">
-                            {{ data.times }}次/周
-                        </span>
-                        <span class="label {{ color|random }}">{{ forloop.counter }}</span> {{ data.user }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="col-sm-7" id="top10" style="margin-left: -15px;height: 346px;padding: 15px 0 15px 0;"></div> -->
-        <div class="col-sm-6 white-bg" id="top1" style="margin-left: 15px;height: 346px">
-            <div class="statistic-box">
-                <h4>
-                    VM资源
-                </h4>
-                <p>
-                    以下图形分别为VM空间占所有主机空间的百分比
-                </p>
-                <div class="row text-center">
-                    <div class="col-sm-6">
-                        <div id="activeUser"  style="width: 140px; height: 140px;">
-
-                        </div>
-                        <h5>VM资源</h5>
-                    </div>
-                    <div class="col-sm-6">
-                        <div id="activeAsset" style="width: 140px; height: 140px;"></div>
-                        <h5>主机</h5>
-                    </div>
-                </div>
-                <div class="m-t">
-                    <small></small>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6" id="top10" style="margin-left: -15px;height: 346px;padding: 15px 0 15px 0;"></div> 
+        <h2>活跃用户TOP5</h2>
+        <small>
+            过去一周共有
+            <span class="text-info">{{ week_users }}</span>
+            位用户登录
+            <span class="text-success">{{ week_hosts }}</span>
+            次服务器.
+        </small>
+        <ul class="list-group clear-list m-t">
+            {% for data in user_top_five %}
+            <li class="list-group-item fist-item">
+                <span class="pull-right">{{ data.times }}次/周</span>
+                <span class="label {{ color|random }}">{{ forloop.counter }}</span>
+                {{ data.user }}
+            </li>
+            {% endfor %}
+        </ul>
     </div>
-    <br/>
-
-    <div class="row">
-        <div class="col-sm-4">
-{#            <div class="ibox float-e-margins">#}
-{#                <div class="ibox-title">#}
-{#                    <h5>权限申请</h5>#}
-{#                    <div class="ibox-tools">#}
-{#                        <a class="collapse-link">#}
-{#                            <i class="fa fa-chevron-up"></i>#}
-{#                        </a>#}
-{#                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">#}
-{#                            <i class="fa fa-wrench"></i>#}
-{#                        </a>#}
-{#                        <ul class="dropdown-menu dropdown-user"></ul>#}
-{#                        <a class="close-link">#}
-{#                            <i class="fa fa-times"></i>#}
-{#                        </a>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="ibox-content ibox-heading">#}
-{#                    <h3><i class="fa fa-envelope-o"></i> 权限申请记录 </h3>#}
-{#                    <small><i class="fa fa-map-marker"></i> 最近十条权限申请记录信息.</small>#}
-{#                </div>#}
-{#                <div class="ibox-content">#}
-{#                    <div class="feed-activity-list">#}
-{#                        {% if perm_apply_10 %}#}
-{#                            {% for perm in perm_apply_10 %}#}
-{#                                <div class="feed-element">#}
-{#                                    <div>#}
-{#                                        {% ifequal perm.status 0 %}#}
-{#                                            <small class="pull-right text-navy">{{ perm.date_add|naturaltime }}</small>#}
-{#                                        {% else %}#}
-{#                                             <small class="pull-right">{{ perm.date_add|naturaltime }}</small>#}
-{#                                        {% endifequal %}#}
-{#                                        <strong>{{ perm.applyer }}</strong>#}
-{#                                        <small class="text-muted">{{ perm.date_add }}</small>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            {% endfor %}#}
-{#                        {% else %}#}
-{#                            <p class="text-center">(暂无)</p>#}
-{#                        {% endif %}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>一周Top10资产</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user"></ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
+    <div class="col-sm-7" id="top10" style="margin-left: -15px;height: 346px;padding: 15px 0 15px 0;"></div>
+    -->
+    <div class="col-sm-6 white-bg" id="top1" style="margin-left: 15px;height: 600px">
+        <div class="statistic-box">
+            <h4>总体资源使用情况</h4>
+            <p>以下图形分别为VM空间占所有主机空间的百分比</p>
+            <div class="row text-center">
+                <div class="col-sm-4">
+                    <div class="ibox-content">
+                        <h4 class="no-margins" style="padding-top:15px">
+                            总空闲CPU:(<strong>53.83%</strong>)
+                        </h4>
+                        <h4 class="no-margins" style="padding-top:15px">
+                            总已用CPU:(<strong>46.17%</strong>)
+                        </h4>
                     </div>
                 </div>
-                <div class="ibox-content ibox-heading">
-                    <h3><i class="fa fa-inbox"></i> 一周Top10资产 </h3>
-                    <small><i class="fa fa-map-marker"></i> 登录次数及最近一次登录记录. </small>
+                <div class="col-sm-6">
+                    <div id="activeCPU"  style="width: 300px; height: 140px;"></div>
+                    <h5>CPU资源</h5>
                 </div>
-                <div class="ibox-content inspinia-timeline">
-                    {% if host_top_ten %}
-                        {% for data in host_top_ten %}
-                            <div class="timeline-item">
-                                <div class="row">
-                                    <div class="col-xs-5 date">
-                                        <i class="fa fa-info-circle"></i>
-                                        <strong>{{ data.host }}</strong>
-                                        <br/>
-                                        <small class="text-navy">{{ data.times }}次</small>
-                                    </div>
-                                    <div class="col-xs-7 content no-top-border">
-                                        <p class="m-b-xs">最近一次登录用户</p>
-                                        <p>{{ data.last.user }}</p>
-                                        <p>于{{ data.last.start_time |date:"Y-m-d H:i:s" }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-center">(暂无)</p>
-                    {% endif %}
+                <div class="col-sm-4">
+                    <div class="ibox-content">
+                        <h4 class="no-margins" style="padding-top:15px">
+                            总空闲内存:(<strong>74.49%</strong>)
+                        </h4>
+                        <h4 class="no-margins" style="padding-top:15px">
+                            总已用内存:(<strong>25.51%</strong>)
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="activeMemory" style="width: 300px; height: 140px;"></div>
+                    <h5>内存资源</h5>
+                </div>
+                <div class="col-sm-4">
+                    <div class="ibox-content">
+                        <h4 class="no-margins" style="padding-top:15px">
+                            总空闲存储:(<strong>63.22%</strong>)
+                        </h4>
+                        <h4 class="no-margins" style="padding-top:15px">
+                            总已用存储:(<strong>36.78%</strong>)
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div id="activeStorage" style="width: 300px; height: 140px;"></div>
+                    <h5>存储资源</h5>
                 </div>
             </div>
+            <div class="m-t">
+                <small></small>
+            </div>
         </div>
-        <div class="col-sm-4">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>最近十次登录</h5>
-                    <div class="ibox-tools">
-                        <span class="label label-info-light">10 Messages</span>
-                       </div>
+    </div>
+    <div class="col-sm-6" id="top10" style="margin-left: -15px;height: 600px;padding: 15px 0 15px 0;"></div>
+</div>
+<br/>
+
+<div class="row">
+    <div class="col-sm-4">
+       
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>一周Top10资产</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user"></ul>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
                 </div>
-                <div class="ibox-content ibox-heading">
-                    <h3><i class="fa fa-paper-plane-o"></i> 登录记录 </h3>
-                    <small><i class="fa fa-map-marker"></i> 最近十次登录记录. </small>
-                </div>
-                <div class="ibox-content">
-                    <div>
-                        <div class="feed-activity-list">
-                            {% if login_10 %}
-                                {% for login in login_10 %}
-                                    <div class="feed-element">
-                                        <a href="profile.html" class="pull-left">
-                                            <img alt="image" class="img-circle" src="/static/img/root.png">
-                                        </a>
-                                        <div class="media-body ">
-                                            {% ifequal login.is_finished 0 %}
-                                                <small class="pull-right text-navy">{{ login.start_time|naturaltime }}</small>
-                                            {% else %}
-                                                <small class="pull-right">{{ login.start_time|naturaltime }}</small>
-                                            {% endifequal %}
-                                            <strong>{{ login.user }}</strong> 登录了{{ login.host }} <br>
-                                            <small class="text-muted">{{ login.start_time }}</small>
-
-                                        </div>
-                                    </div>
-                                {% endfor %}
-
-                                <button id="show" class="btn btn-primary btn-block m-t"><i class="fa fa-arrow-down"></i> 更多 </button>
-                                <div id='more' style="display: none">
-                                    <br/>
-                                    <div class="feed-activity-list">
-                                        {% for login in login_more_10 %}
-                                            <div class="feed-element">
-                                                <a href="profile.html" class="pull-left">
-                                                    <img alt="image" class="img-circle" src="/static/img/root.png">
-                                                </a>
-                                                <div class="media-body ">
-                                                    {% ifequal login.is_finished 0 %}
-                                                        <small class="pull-right text-navy">{{ login.start_time|naturaltime }}</small>
-                                                    {% else %}
-                                                        <small class="pull-right">{{ login.start_time|naturaltime }}</small>
-                                                    {% endifequal %}
-                                                    <strong>{{ login.user }}</strong> 登录了{{ login.host }} <br>
-                                                    <small class="text-muted">{{ login.start_time }}</small>
-
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            {% else %}
-                                <p class="text-center">(暂无)</p>
-                            {% endif %}
+            </div>
+            <div class="ibox-content ibox-heading">
+                <h3>
+                    <i class="fa fa-inbox"></i>
+                    一周Top10资产
+                </h3>
+                <small>
+                    <i class="fa fa-map-marker"></i>
+                    登录次数及最近一次登录记录.
+                </small>
+            </div>
+            <div class="ibox-content inspinia-timeline">
+                {% if host_top_ten %}
+                        {% for data in host_top_ten %}
+                <div class="timeline-item">
+                    <div class="row">
+                        <div class="col-xs-5 date">
+                            <i class="fa fa-info-circle"></i> <strong>{{ data.host }}</strong>
+                            <br/>
+                            <small class="text-navy">{{ data.times }}次</small>
+                        </div>
+                        <div class="col-xs-7 content no-top-border">
+                            <p class="m-b-xs">最近一次登录用户</p>
+                            <p>{{ data.last.user }}</p>
+                            <p>于{{ data.last.start_time |date:"Y-m-d H:i:s" }}</p>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
+                    {% else %}
+                <p class="text-center">(暂无)</p>
+                {% endif %}
             </div>
         </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>最近十次登录</h5>
+                <div class="ibox-tools">
+                    <span class="label label-info-light">10 Messages</span>
+                </div>
+            </div>
+            <div class="ibox-content ibox-heading">
+                <h3>
+                    <i class="fa fa-paper-plane-o"></i>
+                    登录记录
+                </h3>
+                <small>
+                    <i class="fa fa-map-marker"></i>
+                    最近十次登录记录.
+                </small>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div class="feed-activity-list">
+                        {% if login_10 %}
+                                {% for login in login_10 %}
+                        <div class="feed-element">
+                            <a href="profile.html" class="pull-left">
+                                <img alt="image" class="img-circle" src="/static/img/root.png"></a>
+                            <div class="media-body ">
+                                {% ifequal login.is_finished 0 %}
+                                <small class="pull-right text-navy">{{ login.start_time|naturaltime }}</small>
+                                {% else %}
+                                <small class="pull-right">{{ login.start_time|naturaltime }}</small>
+                                {% endifequal %}
+                                <strong>{{ login.user }}</strong>
+                                登录了{{ login.host }}
+                                <br>
+                                <small class="text-muted">{{ login.start_time }}</small>
 
-        <div class="col-sm-4">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>一周Top10用户</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user"></ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="ibox-content ibox-heading">
-                    <h3><i class="fa fa-user"></i> 一周Top10用户 </h3>
-                    <small><i class="fa fa-map-marker"></i> 用户登录次数及最近一次登录记录. </small>
-                </div>
-                <div class="ibox-content inspinia-timeline">
-                    {% if user_top_ten %}
-                        {% for data in user_top_ten %}
-                            <div class="timeline-item">
-                                <div class="row">
-                                    <div class="col-xs-5 date">
-                                        <i class="fa fa-info-circle"></i>
-                                        <strong>{{ data.user }}</strong>
-                                        <br/>
-                                        <small class="text-navy">{{ data.times }}次</small>
-                                    </div>
-                                    <div class="col-xs-7 content no-top-border">
-                                        <p class="m-b-xs">最近一次登录主机</p>
-                                        <p>{{ data.last.host }}</p>
-                                        <p>于{{ data.last.start_time |date:"Y-m-d H:i:s" }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <button id="show" class="btn btn-primary btn-block m-t">
+                            <i class="fa fa-arrow-down"></i>
+                            更多
+                        </button>
+                        <div id='more' style="display: none">
+                            <br/>
+                            <div class="feed-activity-list">
+                                {% for login in login_more_10 %}
+                                <div class="feed-element">
+                                    <a href="profile.html" class="pull-left">
+                                        <img alt="image" class="img-circle" src="/static/img/root.png"></a>
+                                    <div class="media-body ">
+                                        {% ifequal login.is_finished 0 %}
+                                        <small class="pull-right text-navy">{{ login.start_time|naturaltime }}</small>
+                                        {% else %}
+                                        <small class="pull-right">{{ login.start_time|naturaltime }}</small>
+                                        {% endifequal %}
+                                        <strong>{{ login.user }}</strong>
+                                        登录了{{ login.host }}
+                                        <br>
+                                        <small class="text-muted">{{ login.start_time }}</small>
+
                                     </div>
                                 </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
-                    {% else %}
+                        </div>
+                        {% else %}
                         <p class="text-center">(暂无)</p>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-{#    </div>#}
-</div>
+    </div>
 
+    <div class="col-sm-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>一周Top10用户</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user"></ul>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content ibox-heading">
+                <h3>
+                    <i class="fa fa-user"></i>
+                    一周Top10用户
+                </h3>
+                <small>
+                    <i class="fa fa-map-marker"></i>
+                    用户登录次数及最近一次登录记录.
+                </small>
+            </div>
+            <div class="ibox-content inspinia-timeline">
+                {% if user_top_ten %}
+                        {% for data in user_top_ten %}
+                <div class="timeline-item">
+                    <div class="row">
+                        <div class="col-xs-5 date">
+                            <i class="fa fa-info-circle"></i>
+                            <strong>{{ data.user }}</strong>
+                            <br/>
+                            <small class="text-navy">{{ data.times }}次</small>
+                        </div>
+                        <div class="col-xs-7 content no-top-border">
+                            <p class="m-b-xs">最近一次登录主机</p>
+                            <p>{{ data.last.host }}</p>
+                            <p>于{{ data.last.start_time |date:"Y-m-d H:i:s" }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                    {% else %}
+                <p class="text-center">(暂无)</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+ 
+</div>
 {% endblock %}
 
 {% block self_footer_js %}
@@ -336,7 +363,7 @@ $(document).ready(function(){
             var top10Chart = ec.init(document.getElementById('top10'));
             var option = {
                 title : {
-                    text: '月数据总览',
+                    text: '数据备份情况',
                     subtext: '一个月内历史汇总',
                     x: 'center'
                 },
@@ -405,78 +432,59 @@ $(document).ready(function(){
             'echarts/chart/pie'
         ],
         function (ec) {
-            var auChart = ec.init(document.getElementById('activeUser'));
+            var auChart = ec.init(document.getElementById('activeStorage'));
             var option = {
                 tooltip : {
                     trigger: 'item',
                     formatter: "{b} <br> {c} ({d}%)"
                 },
-                legend: {
-                    show: false,
-                    orient : 'vertical',
-                    x : 'left',
-                    data:['月活跃用户','禁用用户','月未登陆用户']
-                },
-                toolbox: {
-                    show : false,
-                    feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
-                        magicType : {
-                            show: true,
-                            type: ['pie', 'funnel'],
-                            option: {
-                                funnel: {
-                                    x: '25%',
-                                    width: '50%',
-                                    funnelAlign: 'center',
-                                    max: 1548
-                                }
-                            }
-                        },
-                        restore : {show: true},
-                        saveAsImage : {show: true}
-                    }
-                },
-                calculable : true,
                 series : [
-                    {
-                        name:'访问来源',
-                        type:'pie',
-                        radius : ['50%', '70%'],
-                        itemStyle : {
-                            normal : {
-                                label : {
-                                    show : false
-                                },
-                                labelLine : {
-                                    show : false
-                                }
-                            },
-                            emphasis : {
-                                label : {
-                                    show : true,
-                                    position : 'center',
-                                    textStyle : {
-                                        fontSize : '5',
-                                        fontWeight : 'bold'
-                                    }
-                                }
-                            }
-                        },
-                        data:[
-                            {value:{{ active_user_month }}, name:'月活跃用户'},
-                            {value:{{ disabled_user_count }}, name:'禁用用户'},
-                            {value:{{ inactive_user_month }}, name:'月未登陆用户'}
 
-                        ]
-                    }
-                ]
+        {
+            name: '资源情况',
+            type: 'pie',
+            radius: '55%',
+            roseType: 'radius',
+            data:[
+                {value:235, name:'已用资源'},
+                {value:404, name:'剩余资源'}
+            ]
+        }
+    ]
             };
 
             auChart.setOption(option);
         }
     );
+    require(
+        [
+             'echarts',
+             'echarts/chart/pie'
+        ],
+        function(ec) {
+            var cpuchart = ec.init(document.getElementById('activeCPU'));
+            var option = {
+                tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+                    series : [
+
+        {
+            name: '资源情况',
+            type: 'pie',
+            radius: '55%',
+            roseType: 'radius',
+            data:[
+                {value:235, name:'已用资源'},
+                {value:274, name:'剩余资源'}
+            ]
+        }
+    ]
+};
+cpuchart.setOption(option);
+        }
+        );
 
     require(
         [
@@ -484,73 +492,25 @@ $(document).ready(function(){
             'echarts/chart/pie'
         ],
         function (ec) {
-            var aaChart = ec.init(document.getElementById('activeAsset'));
+            var aaChart = ec.init(document.getElementById('activeMemory'));
             var option = {
                 tooltip : {
                     trigger: 'item',
                     formatter: "{b} <br> {c} ({d}%)"
                 },
-                legend: {
-                    show: false,
-                    orient : 'vertical',
-                    x : 'left',
-                    data:['月被登陆主机','禁用主机','月未登陆主机']
-                },
-                toolbox: {
-                    show : false,
-                    feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
-                        magicType : {
-                            show: true,
-                            type: ['pie', 'funnel'],
-                            option: {
-                                funnel: {
-                                    x: '25%',
-                                    width: '50%',
-                                    funnelAlign: 'center',
-                                    max: 1548
-                                }
-                            }
-                        },
-                        restore : {show: true},
-                        saveAsImage : {show: true}
-                    }
-                },
-                calculable : true,
                 series : [
-                    {
-                        name:'访问来源',
-                        type:'pie',
-                        radius : ['50%', '70%'],
-                        itemStyle : {
-                            normal : {
-                                label : {
-                                    show : false
-                                },
-                                labelLine : {
-                                    show : false
-                                }
-                            },
-                            emphasis : {
-                                label : {
-                                    show : true,
-                                    position : 'center',
-                                    textStyle : {
-                                        fontSize : '5',
-                                        fontWeight : 'bold'
-                                    }
-                                }
-                            }
-                        },
-                        data:[
-                            {value:{{ active_asset_month }}, name:'月被登陆主机'},
-                            {value:{{ disabled_asset_count }}, name:'禁用主机'},
-                            {value:{{ inactive_asset_month }}, name:'月未登陆主机'}
 
-                        ]
-                    }
-                ]
+        {
+            name: '资源情况',
+            type: 'pie',
+            radius: '55%',
+            roseType: 'radius',
+            data:[
+                {value:800, name:'已用资源'},
+                {value:274, name:'剩余资源'}
+            ]
+        }
+    ]
             };
 
             aaChart.setOption(option);
@@ -558,5 +518,4 @@ $(document).ready(function(){
     );
 
 </script>
-
 {% endblock %}

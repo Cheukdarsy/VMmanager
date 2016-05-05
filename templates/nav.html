@@ -45,20 +45,30 @@
                     <li class="download"><a href="{% url 'file_download' %}">文件下载</a></li>
                 </ul>
             </li> -->
-            <li id='jVMlist'>
-               <a href="{% url 'VM_list' %}"><i class="fa fa-vimeo-square"></i> <span class="nav-label">VM管理</span><span class="label label-info pull-right"></span></a>
-            </li> 
 
-            <li id="jVMapply"><a href={% url 'apply_machine' %}><i class="fa fa-cloud"></i><span class="nav-label">机器申请</span></a></li>
-
-            <li id="setting">
-                   <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">设置</span><span class="fa arrow"></span></a>
+            <li id="vmmanager">
+                   <a href="#"><i class="fa fa-vimeo-square"></i> <span class="nav-label">资源管理</span><span class="fa arrow"></span></a>
                    <ul class="nav nav-second-level">
-                    <li class="vm-setting"><a href="{% url 'set_vm' %}">VM设置</a></li>
-                    <li class="parameter-setting"><a href="#">参数配置</a></li>
+                    <li class="apply"><a href="{% url 'apply_machine' %}">资源申请</a></li>
+                    <li class="list"><a href="{% url 'VM_list' %}">申请审批</a></li>
+                    <li class="vm-setting"><a href={% url 'set_vm' %}>初始化配置</a></li>
                 </ul>
             </li>
-           
+           <li id='datamanager'>
+               <a href="#"><i class="fa fa-briefcase"></i> <span class="nav-label">数据库管理</span><span class="label label-info pull-right"></span></a>
+            </li> 
+            <li id='databackup'>
+               <a href="#"><i class="fa fa-magnet"></i> <span class="nav-label">数据备份</span><span class="label label-info pull-right"></span></a>
+            </li> 
+            <li id='netmanager'>
+               <a href="#"><i class="fa fa-tasks"></i> <span class="nav-label">网络管理</span><span class="label label-info pull-right"></span></a>
+            </li> 
+            <li id='cmdb'>
+               <a href="#"><i class="fa fa-cogs"></i> <span class="nav-label">CMDB</span><span class="label label-info pull-right"></span></a>
+            </li> 
+            <li id='statics'>
+               <a href="#"><i class="fa fa-bar-chart"></i> <span class="nav-label">统计报表</span><span class="label label-info pull-right"></span></a>
+            </li> 
         </ul>
 
     </div>
@@ -73,11 +83,11 @@
             <li id="juser">
                <a href="{% url 'user_detail' %}"><i class="fa fa-dashboard"></i> <span class="nav-label">仪表盘</span><span class="label label-info pull-right"></span></a>
             </li>
-            <li id="jVMapply"><a href={% url 'apply_machine' %}><i class="fa fa-cloud"></i><span class="nav-label">机器申请</span></a></li>
+            <li id="vmmanagerapply"><a href={% url 'apply_machine' %}><i class="fa fa-cloud"></i><span class="nav-label">机器申请</span></a></li>
 
-            <li id="jVMresource"><a href={% url 'resource_view' %}><i class="fa fa-th"></i><span class="nav-label">已申请资源</span></a></li>
+            <li id="vmmanagerresource"><a href={% url 'resource_view' %}><i class="fa fa-th"></i><span class="nav-label">已申请资源</span></a></li>
 
-            <li id="jVMsaving-resource"><a href={% url 'saving_resource_view' %}><i class="fa fa-save"></i><span class="nav-label">已保存资源</span></a></li>
+            <li id="vmmanagersaving-resource"><a href={% url 'saving_resource_view' %}><i class="fa fa-save"></i><span class="nav-label">已保存资源</span></a></li>
         </ul>
     </div>
 </nav>

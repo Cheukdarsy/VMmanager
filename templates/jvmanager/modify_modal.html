@@ -88,28 +88,28 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">内存:&nbsp;</label>
                                               <div class ="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success {% ifequal key.memory 2 %}
+                                                <label class="btn btn-success {% ifequal key.memory_gb 2 %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="2G" value="2" autocomplete="off" {% ifequal key.memory 2 %}
+                                                  <input type="radio" name="memory" class="2G" value="2" autocomplete="off" {% ifequal key.memory_gb 2 %}
                                                     checked 
                                                   {% endifequal %} >2G</label>
-                                                <label class="btn btn-success {% ifequal key.memory 4 %}
+                                                <label class="btn btn-success {% ifequal key.memory_gb 4 %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="4G"  value="4" autocomplete="off" {% ifequal key.memory 4 %}
+                                                  <input type="radio" name="memory" class="4G"  value="4" autocomplete="off" {% ifequal key.memory_gb 4 %}
                                                     checked 
                                                   {% endifequal %} >4G</label>
-                                                <label class="btn btn-success {% ifequal key.memory 8 %}
+                                                <label class="btn btn-success {% ifequal key.memory_gb 8 %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="8G" value="8" autocomplete="off" {% ifequal key.memory 8 %}
+                                                  <input type="radio" name="memory" class="8G" value="8" autocomplete="off" {% ifequal key.memory_gb 8 %}
                                                     checked 
                                                   {% endifequal %} >8G</label>
-                                                <label class="btn btn-success {% ifequal key.memory 16  %}
+                                                <label class="btn btn-success {% ifequal key.memory_gb 16  %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="16G" value="16" autocomplete="off" {% ifequal key.memory 16 %}
+                                                  <input type="radio" name="memory" class="16G" value="16" autocomplete="off" {% ifequal key.memory_gb 16 %}
                                                     checked 
                                                   {% endifequal %} >16G</label>
 
@@ -158,7 +158,7 @@
                                               <div class="col-sm-9">
                                                 <div id="{{ key.id }}modifyslider" class="modifyslider"></div>
                                                 <p>
-                                                  <input type="text" id="{{ key.id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.data_disk }}">
+                                                  <input type="text" id="{{ key.id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.datadisk_gb }}">
                                                   <label for="data_volume">&nbsp;G</label>
                                                 </p>
                                               </div>
@@ -171,7 +171,7 @@
                                             <div class="col-sm-9">
                                             <div id="{{ key.id }}modifyslider_num" class="modifyslider"></div>
                                             <p style="float:left">
-                                            <input type="text" style="width:30px;" id="{{ key.id }}request_num" name="request_num" value="{{ key.request_num }}">
+                                            <input type="text" style="width:30px;" id="{{ key.id }}request_num" name="request_num" value="{{ key.request_vm_num }}">
                                             <label for="amount">&nbsp;台</label>
                                         </p>
                                           </div>

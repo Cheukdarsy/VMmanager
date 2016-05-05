@@ -55,12 +55,12 @@
                         {% endifequal %}</td>
                         <td class="text-center">{{ key.os_type}}</td>
                         <td class="text-center">{{ key.cpu}}</td>
-                        <td class="text-center">{{ key.memory}}</td>
-                        <td class="text-center">{{ key.request_num}}</td>
+                        <td class="text-center">{{ key.memory_gb}}</td>
+                        <td class="text-center">{{ key.request_vm_num}}</td>
                         <td class="text-center">{% ifequal key.apply_status "SM"  %}
                           待审核
                         {% endifequal %} {% ifequal key.apply_status "RB"  %}
-                          被退回
+                          被退回&nbsp;{{key.apply_reason}}
                         {% endifequal %} {% ifequal key.apply_status "SC" %}
                           已生成
                         {% endifequal %}</td>

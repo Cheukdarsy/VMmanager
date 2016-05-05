@@ -31,13 +31,10 @@
                                 </li>
                                 -->
                                 <li id="tab1" class="active">
-                                    <a data-toggle="tab" href="#tab-vcenter" aria-expanded="true">Vcenter设置</a>
+                                    <a data-toggle="tab" href="#tab-vmware" aria-expanded="true">VMware环境配置</a>
                                 </li>
                                 <li id="tab２">
-                                    <a data-toggle="tab" href="#tab-IPpool" aria-expanded="true">IP池设置</a>
-                                </li>
-                                <li id="tab３">
-                                    <a data-toggle="tab" href="#tab-template" aria-expanded="true">模板定义</a>
+                                    <a data-toggle="tab" href="#tab-parameter" aria-expanded="true">申请参数配置</a>
                                 </li>
                             </ul>
                         </div>
@@ -45,212 +42,137 @@
 
                     <div class="panel-body">
                         <div class="tab-content">
-                            <div id="tab-vcenter" class="tab-pane active col-sm-10">
+                            <div id="tab-vmware" class="tab-pane active col-sm-10">
 
                                 <div class="panel panel-default">
-
+                                    <div class="panel-heading">
+                                        vCenter配置
+                                        <button id='vcenter-setting' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
+                                            添加VM
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
                                     <div class="panel-body">
                                         <table class="table table-striped table-hover table-cendensed" id="vcenter-table" >
                                             <tr>
-                                                <th class="text-center">序号</th>
                                                 <th class="text-center">IP</th>
+                                                <th class="text-center">用户</th>
+                                                <th class="text-center">密码</th>
                                                 <th class="text-center">端口</th>
                                                 <th class="text-center">操作</th>
-                                                <th class="text-center"></th>
                                             </tr>
                                             <tr>
                                                 <td class="text-center">1</td>
                                                 <td class="text-center">118.240.13.25</td>
                                                 <td class="text-center">23</td>
+                                                <td class="text-center">23</td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-xs btn-success">初始化</button>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button id='vcenter-setting' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal">
-                                                        添加
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <div class="modal fade" id="add-vm-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                                <h4 class="modal-title" id="myModalLabel">填写配置</h4>
-                                                            </div>
-                                                            <div class="modal-body" style="padding-bottom:10px">
-                                                                <div class="ibox-content form-horizontal">
-                                                                    <form method="post" action="" id="vc-setting-form">
-                                                                        {% csrf_token %}
-                                                                        <div class="panel panel-default">
-                                                                            <div class="panel-body">
-                                                                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                    <label class="col-sm-3 control-label">IP地址:&nbsp;</label>
-                                                                                    <div class="dropdown col-sm-9">
-                                                                                        <input type="text" name="vcip" id="vcip"></div>
-                                                                                </div>
-                                                                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                    <label class="col-sm-3 control-label">端口:&nbsp;</label>
-                                                                                    <div class="dropdown col-sm-9">
-                                                                                        <input type="text" name="vcport" id="vcport" placeholder="23"></div>
-                                                                                </div>
-                                                                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                    <label class="col-sm-3 control-label">用户名:&nbsp;</label>
-                                                                                    <div class="dropdown col-sm-9">
-                                                                                        <input type="text" name="vcname" id="vcname"></div>
-                                                                                </div>
-                                                                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                    <label class="col-sm-3 control-label">密码:&nbsp;</label>
-                                                                                    <div class="dropdown col-sm-9">
-                                                                                        <input type="password"  name="vcpw" id="vcpw"></div>
-                                                                                </div>
-                                                                                <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                    <label class="col-sm-3 control-label">确认密码:&nbsp;</label>
-                                                                                    <div class="dropdown col-sm-9">
-                                                                                        <input type="password" name="vcpw-conf" id="vcpw-conf"></div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                                <button type="submit" class="btn btn-primary" id="vc-add-btn">提交</button>
-                                                            </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div id="tab-IPpool" class="tab-pane col-sm-10">
-                                <div class="panel panel-default">
-
-                                    <div class="panel-body">
-                                        <table class="table table-striped table-hover" id="ip-table" >
-                                            <tr>
-                                                <th class="text-center" >序号</th>
-                                                <th class="text-center ">IP段</th>
-                                                <th class="text-center ">操作</th>
-                                                <th class="text-center "></th>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">1</td>
-                                                <td class="text-center">118.240.15.240</td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-xs btn-danger">释放IP段</button>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-xs btn-info" id="ip-setting" data-toggle="modal" data-target="#add-ip-modal">
-                                                        <i class="fa fa-sitemap"></i>
-                                                        激活新IP段
-                                                    </button>
-                                                </td>
-                                                <div class="modal fade" id="add-ip-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                                <h4 class="modal-title" id="myModalLabel">选择IP段</h4>
-                                                            </div>
-                                                            <div class="modal-body" style="padding-bottom:10px">
-                                                                <div class="ibox-content form-horizontal" style="margin:1px 50px">
-                                                                    <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                        <label class="col-sm-3 control-label">可用IP段:&nbsp;</label>
-                                                                        <div class="col-sm-9 dropdown">
-                                                                            <select name='ipselect' id='ipselect' class='selectpicker'>
-                                                                                <option id='ip1'>128.240.2.240</option>
-                                                                                <option id='ip1'>128.240.4.240</option>
-                                                                                <option id='ip1'>128.240.7.240</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                                <button type="button" class="btn btn-primary" id="ip-active-btn">激活</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </tr>
-                                        </table>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="tab-template" class="tab-pane col-sm-10">
-                                <div class="panel panel-default">
-
-                                    <div class="panel-body">
-                                        <table class="table table-striped table-hover " id="editable" >
-                                            <tr>
-                                                <th class="text-center">序号</th>
-                                                <th class="text-center">模板名称</th>
-                                                <th class="text-center">系统</th>
-                                                <th class="text-center">功能</th>
-                                                <th class="text-center">操作</th>
-                                                <th class="text-center"></th>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">1</td>
-                                                <td class="text-center">blabla</td>
-                                                <td class="text-center">SUSE 11</td>
-                                                <td class="text-center">WAS</td>
-                                                <td class="text-center">
+                                                    <button class="btn btn-xs btn-success"  data-toggle="modal" data-target="#modify-vm-modal">修改</button>
+                                                    {% include 'jvmanager/modify_vcenter_modal.html' %}  
+                                                    <button class="btn btn-xs btn-primary">同步</button>
                                                     <button class="btn btn-xs btn-danger">删除</button>
                                                 </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-xs btn-info"　id="tempalte-setting" data-toggle="modal" data-target="#add-template-modal">
-                                                        <i class="fa fa-flag"></i>
-                                                        添加新模板
-                                                    </button>
-                                                </td>
-                                                <div class="modal fade" id="add-template-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                                <h4 class="modal-title" id="myModalLabel">模板定义</h4>
-                                                            </div>
-                                                            <div class="modal-body" style="padding-bottom:10px">
-                                                                <div class="ibox-content form-horizontal" style="margin:1px 50px">
-                                                                    <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                        <label class="col-sm-3 control-label">选择VC:&nbsp;</label>
-                                                                        <div class="col-sm-9 dropdown">
-                                                                            <select name='templateselect' id='templateselect' class='selectpicker'>
-                                                                                <option id='tp1'>128.240.2.240</option>
-                                                                                <option id='tp2'>128.240.4.240</option>
-                                                                                <option id='tp3'>128.240.7.240</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                                <button type="button" class="btn btn-primary" id="template-define-btn">定义</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <td class="text-center"></td>
                                             </tr>
-
                                         </table>
+                                        {% include 'jvmanager/add_vcenter_modal.html' %}  
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        IP池配置
+                                        <button id='ip-setting' class="btn btn-xs btn-info" data-toggle="modal" data-target="#add-IP-modal" style="float:right">
+                                            手工添加IP网段
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="panel-body">
+                                      <table class="table table-striped table-hover table-cendensed" id="ip-table" >
+                                            <tr>
+                                                <th class="text-center">VLAN ID</th>
+                                                <th class="text-center">网段</th>
+                                                <th class="text-center">来源</th>
+                                                <th class="text-center">状态</th>
+                                                <th class="text-center">操作</th>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">1</td>
+                                                <td class="text-center">118.240.13.25</td>
+                                                <td class="text-center">23</td>
+                                                <td class="text-center">23</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-xs btn-success">IP池初始化</button>
+                                                    
+                                                </td>
+                                                <td class="text-center"></td>
+                                            </tr>
+                                        </table>  
+                                    </div>
 
+                                    </div>
+
+                            </div>
+                            <div id="tab-parameter" class="tab-pane col-sm-10">
+                                <div class="panel panel-default">
+
+                                    <div class="panel-heading">
+                                        环境类型
+                                        <button id='add-env' class="btn btn-xs btn-primary" style="float:right">
+                                            添加环境类型
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table class="table table-striped table-hover table-bordered" id="env-table" >
+                                            <tr>
+                                                <th class="text-center">序号</th>
+                                                <th class="text-center" style='width:300px'>环境类型</th>
+                                                <th class="text-center">操作</th>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">1</td>
+                                                <td class="text-center">测试环境</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-xs btn-success">修改</button>
+                                                    <button class="btn btn-xs btn-danger">删除</button>
+                                                </td>
+                                                <td class="text-center"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+
+                                    <div class="panel-heading">
+                                        操作系统类型
+                                        <button id='add-os' class="btn btn-xs btn-primary" style="float:right">
+                                            添加系统
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table class="table table-striped table-hover table-cendensed" id="parameter-table" >
+                                            <tr>
+                                                <th class="text-center">序号</th>
+                                                <th class="text-center">操作系统类型</th>
+                                                <th class="text-center">系统版本</th>
+                                                <th class="text-center">备注</th>
+                                                <th class="text-center">操作</th>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">1</td>
+                                                <td class="text-center">WINDOWS 2008</td>
+                                                <td class="text-center">R2</td>
+                                                <td class="text-center">仅用于测试环境</td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-xs btn-success">修改</button>
+                                                    <button class="btn btn-xs btn-danger">删除</button>
+                                                </td>
+                                                <td class="text-center"></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -315,12 +237,18 @@
     })
     var vccount = 1,ipcount = 1;
     
-    $(document).on('click', '#ip-active-btn', function(event) {
+    $(document).on('click', '#add-env', function(event) {
         ipcount++;
-        $("#ip-setting").remove();
-        html = "<tr><td class='text-center'>"+ipcount+"</td><td class='text-center'>"+$("#add-ip-modal select[name='ipselect']").val()+"<td class='text-center'><button class='btn btn-xs btn-danger'>释放IP段</button></td><td class='text-center'><button id='ip-setting' class='btn btn-xs btn-primary' data-toggle='modal' data-target='#add-ip-modal'>激活新IP段<i class='fa fa-sitemap'></i></button></td></tr>";
-        $("#ip-table").append(html);
-        $("#add-ip-modal").modal("hide");
+        html = "<tr><td class='text-center'>"+ipcount+"</td><td class='text-center' id='env-td-"+ipcount+"'><input type='text' placeholder='输入环境名称' id='inner-input"+ipcount+"'></td><td class='text-center' id='env-btn-td-"+ipcount+"'><button class='btn btn-xs btn-success' id='add-env-"+ipcount+"'>确认添加</button></td></tr>";
+        $("#env-table").append(html);
+        $("#inner-input"+ipcount).focus();
+        $("#add-env-"+ipcount).click(function(event) {
+             if($("#inner-input"+ipcount).val()){
+                //ajax提交
+                $("#env-td-"+ipcount).html($("#inner-input"+ipcount).val())
+                $("#env-btn-td-"+ipcount).html("<button class='btn btn-xs btn-success' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>")
+             }
+        });
     });
     $(document).on('click', '#templat-select', function(event) {
         alert($("#template-select").val())

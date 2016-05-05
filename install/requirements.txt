@@ -15,3 +15,8 @@ pyinotify==0.9.6
 passlib==1.6.5
 argparse==1.4.0
 django_crontab==0.6.0
+#
+kombu==3.0.35
+celery==3.1.23
+django-celery==3.1.17
+pyvmomi==6.0.0
