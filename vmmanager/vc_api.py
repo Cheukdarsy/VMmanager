@@ -342,3 +342,6 @@ def reconfig_vm(content, vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, t
     vim_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=str(vm.moid))
     return vim_vm_reconfig(vim_vm, tg_annotation, tg_cpu_num, tg_cpu_cores, tg_mem_mb, tg_datadisk_gb)
 
+
+def get_cluster(env_type):
+    pass

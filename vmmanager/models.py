@@ -48,9 +48,11 @@ class VCenter(models.Model):
         warnings.filterwarnings("ignore")
         si = SmartConnect(host=self.ip, user=self.user, pwd=self.password, port=self.port)
         if not si:
-            self.last_connect = None
-            self.save(force_update=True)
+            self.last_connect = datetime.now()
+            self.save(update_fields=['last_connect'])
             return None
+        self.last_connect = datetime.now()
+        self.save(update_fields=['last_connect'])
         content = si.RetrieveContent()
         uuid = content.about.instanceUuid
         if uuid != self.uuid:
@@ -264,7 +266,7 @@ class Network(VMObject):
 class IPUsage(models.Model):
     ipaddress = models.GenericIPAddressField(protocol='ipv4')
     network = models.ForeignKey('Network')
-    vm = models.ForeignKey('VirtualMachine', null=True)
+    vm = models.ForeignKey('VirtualMachine', null=True, on_delete=models.SET_NULL)
     used_manage = models.BooleanField(default=False)
     used_manage_app = models.CharField(max_length=30, null=True)
     used_occupy = models.BooleanField(default=False)
@@ -481,7 +483,7 @@ class VirtualMachine(VMObject):
     cpu_cores = models.PositiveSmallIntegerField()
     memory_mb = models.PositiveIntegerField()
     storage_mb = models.PositiveIntegerField()
-    guestos_shorname = models.CharField(max_length=30)
+    guestos_shortname = models.CharField(max_length=30)
     guestos_fullname = models.CharField(max_length=50)
     hostsystem = models.ForeignKey('HostSystem', null=True)
     resourcepool = models.ForeignKey('ResourcePool', null=True)
@@ -491,7 +493,7 @@ class VirtualMachine(VMObject):
     def _sum_hash(self):
         return (
             super(VirtualMachine, self)._sum_hash() +
-            hash(self.template) + hash(self.annotation) +
+            hash(self.istemplate) + hash(self.annotation) +
             hash(self.cpu_num) + hash(self.cpu_cores) +
             hash(self.memory_mb) + hash(self.storage_mb) +
             hash(self.guestos_shorname) + hash(self.guestos_fullname) +
@@ -500,30 +502,33 @@ class VirtualMachine(VMObject):
 
     def update_ipusage(self, vimobj):
         vm_guest = vimobj.guest
-        count_ip = 0
+        old_ip = list(self.ipusage_set)
         try:
             for vimip in vm_guest.net:
-                ip = IPUsage.objects.get(network__name=vimip.network.strip(), ipaddress=vimip.ipAddress)
-                ip.used_occupy = False
-                ip.vm = self
-                ip.save(update_fields=['vm', 'used_occupy'])
-                count_ip += 1
-        except:
-            pass
-        finally:
-            return count_ip
+                ip = IPUsage.objects.get(network__name=vimip.network.strip(), ipaddress=vimip.ipAddress[0])
+                if ip in old_ip:
+                    old_ip.remove(ip)
+                else:
+                    ip.used_occupy = False
+                    ip.vm = self
+                    ip.save(update_fields=['use_occupy','vm'])
+            for oip in old_ip:
+                oip.vm = None
+                oip.save(update_fields=['vm'])
+        except Exception, e:
+            raise e
 
     def update_by_vim(self, vimobj, vc, related=False):
         self.name = vimobj.name
         vm_config = vimobj.config
-        self.template = vm_config.template
+        self.istemplate = vm_config.template
         self.annotation = vm_config.annotation
         self.cpu_num = vm_config.hardware.numCPU
         self.cpu_cores = vm_config.hardware.numCoresPerSocket
         self.memory_mb = vm_config.hardware.memoryMB
         self.storage_mb = vimobj.summary.storage.committed / 1024 ** 2
         vm_guest = vimobj.guest
-        self.guestos_shorname = vm_guest.guestId
+        self.guestos_shortname = vm_guest.guestId
         self.guestos_fullname = vm_guest.guestFullName
         if related:
             # update hostsystem
@@ -531,30 +536,42 @@ class VirtualMachine(VMObject):
             if host:
                 try:
                     self.hostsystem = HostSystem.objects.get(vcenter=vc, moid=host._GetMoId())
-                except:
-                    pass
+                except Exception, e:
+                    raise e
             # update resourcepool
             resp = vimobj.resourcePool
             if resp:
                 try:
                     self.resourcepool = ResourcePool.objects.get(vcenter=vc, moid=resp._GetMoId())
-                except:
-                    pass
+                except Exception, e:
+                    raise e
         self.save()
         if not related:
             return True
         # update networks
         try:
+            old_net = list(self.networks)
             for vimnet in vimobj.network:
                 net = Network.objects.get(vcenter=vc, moid=vimnet._GetMoId())
-                self.networks.add(net)
+                if net in old_net:
+                    old_net.remove(net)
+                else:
+                    self.networks.add(net)
+            if old_net:
+                self.networks.remove(*old_net)
         except:
             pass
         # update datastores
         try:
+            old_ds = list(self.datastores)
             for vimds in vimobj.datastore:
                 ds = Datastore.objects.get(vcenter=vc, moid=vimds._GetMoId())
-                self.datastores.add(ds)
+                if ds in old_ds:
+                    old_ds.remove(ds)
+                else:
+                    self.datastores.add(ds)
+            if old_ds:
+                self.datastores.remove(*old_ds)
         except:
             pass
         # update ipusage_set
@@ -578,26 +595,17 @@ class VirtualMachine(VMObject):
 
 
 class Template(VirtualMachine):
-    USG_CHOICE = (
-        ('WAS', 'Web Application Server'),
-        ('ORA', 'Oracle Database'),
-        ('BASE', 'Operation System Only')
-    )
-    usage = models.CharField(max_length=30, choices=USG_CHOICE)
+    os_type = models.CharField(max_length=10)
+    env_type = models.CharField(max_length=30)
 
     class Meta:
         pass
 
     @classmethod
-    def select_template(cls, vc, usage, guestos):
-        match_os = cls.objects.filter(vcenter=vc, guestos_shorname=guestos)
-        match_all = match_os.filter(usage=usage)
-        if match_all.exists():
-            return match_all
-        elif match_os.filter(usage='BASE').exists():
-            return match_os.filter(usage='BASE')
-        elif match_os.exists():
-            return match_os
+    def select_template(cls, env_type, os_type):
+        match = cls.objects.filter(env_type=env_type, os_type=os_type)
+        if match.exists():
+            return match[0]
         else:
             return None
 

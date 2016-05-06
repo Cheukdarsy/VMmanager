@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*-
 
 from .jvm_api import *
-from .models import Application, Approvel
-
+from .vc_api import *
+import json
+from .models import VCenter, Application, Approvel, VMOrder
+from .tasks import vmtask_clone_vm
 
 # Create your views here.
 
@@ -108,7 +110,7 @@ def delete_apply(request):
         id = int(request.POST.get("id", ""))
         reason = request.POST.get("reason", "")
         try:
-            Application.objects.filter(id=id).update(apply_status='RB',apply_reason=reason)
+            Application.objects.filter(id=id).update(apply_status='RB', apply_reason=reason)
         except Exception, e:
             raise e
         else:
@@ -200,71 +202,130 @@ def submit_saving_resource(request):
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
 
+
 @require_role('admin')
 def set_vm(request):
-    return my_render('jvmanager/set_vm.html',locals(),request)
+    return my_render('jvmanager/set_vm.html', locals(), request)
 
-"""
-    邱老板需填充函数如下
-    """
-#同意生成机器界面
-def generate_machine():
-    """
-        前端返回一个ID列表{json}，然后根据ID去approv表获取相关参数生成机器，包括台数等
-        """
-    pass
 
-def ajax_get_process():
+def generate_machine(request):
     """
-        根据ID列表获取生成进度
-        """
-    pass
+    前端返回一个ID列表{json}，然后根据ID去approv表获取相关参数生成机器，包括台数等
+    """
+    if request.method == 'POST':
+        idlist = str(request.POST.get('id', ''))
+        id = [int(x) for x in idlist.split(',')]
+        try:
+            for x in id:
+                vmorder = VMOrder.objects.get(pk=x)
+                if not vmorder.gen_status:
+                    vmtask_clone_vm.delay(vmorder)
+        except Exception, e:
+            raise e
+        else:
+            success_dict = {"info": "success"}
+            return JsonResponse(success_dict)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
+
+
+def ajax_get_process(request):
+    """
+    根据ID列表获取生成进度
+    """
+    if request.method == 'POST':
+        result_list = []
+        idlist = str(request.POST.get('id', ''))
+        id = [int(x) for x in idlist.split(',')]
+        try:
+            for x in id:
+                vmorder = VMOrder.objects.get(pk=x)
+                if vmorder.gen_status:
+                    result_list.append({'id': x, 'progress': vmorder.gen_progress, 'log': vmorder.gen_log, 'status': vmorder.gen_status})
+        except Exception, e:
+            raise e
+        else:
+            return json.dumps(result_list)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
+
+
 def ajax_get_generatestatus():
     """
-        根据ID列表获取生成日志
-        """
+    根据ID列表获取生成日志
+    """
     pass
+
+
 def ajax_get_template():
     """
         前端返回cluster名称clustername，获取对应的template
         """
     pass
-def ajax_get_cluster():
+
+
+def ajax_get_cluster(request):
     """
-        动态获取集群信息，需返回所有可用集群名称以及权重比(CPU+内存＋存储)
-        """
-    pass
+    动态获取集群信息，需返回所有可用集群名称以及权重比(CPU+内存＋存储)
+    参数对照
+    id: Approvel id
+    """
+    if request.method == 'POST':
+        result_list = []
+        approvel_id = int(request.POST['id'])
+        try:
+            approvel = Approvel.objects.get(pk=approvel_id)
+            env_type = approvel.appro_env_type
+            clus_dict = get_cluster(env_type)
+        except Exception, e:
+            raise e
+        else:
+            return json.dumps(result_list)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
+
+
 def ajax_get_resource():
     """
         获取资源称名称
         """
     pass
+
+
 def ajax_get_storage():
     """
         获取相关集群的剩余容量，前端返回集群名称clustername，需返回剩余容量值及百分比
         """
     pass
-#VM参数配置页面
+
+
+# VM参数配置页面
 def ajax_add_IP():
     """
         动态激活IP段
         """
     pass
+
+
 def ajax_get_IP():
     """
         获取可用IP列表，用于下拉框选择
         """
     pass
+
+
 def ajax_add_template():
     """
         添加template
         """
-    pass	
+    pass
+
+
 def get_templates():
     """
         获取所有模板信息
         """
     pass
-
-
-
