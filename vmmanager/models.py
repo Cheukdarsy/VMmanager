@@ -1,15 +1,14 @@
 # -*- coding:utf8 -*-
 
-import atexit
-import ssl
 import warnings
 from datetime import datetime
 from os import system
 
 from django.db import models
-from pyVim.connect import SmartConnect, Disconnect
+from pyVim.connect import SmartConnect
 from pyVmomi import vim
 
+from jumpserver.api import logger
 from juser.models import User, UserGroup
 
 
@@ -21,52 +20,85 @@ class SheetField(models.Model):
     option_display = models.CharField(max_length=50, null=True)
 
 
+_sis = {}
+
+
+def GetSiByVCid(vcid):
+    if _sis.has_key(vcid):
+        return _sis[vcid]
+    else:
+        return None
+
+
+def SetSiByVCid(vcid, si):
+    global _sis
+    _sis[vcid] = si
+
+
 class VCenter(models.Model):
     uuid = models.CharField(max_length=50, unique=True)
     version = models.CharField(max_length=30)
     ip = models.GenericIPAddressField(protocol='ipv4')
     port = models.PositiveIntegerField()
+    env_type = models.CharField(max_length=50)
     user = models.CharField(max_length=30)
     password = models.CharField(max_length=30)
     last_connect = models.DateTimeField(null=True)
 
     @classmethod
-    def discover(cls, ip='localhost', port=443, user='root', pwd='vmware'):
+    def discover(cls, ip='localhost', port=443, env_type=None, user='root', pwd='vmware'):
         si = SmartConnect(host=ip, user=user, pwd=pwd, port=port)
         if not si:
             return None
+        # Disconnect(si)
         content = si.RetrieveContent()
         new_uuid = content.about.instanceUuid
         new_version = content.about.apiVersion
-        Disconnect(si)
-        vc = cls(ip=ip, port=port, user=user, password=pwd, uuid=new_uuid, version=new_version,
-                 last_connect=datetime.now())
+        if env_type:
+            env_type_str = ','.join(sorted(env_type))
+        else:
+            env_type_str = ''
+        vc = cls(ip=ip, port=port, env_type=env_type_str, user=user, password=pwd, uuid=new_uuid,
+                 version=new_version, last_connect=datetime.now())
         vc.save()
+        SetSiByVCid(vc.id, si)
         return vc
 
     def connect(self):
-        warnings.filterwarnings("ignore")
-        si = SmartConnect(host=self.ip, user=self.user, pwd=self.password, port=self.port)
-        if not si:
+        si = GetSiByVCid(self.id)
+        try:
+            content = si.RetrieveContent()
+            curSession = content.sessionManager.currentSession
+            if curSession and isinstance(curSession, vim.UserSession):
+                logger.debug("Get session: VCenter " + str(self.ip) + ", session ID:" + curSession.key)
+                return content
+            else:
+                curSession = content.sessionManager.Login(self.user, self.password)
+                logger.debug("ReLogin session: VCenter " + str(self.ip) + ", session ID:" + curSession.key)
+        except:
+            try:
+                warnings.filterwarnings("ignore")
+                si = SmartConnect(host=self.ip, user=self.user, pwd=self.password, port=self.port)
+                logger.debug("Get session failed: VCenter " + str(self.ip) + ", reconnectted")
+                SetSiByVCid(self.id, si)
+            except:
+                logger.debug("Cannot get a session from VCenter " + str(self.ip))
+                return None
+        finally:
+            content = si.RetrieveContent()
+            uuid = content.about.instanceUuid
+            if uuid != self.uuid:
+                logger.warning("UUID of VCenter changed, it might be another VCenter!!")
+                return None
             self.last_connect = datetime.now()
             self.save(update_fields=['last_connect'])
-            return None
-        self.last_connect = datetime.now()
-        self.save(update_fields=['last_connect'])
-        content = si.RetrieveContent()
-        uuid = content.about.instanceUuid
-        if uuid != self.uuid:
-            self.uuid = uuid
-            print("UUID of VCenter changed, it might be another VCenter!!")
-            self.save()
-        atexit.register(Disconnect, si)
         return content
 
 
 class VMObject(models.Model):
     vcenter = models.ForeignKey('VCenter')
     moid = models.CharField(max_length=30)
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=80)
     hash_value = models.CharField(max_length=80, editable=False, default='')
 
     class Meta:
@@ -91,6 +123,9 @@ class VMObject(models.Model):
                 v.append('hash_value')
         self.hash_value = str(hash_new)
         super(VMObject, self).save(*args, **kwargs)
+
+    def getMoid(self):
+        return str(self.moid)
 
 
 class ComputeResource(VMObject):
@@ -130,6 +165,34 @@ class ComputeResource(VMObject):
             new_obj = cls(moid=moid, vcenter=vc)
         new_obj.update_by_vim(vimobj)
         return new_obj, created
+
+    def free_cpu(self):
+        """
+        :return: cpu_free_percent
+        """
+        total_cpu = 0
+        usage_cpu = 0
+        qset = self.hostsystem_set.all()
+        if not qset.exists():
+            return 0
+        for host in qset:
+            total_cpu += host.total_cpu_mhz
+            usage_cpu += host.usage_cpu_mhz
+        return 100 - (usage_cpu / total_cpu)
+
+    def free_mem(self):
+        """
+        :return: memory_free_percent
+        """
+        total_mem = 0
+        usage_mem = 0
+        qset = self.hostsystem_set.all()
+        if not qset.exists():
+            return 0
+        for host in qset:
+            total_mem += host.total_mem_mb
+            usage_mem += host.usage_mem_mb
+        return 100 - (usage_mem / total_mem)
 
 
 class ResourcePool(VMObject):
@@ -220,6 +283,10 @@ class Network(VMObject):
             super(Network, self)._sum_hash() +
             hash(self.net) + hash(self.netmask)
         )
+
+    def getmask_str(self):
+        mask_bin = (self.netmask * '1').ljust(32, str(0))
+        return bin2str(mask_bin)
 
     def update_nw(self, nw='', mask=24):
         if isinstance(mask, str):
@@ -496,22 +563,26 @@ class VirtualMachine(VMObject):
             hash(self.istemplate) + hash(self.annotation) +
             hash(self.cpu_num) + hash(self.cpu_cores) +
             hash(self.memory_mb) + hash(self.storage_mb) +
-            hash(self.guestos_shorname) + hash(self.guestos_fullname) +
+            hash(self.guestos_shortname) + hash(self.guestos_fullname) +
             hash(self.hostsystem_id) + hash(self.resourcepool_id)
         )
 
     def update_ipusage(self, vimobj):
         vm_guest = vimobj.guest
-        old_ip = list(self.ipusage_set)
+        old_ip = list(self.ipusage_set.all())
         try:
             for vimip in vm_guest.net:
-                ip = IPUsage.objects.get(network__name=vimip.network.strip(), ipaddress=vimip.ipAddress[0])
+                qset = IPUsage.objects.filter(network__name=vimip.network.strip(), ipaddress=vimip.ipAddress[0])
+                if not qset.exists():
+                    print("IPAddress: " + str(vimip.ipAddress[0]) + "-- not initialed")
+                    continue
+                ip = qset[0]
                 if ip in old_ip:
                     old_ip.remove(ip)
                 else:
                     ip.used_occupy = False
                     ip.vm = self
-                    ip.save(update_fields=['use_occupy','vm'])
+                    ip.save(update_fields=['used_occupy', 'vm'])
             for oip in old_ip:
                 oip.vm = None
                 oip.save(update_fields=['vm'])
@@ -527,9 +598,10 @@ class VirtualMachine(VMObject):
         self.cpu_cores = vm_config.hardware.numCoresPerSocket
         self.memory_mb = vm_config.hardware.memoryMB
         self.storage_mb = vimobj.summary.storage.committed / 1024 ** 2
-        vm_guest = vimobj.guest
-        self.guestos_shortname = vm_guest.guestId
-        self.guestos_fullname = vm_guest.guestFullName
+        # vm_guest = vimobj.guest
+        vm_sumcfg = vimobj.summary.config
+        self.guestos_shortname = vm_sumcfg.guestId
+        self.guestos_fullname = vm_sumcfg.guestFullName
         if related:
             # update hostsystem
             host = vimobj.runtime.host
@@ -550,7 +622,7 @@ class VirtualMachine(VMObject):
             return True
         # update networks
         try:
-            old_net = list(self.networks)
+            old_net = list(self.networks.all())
             for vimnet in vimobj.network:
                 net = Network.objects.get(vcenter=vc, moid=vimnet._GetMoId())
                 if net in old_net:
@@ -563,7 +635,7 @@ class VirtualMachine(VMObject):
             pass
         # update datastores
         try:
-            old_ds = list(self.datastores)
+            old_ds = list(self.datastores.all())
             for vimds in vimobj.datastore:
                 ds = Datastore.objects.get(vcenter=vc, moid=vimds._GetMoId())
                 if ds in old_ds:
@@ -663,7 +735,7 @@ class Approvel(models.Model):
 class VMOrder(models.Model):
     """生成表"""
     GEN_STATUS = (
-        ('FAIL', 'failed'),
+        ('FAILED', 'failed'),
         ('SUCCESS', 'success'),
         ('RUNNING', 'running')
     )
@@ -674,7 +746,7 @@ class VMOrder(models.Model):
     loc_cluster = models.ForeignKey('ComputeResource')
     loc_resp = models.ForeignKey('ResourcePool', null=True)
     loc_storage = models.ForeignKey('Datastore')
-    gen_status = models.CharField(max_length=20, choices=GEN_STATUS)
+    gen_status = models.CharField(max_length=20, choices=GEN_STATUS, null=True)
     gen_log = models.TextField(null=True)
     gen_time = models.DateTimeField(null=True)
     gen_progress = models.PositiveIntegerField()

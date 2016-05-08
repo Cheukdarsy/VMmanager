@@ -7,7 +7,26 @@ import time
 
 from pyVmomi import vim
 
-from vmmanager.models import *
+from .models import *
+
+_typeMap = {
+    vim.ComputeResource: ComputeResource,
+    vim.ResourcePool: ResourcePool,
+    vim.Network: Network,
+    vim.Datastore: Datastore,
+    vim.HostSystem: HostSystem,
+    vim.VirtualMachine: VirtualMachine
+}
+
+
+def _map_vimtype(vmtype):
+    for k, v in _typeMap.items():
+        if v == vmtype:
+            return k
+
+
+def _map_vmtype(vimtype):
+    return _typeMap[vimtype]
 
 
 def _refresh_vim_objs(model, content, *args, **kwargs):
@@ -16,27 +35,26 @@ def _refresh_vim_objs(model, content, *args, **kwargs):
     @param content: the service content of VCenter.
     @param related: weather to update the relationship between assets
     """
-    typeMap = {
-        vim.ComputeResource: ComputeResource,
-        vim.ResourcePool: ResourcePool,
-        vim.Network: Network,
-        vim.Datastore: Datastore,
-        vim.HostSystem: HostSystem,
-        vim.VirtualMachine: VirtualMachine
-    }
-    if model not in typeMap.keys():
+
+    if model not in _typeMap.keys():
         return False
     vc = VCenter.objects.get(uuid=content.about.instanceUuid)
-    container = content.rootFolder
+    if kwargs.has_key('container'):
+        container = kwargs.pop('container')
+        if not isinstance(container, vim.ManagedEntity):
+            logger.warning("Not a valid container entity, using rootFolder as default...")
+            container = content.rootFolder
+    else:
+        container = content.rootFolder
 
     # discover or update model
     vimView = content.viewManager.CreateContainerView(container, [model], True)
     updList = []
     for obj in vimView.view:
         updList.append(obj._GetMoId())
-        typeMap[model].create_or_update_by_vim(obj, vc, *args, **kwargs)
+        _map_vmtype(model).create_or_update_by_vim(obj, vc, *args, **kwargs)
     # delete invalid objects
-    qset = typeMap[model].objects.filter(vcenter=vc)
+    qset = _map_vmtype(model).objects.filter(vcenter=vc)
     if qset.count() > len(updList):
         for obj in qset:
             if obj.moid not in updList:
@@ -46,7 +64,7 @@ def _refresh_vim_objs(model, content, *args, **kwargs):
     return True
 
 
-def get_obj(content, container=None, vimtype=None, name='', moid=''):
+def get_obj(content, container=None, vimtype=list(), name='', moid=''):
     """
     Return an object by name, if name is None the
     first found object is returned
@@ -79,6 +97,17 @@ def refresh_all_vms(content, related=False):
     @param related: weather to update the relationship between assets
     """
     return _refresh_vim_objs(vim.VirtualMachine, content, related)
+
+
+def refresh_some_vms(vmobject, related=False):
+    vmtype = type(vmobject)
+    if vmtype in [ComputeResource, ResourcePool, Datastore, HostSystem]:
+        vimtype = _map_vimtype(vmtype)
+        content = vmobject.vcenter.connect()
+        container = get_obj(content, vimtype=[vimtype], moid=vmobject.getMoid())
+        return _refresh_vim_objs(vim.VirtualMachine, content, container=container, related=related)
+    else:
+        return False
 
 
 def refresh_all_assets(content, related=False):
@@ -154,6 +183,26 @@ def wait_for_task(task):
         time.sleep(5)
 
 
+def vim_create_cluster(content, cluster_name, dc_name=None):
+    dc_folder = content.rootFolder
+    dc = None
+    for vimobj in dc_folder.childEntity:
+        if isinstance(vimobj, vim.Datacenter):
+            if (not dc_name) or (vimobj.name == dc_name):
+                dc = vimobj
+                break
+    if not dc:
+        raise Exception("No DataCenter found")
+    spec = vim.cluster.ConfigSpec()
+    # start create cluster task
+    try:
+        cluster_moid = dc.hostFolder.CreateCluster(name=cluster_name, spec=spec)._GetMoId()
+    except Exception, e:
+        print(e)
+        raise e
+    return cluster_moid
+
+
 def vim_vm_poweron(vim_vm, host=None):
     if isinstance(vim_vm, vim.VirtualMachine):
         try:
@@ -171,7 +220,7 @@ VM_TZ = "Asia/Shanghai"
 
 
 def _vim_gen_spec_customize(is_windows, ipusage=None, hostname=None):
-    custspec = vim.vm.customization.Specification
+    custspec = vim.vm.customization.Specification()
     # ipsettings
     if ipusage:
         ipsetting = vim.vm.customization.IPSettings()
@@ -179,7 +228,7 @@ def _vim_gen_spec_customize(is_windows, ipusage=None, hostname=None):
         fixip.ipAddress = ipusage.ipaddress
         ipsetting.ip = fixip
         network = ipusage.network
-        ipsetting.subnetMask = network.netmask
+        ipsetting.subnetMask = network.getmask_str()
         try:
             gateway = network.ipusage_set.get(used_manage_app='GW').ipaddress
         except:
@@ -191,14 +240,21 @@ def _vim_gen_spec_customize(is_windows, ipusage=None, hostname=None):
         ipadapter = vim.vm.customization.AdapterMapping()
         ipadapter.adapter = ipsetting
         custspec.nicSettingMap = [ipadapter]
+    glb_ipsetting = vim.vm.customization.GlobalIPSettings()
+    if not is_windows:
+        pass
     if hostname and not is_windows:
-        linuxprep = vim.vm.customization.LinuxPrep()
+        identity = vim.vm.customization.LinuxPrep()
         namegen = vim.vm.customization.FixedName()
         namegen.name = hostname
-        linuxprep.hostName = namegen
-        linuxprep.domain = hostname + '.site'
-        linuxprep.hwClockUTC = False
-        linuxprep.timeZone = VM_TZ
+        identity.hostName = namegen
+        identity.domain = hostname + '.site'
+        identity.hwClockUTC = False
+        identity.timeZone = VM_TZ
+    else:
+        identity = vim.vm.customization.IdentitySettings()
+    custspec.globalIPSettings = glb_ipsetting
+    custspec.identity = identity
     return custspec
 
 
@@ -217,7 +273,7 @@ def _vim_set_customize(vim_vm, *args, **kwargs):
 
 def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_on=False):
     try:
-        guestos = vim_src_vm.guest.guestFamily
+        guestos = vim_src_vm.summary.config.guestId
     except:
         print("Cannot get guest os type")
         return -1
@@ -240,10 +296,12 @@ def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_o
     clonespec.customization = _vim_gen_spec_customize(is_windows, ipusage, vm_name)
     # start clone task
     try:
-        task = vim_src_vm.Clone(folder=vm_folder, name=vm_name, spec=clonespec)
-    except:
-        task = None
-    return task, ""
+        taskid = vim_src_vm.Clone(folder=vm_folder, name=vm_name, spec=clonespec)._GetMoId()
+    except Exception, e:
+        taskid = None
+        print(taskid)
+        raise e
+    return taskid, ""
 
 
 def clone_vm(content, src_vm, vm_name, ipusage, datastore, cluster=None, resourcepool=None, power_on=False):
@@ -326,7 +384,14 @@ def vim_vm_reconfig(vim_vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, tg
                 controller_key = dev.key
         disk_spec = _vim_gen_spec_disk(tg_datadisk_gb, unit_number, controller_key)
         configspec.deviceChange = [disk_spec]
-    return vim_vm.Reconfigure(spec=configspec), ""
+    # start reconfig task
+    try:
+        taskid = vim_vm.Reconfigure(spec=configspec)._GetMoId()
+    except Exception, e:
+        taskid = None
+        print(taskid)
+        raise e
+    return taskid, ""
 
 
 def reconfig_vm(content, vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, tg_mem_mb=-1, tg_datadisk_gb=-1):
@@ -343,5 +408,46 @@ def reconfig_vm(content, vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, t
     return vim_vm_reconfig(vim_vm, tg_annotation, tg_cpu_num, tg_cpu_cores, tg_mem_mb, tg_datadisk_gb)
 
 
-def get_cluster(env_type):
-    pass
+def get_task(content, taskid):
+    tasklist = content.taskManager.recentTask
+    vimtask = None
+    for vt in tasklist:
+        if taskid == vt._GetMoId():
+            vimtask = vt
+    return vimtask
+
+
+def get_capi_datastore(cluster):
+    hostlist = cluster.hostsystem_set.all()
+    result_list = []
+    ds_count = set()
+    for host in hostlist:
+        dslist = host.datastores.filter(multi_hosts_access=True)
+        for ds in dslist:
+            if ds.accessible and ds.id not in ds_count:
+                ds_count.add(ds_count)
+                result_list.append({
+                    'datastore_id': ds.id,
+                    'datastore_name': ds.name,
+                    'free_space_gb': ds.free_space_mb / 1024,
+                    'total_space_gb': ds.total_space_mb / 1024,
+                    'free_percent': ds.free_space_mb * 100 / ds.total_space_mb
+                })
+    return result_list
+
+
+def get_capi_cluster(env_type):
+    """
+    :param env_type: environment type
+    :type env_type:unicode
+    :return:
+    """
+    vc_set = list(VCenter.objects.filter(env_type__contains=env_type))
+    result_list = []
+    for vc in vc_set:
+        for clus in vc.computeresource_set.all():
+            hostnum = clus.hostsystem_set.count()
+            clus_capi = {'cluster_id': clus.id, 'cluster_name': clus.name, 'host_num': hostnum,
+                         'free_cpu': clus.free_cpu(), 'free_memory': clus.free_mem()}
+            stor_capi = get_capi_datastore(clus)
+    return result_list

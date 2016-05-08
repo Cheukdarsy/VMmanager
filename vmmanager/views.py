@@ -5,6 +5,7 @@ from .vc_api import *
 import json
 from .models import VCenter, Application, Approvel, VMOrder
 from .tasks import vmtask_clone_vm
+from datetime import datetime
 
 # Create your views here.
 
@@ -47,7 +48,7 @@ def modify_machine_detail(request, *call_args):
         saving_data_disk = int(request.POST.get('saving_data_disk', ''))
         saving_apply_num = int(request.POST.get('saving_request_num', ''))
         saving_apply_status = 'SM'
-        saving_datetime = datetime.datetime.now()
+        saving_datetime = datetime.now()
         try:
             Application.objects.filter(id=request_id).update(fun_type=saving_fun_type, os_type=saving_os_type,
                                                              cpu=saving_cpu_num, env_type=saving_env_type,
@@ -81,7 +82,7 @@ def agree_apply(request):
         approving_data_disk = int(request.POST.get('confirm_data_disk', ''))
         approving_apply_num = 1
         approving_status = "AP"
-        approving_datetime = datetime.datetime.now()
+        approving_datetime = datetime.now()
         try:
             Application.objects.filter(id=request_id).update(apply_status=approving_status)
             confirm_apply = Approvel(application=application, appro_env_type=approving_env_type,
@@ -157,7 +158,7 @@ def apply_machine(request):
             db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory, os_type=os_type,
                              datadisk_gb=data_disk, request_vm_num=request_num,
                              apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
-                             apply_date=datetime.datetime.now(), user=user)
+                             apply_date=datetime.now(), user=user)
         except ServerError:
             pass
         else:
@@ -273,12 +274,11 @@ def ajax_get_cluster(request):
     id: Approvel id
     """
     if request.method == 'POST':
-        result_list = []
         approvel_id = int(request.POST['id'])
         try:
             approvel = Approvel.objects.get(pk=approvel_id)
             env_type = approvel.appro_env_type
-            clus_dict = get_cluster(env_type)
+            result_list = get_capi_cluster(env_type)
         except Exception, e:
             raise e
         else:
