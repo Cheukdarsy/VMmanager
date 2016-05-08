@@ -288,9 +288,17 @@ def ajax_get_template():
 
 def ajax_get_cluster(request):
     """
-    动态获取集群信息，需返回所有可用集群名称以及权重比(CPU+内存＋存储)
+    动态获取集群信息，需返回所有可用集群名称以及权重比(CPU+内存+存储)
     参数对照
-    id: Approvel id
+        id: Approvel id审批表ID
+    返回每个条目的字段对照
+        集群ID           'cluster_id': clus.id,
+        集群名称         'cluster_name': clus.name,
+        集群主机数       'host_num': hostnum,
+        CPU剩余百分比    'free_cpu': clus.free_cpu(),
+        内存剩余百分比   'free_memory': clus.free_mem(),
+        集群LUN数        'ds_num': len(stor_capi),
+        LUN剩余百分比    'free_space': stor_capi_percent
     """
     if request.method == 'POST':
         approvel_id = int(request.POST['id'])
@@ -307,25 +315,72 @@ def ajax_get_cluster(request):
         return JsonResponse(error_dict)
 
 
-def ajax_get_resource():
+def ajax_get_resource(request):
     """
-        获取资源称名称
-        """
-    pass
+    获取资源池名称
+    参数对照POST
+        id: cluster id集群id
+    返回每个条目的字段对照
+        资源池ID        'resp_id':resp.id,
+        资源池名称      'resp_name':resp.name
+    """
+    if request.method == 'POST':
+        cluster_id = int(request.POST['id'])
+        try:
+            cluster = ComputeResource.objects.get(pk=cluster_id)
+            resp_set = cluster.resourcepool_set.filter(parent__isnull=False)
+            result_list = []
+            for resp in resp_set:
+                result_list.append({
+                    'resp_id': resp.id,
+                    'resp_name': resp.name
+                })
+        except Exception, e:
+            raise e
+        else:
+            return json.dumps(result_list)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
 
 
-def ajax_get_storage():
+def ajax_get_storage(request):
     """
-        获取相关集群的剩余容量，前端返回集群名称clustername，需返回剩余容量值及百分比
-        """
-    pass
+    获取相关集群的剩余容量，需返回剩余容量值及百分比
+    参数对照POST
+        id: cluster id集群id
+    返回每个条目的字段对照
+        存储ID          'datastore_id': ds.id,
+        存储名称        'datastore_name': ds.name,
+        剩余容量GB      'free_space_gb': ds.free_space_mb / 1024,
+        总容量GB        'total_space_gb': ds.total_space_mb / 1024,
+        剩余百分比      'free_percent': ds.free_space_mb * 100 / ds.total_space_mb
+    """
+    if request.method == 'POST':
+        cluster_id = int(request.POST['id'])
+        try:
+            cluster = ComputeResource.objects.get(pk=cluster_id)
+            resp_set = cluster.resourcepool_set.filter(parent__isnull=False)
+            result_list = []
+            for resp in resp_set:
+                result_list.append({
+                    'resp_id': resp.id,
+                    'resp_name': resp.name
+                })
+        except Exception, e:
+            raise e
+        else:
+            return json.dumps(result_list)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
 
 
 # VM参数配置页面
 def ajax_add_IP():
     """
-        动态激活IP段
-        """
+    动态激活IP段
+    """
     pass
 
 

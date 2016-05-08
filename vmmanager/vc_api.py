@@ -447,7 +447,21 @@ def get_capi_cluster(env_type):
     for vc in vc_set:
         for clus in vc.computeresource_set.all():
             hostnum = clus.hostsystem_set.count()
-            clus_capi = {'cluster_id': clus.id, 'cluster_name': clus.name, 'host_num': hostnum,
-                         'free_cpu': clus.free_cpu(), 'free_memory': clus.free_mem()}
             stor_capi = get_capi_datastore(clus)
+            free_space_all = 0
+            total_space_all = 0
+            for capi in stor_capi:
+                free_space_all += capi['free_space_gb']
+                total_space_all += capi['total_space_gb']
+            stor_capi_percent = free_space_all * 100 / total_space_all
+            clus_capi = {
+                'cluster_id': clus.id,
+                'cluster_name': clus.name,
+                'host_num': hostnum,
+                'free_cpu': clus.free_cpu(),
+                'free_memory': clus.free_mem(),
+                'ds_num': len(stor_capi),
+                'free_space': stor_capi_percent
+            }
+            result_list.append(clus_capi)
     return result_list

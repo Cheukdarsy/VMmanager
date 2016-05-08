@@ -288,29 +288,31 @@ class Network(VMObject):
         mask_bin = (self.netmask * '1').ljust(32, str(0))
         return bin2str(mask_bin)
 
-    def update_nw(self, nw='', mask=24):
-        if isinstance(mask, str):
-            if mask.count('.') == 3:
-                mask = str2bin(mask).index('0')
-            else:
-                return
+    def update_manual(self, nw=None, mask=None):
+        """
+        Update network infomations manually
+        :param nw: network address,e.g.192.168.1.0
+        :type nw:str
+        :param mask: netmask as integer,e.g.24
+        :type mask:int
+        :return:
+        """
         if nw:
-            try:
-                self.net = nw
-            except:
-                self.net = "1.1.1.0"
-            finally:
-                self.netmask = mask
+            self.net = nw
+        if type(mask) == int:
+            self.netmask = mask
+        self.save(update_fields=['net', 'netmask'])
 
-    def update_by_vim(self, vimobj, nw=None, mask=24):
+    def update_by_vim(self, vimobj):
         if not isinstance(vimobj, vim.Network):
             return
         name = vimobj.name.strip()
         self.name = name
-        if not nw:
-            nw = name.split('-')[-1]
-        if not (self.net and self.netmask):
-            self.update_nw(nw, mask)
+        try:
+            self.net = name.split('-')[-1]
+        except:
+            self.net = "1.1.1.0"
+        self.netmask = 24
         self.save()
 
     @classmethod
