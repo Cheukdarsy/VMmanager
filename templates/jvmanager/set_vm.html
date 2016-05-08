@@ -48,7 +48,7 @@
                                     <div class="panel-heading">
                                         vCenter配置
                                         <button id='vcenter-setting' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
-                                            添加VM
+                                            添加VC
                                             <i class="fa fa-plus"></i>
                                         </button>
                                     </div>
@@ -62,9 +62,9 @@
                                                 <th class="text-center">操作</th>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">1</td>
+                                                <td class="text-center">das</td>
                                                 <td class="text-center">118.240.13.25</td>
-                                                <td class="text-center">23</td>
+                                                <td class="text-center">12345</td>
                                                 <td class="text-center">23</td>
                                                 <td class="text-center">
                                                     <button class="btn btn-xs btn-success"  data-toggle="modal" data-target="#modify-vm-modal">修改</button>
@@ -81,25 +81,111 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         IP池配置
-                                        <button id='ip-add-btn' class="btn btn-xs btn-info" data-toggle="modal" data-target="#add-IP-modal" style="float:right">
-                                            手工添加IP网段
+                                        <button id='ip-add-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-IP-modal" style="float:right">
+                                            添加网络
                                             <i class="fa fa-plus"></i>
                                         </button>
+                                        <div class="modal fade" id="add-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">管理IP</h4>
+                                                    </div>
+                                                    <div class="modal-body" style="padding-bottom:10px">
+                                                        <div class="ibox-content form-horizontal">
+                                                            <form method="post" action="" id="vc-setting-form">
+                                                                {% csrf_token %}
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <label class="col-sm-3 control-label">网络:&nbsp;</label>
+                                                                            <div class="dropdown col-sm-9">
+                                                                                <select name="network" id="network">
+                                                                                    <option value="123.1.1.1">123.1.1.1</option>
+                                                                                    <option value="123.1.1.1">123.1.1.2</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <label class="col-sm-3 control-label">网关:&nbsp;</label>
+                                                                            <div class="dropdown col-sm-9">
+                                                                                <input type="text" name="netgate" id="netgate"　value="123.1.1.240"></div>
+                                                                        </div>
+                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <label class="col-sm-3 control-label">子网掩码:&nbsp;</label>
+                                                                            <div class="dropdown col-sm-9">
+                                                                                <input type="text" name="netcode" id="netcode"　value="255.255.255.0"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button id='ip-add-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#manage-IP-modal" style="float:right margin-left:10px">管理IP</button>
+                                        <div class="modal fade" id="manage-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">管理IP</h4>
+                                                    </div>
+                                                    <div class="modal-body" style="padding-bottom:10px">
+                                                        <div class="ibox-content form-horizontal">
+                                                            <form method="post" action="" id="vc-setting-form">
+                                                                {% csrf_token %}
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <label class="col-sm-3 control-label">网络:&nbsp;</label>
+                                                                            <div class="dropdown col-sm-9">
+                                                                                <select name="network" id="network">
+                                                                                    <option value="123.1.1.1">123.1.1.1</option>
+                                                                                    <option value="123.1.1.1">123.1.1.2</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <label class="col-sm-3 control-label">IP:&nbsp;</label>
+                                                                            <div class="dropdown col-sm-9">
+                                                                                <input type="text" name="netgate" id="netgate"　value="123.1.1.240"></div>
+                                                                        </div>
+                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <label class="col-sm-3 control-label">用途:&nbsp;</label>
+                                                                            <div class="dropdown col-sm-9">
+                                                                                <select name="network" id="network">
+                                                                                    <option value="123.1.1.1">网关</option>
+                                                                                    <option value="123.1.1.1">普通地址</option>
+                                                                                </select></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="panel-body">
                                         <table class="table table-striped table-hover table-cendensed" id="ip-table" >
                                             <tr>
-                                                <th class="text-center">VLAN ID</th>
-                                                <th class="text-center">网段</th>
-                                                <th class="text-center">来源</th>
-                                                <th class="text-center">状态</th>
+                                                <th class="text-center">网络</th>
+                                                <th class="text-center">IP地址</th>
+                                                <th class="text-center">用途</th>
                                                 <th class="text-center">操作</th>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">34432</td>
+                                                <td class="text-center">118.240.13.0/24</td>
                                                 <td class="text-center">118.240.13.25</td>
-                                                <td class="text-center">自动获取</td>
-                                                <td class="text-center">已生成</td>
+                                                <td class="text-center">网关</td>
                                                 <td class="text-center">
                                                     <button class="btn btn-xs btn-success">IP池初始化</button>
 
@@ -158,7 +244,7 @@
                                                 <th class="text-center" style='width:150px'>操作系统类型</th>
                                                 <th class="text-center" style='width:100px'>系统版本</th>
                                                 <th class="text-center" style='width:150px'>备注</th>
-                                                <th class="text-center" style='width:150px'>操作</th>
+                                                <th class="text-center">操作</th>
 
                                             </tr>
                                             <tr>
@@ -238,6 +324,7 @@
     var ipcount = $("#env-table tr").length-1;
     
     $(document).on('click', '#add-env', function(event) {
+        $("#add-env").attr('disabled', 'true');
         ipcount++;
         html = "<tr><td class='text-center'>"+ipcount+"</td><td class='text-center' id='env-td-"+ipcount+"'><input type='text' placeholder='输入环境名称' id='inner-input"+ipcount+"'></td><td class='text-center' id='env-btn-td-"+ipcount+"'><button class='btn btn-xs btn-success' id='add-env-"+ipcount+"'>确认添加</button></td></tr>";
         $("#env-table").append(html);
@@ -245,6 +332,7 @@
         $("#add-env-"+ipcount).click(function(event) {
              if($("#inner-input"+ipcount).val()){
                 //ajax提交
+                $("#add-env").removeAttr('disabled');
                 $("#env-td-"+ipcount).html($("#inner-input"+ipcount).val())
                 $("#env-btn-td-"+ipcount).html("<button class='btn btn-xs btn-success' id='env-mf-"+ipcount+"-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
         $('#env-mf-'+ipcount+'-btn').click(function(event) {
@@ -276,17 +364,26 @@
         });
     });
 
-    $('#ip-add-btn').click(function(event) {
+    /*$('#ip-add-btn').click(function(event) {
         html = "<tr><td class='text-center'>3223</td><td class='text-center'>192.222.22.1</td><td class='text-center'>人工录入</td><td class='text-center'>未初始化</td><td class='text-center'><button class='btn btn-xs btn-success'>IP池初始化</button></td></tr>"
         $("#ip-table").append(html)
-    });
+    });*/
     
     var oscount = $("#os-table tr").length-1;
     $('#add-os').click(function(event) {
+        $("#add-os").attr('disabled', 'true');
         oscount++;
-        html = "<tr><td class='text-center'>"+oscount+"</td><td class='text-center'><input type='text' placeholder='输入系统名称' id='os-input"+oscount+"' style='width:100px'></td><td class='text-center'><input type='text' placeholder='输入版本' id='os-version-input"+oscount+"' style='width:60px'></td><td class='text-center'><input type='text' placeholder='输入备注' id='os-state-input"+oscount+"' style='width:100px'></td><td class='text-center' id='os-btn-td-"+oscount+"'><button class='btn btn-xs btn-success' id='add-os-"+oscount+"'>确认添加</button></td></tr>"
+        html = "<tr><td class='text-center'>"+oscount+"</td><td class='text-center' id='os-td-"+oscount+"''><input type='text' placeholder='输入系统名称' id='os-input"+oscount+"' style='width:100px'></td><td class='text-center' id='os-ver-td-"+oscount+"'><input type='text' placeholder='输入版本' id='os-version-input"+oscount+"' style='width:60px'></td><td class='text-center' id='os-state-td-"+oscount+"'><input type='text' placeholder='输入备注' id='os-state-input"+oscount+"' style='width:100px'></td><td class='text-center' id='os-btn-td-"+oscount+"'><button class='btn btn-xs btn-success' id='add-os-"+oscount+"'>确认添加</button></td></tr>"
         $("#os-table").append(html);
         $("#os-table input").focus();
+        $("#add-os-"+oscount).click(function(event) {
+            //ajax提交
+            $("#add-os").removeAttr('disabled');
+            $("#os-td-"+oscount).html($("#os-input"+oscount).val());
+            $("#os-ver-td-"+oscount).html($("#os-version-input"+oscount).val());
+            $("#os-state-td-"+oscount).html($("#os-state-input"+oscount).val())
+            $("#os-btn-td-"+oscount).html("<button class='btn btn-xs btn-success' id='env-mf-"+oscount+"-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
+        });
     });
    
 </script>

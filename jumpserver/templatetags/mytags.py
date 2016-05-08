@@ -304,3 +304,7 @@ def user_perm_asset_num(user_id):
         return len(user_perm_info.get('asset').keys())
     else:
         return 0
+
+@register.filter(name="times")
+def times(number):
+    return range(1,number+1)

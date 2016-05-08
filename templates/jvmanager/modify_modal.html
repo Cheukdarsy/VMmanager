@@ -1,4 +1,4 @@
-                            <div class="modal fade" id="{{ key.id}}modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal fade" id="{{ key.application_id}}modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
@@ -20,9 +20,9 @@
                                               <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
 
                                               <div class="dropdown col-sm-9">
-                                              <input type="text" name="env_type" class="env_type" style="display:none" value="{{ key.env_type }}">
+                                              <input type="text" name="env_type" class="env_type" style="display:none" value="{{ key.appro_env_type }}">
                                                 <button class="btn  btn-success dropdown-toggle dropdownMenu1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                  {{ key.env_type }}
+                                                  {{ key.appro_env_type }}
                                                   <span class="caret"></span>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
@@ -47,22 +47,22 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
                                               <div class="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success normal-type {% ifequal key.fun_type  "normal" %}
+                                                <label class="btn btn-success normal-type {% ifequal key.appro_fun_type  "normal" %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="fun_type" autocomplete="off" {% ifequal key.fun_type "normal"  %}
+                                                  <input type="radio" name="fun_type" autocomplete="off" {% ifequal key.appro_fun_type "normal"  %}
                                                     checked
                                                   {% endifequal %} value="normal">普通型</label>
-                                                <label class="btn btn-success was-type {% ifequal key.fun_type "was" %}
+                                                <label class="btn btn-success was-type {% ifequal key.appro_fun_type "was" %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="fun_type" iautocomplete="off" {% ifequal key.fun_type "was"  %}
+                                                  <input type="radio" name="fun_type" iautocomplete="off" {% ifequal key.appro_fun_type "was"  %}
                                                     checked 
                                                   {% endifequal %} value="was">WAS</label>
-                                                <label class="btn btn-success database-type {% ifequal key.fun_type "database" %}
+                                                <label class="btn btn-success database-type {% ifequal key.appro_fun_type "database" %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="fun_type" autocomplete="off" {% ifequal key.fun_type "database" %}
+                                                  <input type="radio" name="fun_type" autocomplete="off" {% ifequal key.appro_fun_type "database" %}
                                                     checked 
                                                   {% endifequal %} value="database">数据库型</label>
                                               </div>
@@ -70,16 +70,16 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">CPU:&nbsp;</label>
                                               <div class ="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success {% ifequal key.cpu 2  %}
+                                                <label class="btn btn-success {% ifequal key.appro_cpu 2  %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="cpu" class="2C" value="2" autocomplete="off" {% ifequal key.cpu 2  %}
+                                                  <input type="radio" name="cpu" class="2C" value="2" autocomplete="off" {% ifequal key.appro_cpu 2  %}
                                                     checked 
                                                   {% endifequal %}　>2C</label>
-                                                <label class="btn btn-success {% ifequal key.cpu 4 %}
+                                                <label class="btn btn-success {% ifequal key.appro_cpu 4 %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="cpu" class="4C" value="4" autocomplete="off" {% ifequal key.cpu 4  %}
+                                                  <input type="radio" name="cpu" class="4C" value="4" autocomplete="off" {% ifequal key.appro_cpu 4  %}
                                                     checked
                                                   {% endifequal %}　>4C</label>
 
@@ -88,28 +88,28 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">内存:&nbsp;</label>
                                               <div class ="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success {% ifequal key.memory_gb 2 %}
+                                                <label class="btn btn-success {% ifequal key.appro_memory_gb 2 %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="2G" value="2" autocomplete="off" {% ifequal key.memory_gb 2 %}
+                                                  <input type="radio" name="memory" class="2G" value="2" autocomplete="off" {% ifequal key.appro_memory_gb 2 %}
                                                     checked 
                                                   {% endifequal %} >2G</label>
-                                                <label class="btn btn-success {% ifequal key.memory_gb 4 %}
+                                                <label class="btn btn-success {% ifequal key.appro_memory_gb 4 %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="4G"  value="4" autocomplete="off" {% ifequal key.memory_gb 4 %}
+                                                  <input type="radio" name="memory" class="4G"  value="4" autocomplete="off" {% ifequal key.appro_memory_gb 4 %}
                                                     checked 
                                                   {% endifequal %} >4G</label>
-                                                <label class="btn btn-success {% ifequal key.memory_gb 8 %}
+                                                <label class="btn btn-success {% ifequal key.appro_memory_gb 8 %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="8G" value="8" autocomplete="off" {% ifequal key.memory_gb 8 %}
+                                                  <input type="radio" name="memory" class="8G" value="8" autocomplete="off" {% ifequal key.appro_memory_gb 8 %}
                                                     checked 
                                                   {% endifequal %} >8G</label>
-                                                <label class="btn btn-success {% ifequal key.memory_gb 16  %}
+                                                <label class="btn btn-success {% ifequal key.appro_memory_gb 16  %}
                                                   active
                                                 {% endifequal %}">
-                                                  <input type="radio" name="memory" class="16G" value="16" autocomplete="off" {% ifequal key.memory_gb 16 %}
+                                                  <input type="radio" name="memory" class="16G" value="16" autocomplete="off" {% ifequal key.appro_memory_gb 16 %}
                                                     checked 
                                                   {% endifequal %} >16G</label>
 
@@ -118,9 +118,9 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
                                               <div class="dropdown col-sm-9">
-                                              <input type="text" name="os_type" class="os_type" style="display:none" value="{{ key.os_type }}">
+                                              <input type="text" name="os_type" class="os_type" style="display:none" value="{{ key.appro_os_type }}">
                                                 <button class="btn btn-success dropdown-toggle dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                  {{ key.os_type }}
+                                                  {{ key.appro_os_type }}
                                                   <span class="caret"></span>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
@@ -156,9 +156,9 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
                                               <div class="col-sm-9">
-                                                <div id="{{ key.id }}modifyslider" class="modifyslider"></div>
+                                                <div id="{{ key.application_id }}modifyslider" class="modifyslider"></div>
                                                 <p>
-                                                  <input type="text" id="{{ key.id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.datadisk_gb }}">
+                                                  <input type="text" id="{{ key.application_id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.appro_datadisk_gb }}">
                                                   <label for="data_volume">&nbsp;G</label>
                                                 </p>
                                               </div>
@@ -169,9 +169,9 @@
                                           <div class="form-group">
                                             <label class="col-sm-3 control-label">数量:&nbsp;</label>
                                             <div class="col-sm-9">
-                                            <div id="{{ key.id }}modifyslider_num" class="modifyslider"></div>
+                                            <div id="{{ key.application_id }}modifyslider_num" class="modifyslider"></div>
                                             <p style="float:left">
-                                            <input type="text" style="width:30px;" id="{{ key.id }}request_num" name="request_num" value="{{ key.request_vm_num }}">
+                                            <input type="text" style="width:30px;" id="{{ key.application_id }}request_num" name="request_num" value="{{ key.appro_vm_num }}">
                                             <label for="amount">&nbsp;台</label>
                                         </p>
                                           </div>
