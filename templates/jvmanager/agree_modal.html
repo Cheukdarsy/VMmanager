@@ -1,11 +1,12 @@
-                           <div class="modal fade" id="{{ key.id }}AGModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                          {% load mytags %}
+                           <div class="modal fade" id="{{ key.application_id }}AGModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                              <div class="modal-dialog" role="document">
                                <div class="modal-content">
                                  <div class="modal-header">
                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                      <span aria-hidden="true">&times;</span>
                                    </button>
-                                   <h4 class="modal-title" id="myModalLabel">确认表单</h4>
+                                   <h4 class="modal-title" id="myModalLabel">资源复核</h4>
                                  </div>
                                  <div class="modal-body">
                                    <!-- 用户表单 -->                           
@@ -14,78 +15,107 @@
                                        <div class="panel panel-default">
                                          <div class="panel-heading">基本配置：</div>
                                          <div class="panel-body">
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">环境类型:&nbsp;</label>
 
-                                             <div class="dropdown col-sm-9">
-                                               <input type="text" name="env_type" class="text_type" id="{{ key.id }}env_type" disabled value="{{ key.env_type }}">
+                                             <div class="dropdown col-sm-4">
+                                               <input type="text" name="env_type" class="text_type" id="{{ key.id }}env_type" disabled value="{{ key.appro_env_type }}">
                                              </div>
                                            </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
-                                             <div class="btn-group col-sm-9" data-toggle="buttons">
-                                              <input type="text" name="fun_type" class="text_type" id="{{ key.id }}fun_type" disabled value="{{ key.fun_type }}">                                               
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">主机类型:&nbsp;</label>
+                                             <div class="btn-group col-sm-4" data-toggle="buttons">
+                                              <input type="text" name="fun_type" class="text_type" id="{{ key.application_id }}fun_type" disabled value="{{ key.appro_fun_type }}">                                               
                                              </div>
                                            </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">CPU:&nbsp;</label>
-                                             <div class ="col-sm-9" >
-                                              <input type="text" name="cpu" class="num_type" id="{{ key.id }}cpu" disabled value="{{ key.cpu }}"><span>C</span>
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">CPU:&nbsp;</label>
+                                             <div class ="col-sm-6" >
+                                              <input type="text" name="cpu" class="num_type" id="{{ key.application_id }}cpu" disabled value="{{ key.appro_cpu }}"><span>C</span>
                                              </div>
                                            </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">内存:&nbsp;</label>
-                                             <div class ="col-sm-9" >
-                                               <input type="text" name="memory" class="num_type" id="{{ key.id }}memory" disabled value="{{ key.memory_gb }}"><span>G</span>  
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">内存:&nbsp;</label>
+                                             <div class ="col-sm-6" >
+                                               <input type="text" name="memory" class="num_type" id="{{ key.application_id }}memory" disabled value="{{ key.appro_memory_gb }}"><span>G</span>  
                                              </div>
                                            </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
-                                             <div class="col-sm-9">
-                                               <input type="text" name="os" id="{{ key.id }}os_type" disabled value="{{ key.os_type }}">
+                                           <div class="form-group col-sm-6" >
+                                             <label class="col-sm-6 control-label" >操作系统:&nbsp;</label>
+                                             <div class="col-sm-6" style="padding-left:1px">
+                                               <input type="text" name="os" id="{{ key.application_id }}os_type" disabled value="{{ key.appro_os_type }}" style="width:125px">
                                              </div>
                                            </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">系统盘:&nbsp;</label>
-                                             <div class="col-sm-9">
-                                               <p style="margin:5px">
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">系统盘:&nbsp;</label>
+                                             <div class="col-sm-6" style="margin-top:5px">
+                                               <p>
                                                  <label for="amount">&nbsp;50G</label>
                                                </p>
                                              </div>
                                            </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
-                                             <div class="col-sm-9">
-                                               <input type="text" name="datadisk" class="num_type" id="{{ key.id }}data_disk" disabled value="{{ key.datadisk_gb }}"><span>G</span>
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">数据盘:&nbsp;</label>
+                                             <div class="col-sm-6">
+                                               <input type="text" name="datadisk" class="num_type" id="{{ key.application_id }}data_disk" disabled value="{{ key.appro_datadisk_gb }}"><span>G</span>
                                              </div>
                                            </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">数量:&nbsp;</label>
-                                             <div class="col-sm-9">
-                                               <input type="text" name="datadisk" class="num_type" id="{{ key.id }}data_disk" disabled value="{{ key.request_vm_num }}"><span>台</span>
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">数量:&nbsp;</label>
+                                             <div class="col-sm-6">
+                                               <input type="text" name="vm_num" class="num_type" id="{{ key.application_id }}vm_num" disabled value="{{ key.appro_vm_num }}"><span>台</span>
                                              </div>
                                            </div>
                                          </div>
-                                         <div class="panel-heading">参数配置：</div>
-                                         <div class="panel-body">
-                                           
-                                          <div class="form-group">
-                                             <label class="col-sm-3 control-label">IP段:&nbsp;</label>
-                                             <div class="col-sm-9">
-                                               <select name="ip" id="{{ key.id }}ip">
-                                                 <option value="118.240.67.5">118.240.67.5</option>
-                                               </select>
-                                             </div>
-                                           </div>
-                                           <div class="form-group">
-                                             <label class="col-sm-3 control-label">集群:&nbsp;</label>
-                                             <div class="col-sm-9">
-                                               <select name="cluster" id="{{key.id}}cluster">
+                                         <div class="panel-heading">分配计划:</div>
+                                         {% for i in key.appro_vm_num|times %}
+                                          <div class="panel-body" id="{{key.application_id}}{{i}}" style="border:1px solid;border-color:#DDD">
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">资源池:&nbsp;</label>
+                                             <div class="col-sm-6">
+                                               <select name="cluster" id="{{key.application_id}}{{i}}resourcepool">
                                                  <option value="cluster1">cluster1</option>
                                                </select>
                                              </div>
                                            </div>
-                                         </div>
+                                          <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">IP地址:&nbsp;</label>
+                                             <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
+                                               <p style="width:200px">
+                                                 <label id="{{ key.application_id }}{{i}}ipaddress">118.240.67.5</label>
+                                                 <a class="btn btn-success btn-xs">换</a>
+                                               </p>
+                                             </div>
+                                           </div>
+                                           
+                                          <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">存储:&nbsp;</label>
+                                             <div class="col-sm-6">
+                                               <select name="cluster" id="{{key.application_id}}{{i}}storage">
+                                                 <option value="cluster1">cluster1</option>
+                                               </select>
+                                             </div>
+                                           </div>
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-6 control-label">机器名:&nbsp;</label>
+                                             <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
+                                               <p style="width:200px">
+                                                 <label id="{{ key.application_id }}{{i}}machinename">pdHF234325454</label>
+                                               </p>
+                                             </div>
+                                           </div>
+                                           <div class="form-group col-sm-6">
+                                             <label class="col-sm-7 control-label">集群(主机):&nbsp;</label>
+                                             <div class="col-sm-5">
+                                               <select name="cluster" id="{{key.application_id}}{{i}}cluster">
+                                                 <option value="cluster1">cluster1</option>
+                                               </select>
+                                             </div>
+                                           </div>
+                                           <div class="form-group col-sm-6"><div style="float:right;font-size:20px">*{{i}}</div></div>
+                                         </div> 
+                                         {% endfor %}
+                                         
                                        </div>
                                      </form>
                                    </div>

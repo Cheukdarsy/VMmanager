@@ -48,7 +48,7 @@
                                     <div class="panel-heading">
                                         vCenter配置
                                         <button id='vcenter-setting' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
-                                            添加VM
+                                            添加VC
                                             <i class="fa fa-plus"></i>
                                         </button>
                                     </div>
@@ -62,9 +62,9 @@
                                                 <th class="text-center">操作</th>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">1</td>
+                                                <td class="text-center">das</td>
                                                 <td class="text-center">118.240.13.25</td>
-                                                <td class="text-center">23</td>
+                                                <td class="text-center">12345</td>
                                                 <td class="text-center">23</td>
                                                 <td class="text-center">
                                                     <button class="btn btn-xs btn-success"  data-toggle="modal" data-target="#modify-vm-modal">修改</button>
@@ -81,25 +81,26 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         IP池配置
-                                        <button id='ip-add-btn' class="btn btn-xs btn-info" data-toggle="modal" data-target="#add-IP-modal" style="float:right">
-                                            手工添加IP网段
+                                        <button id='ip-add-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-IP-modal" style="float:right">
+                                            添加网络
                                             <i class="fa fa-plus"></i>
+                                        </button>
+                                        <button id='ip-add-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#manage-IP-modal" style="float:right margin-left:10px">
+                                            管理IP
                                         </button>
                                     </div>
                                     <div class="panel-body">
                                         <table class="table table-striped table-hover table-cendensed" id="ip-table" >
                                             <tr>
-                                                <th class="text-center">VLAN ID</th>
-                                                <th class="text-center">网段</th>
-                                                <th class="text-center">来源</th>
-                                                <th class="text-center">状态</th>
+                                                <th class="text-center">网络</th>
+                                                <th class="text-center">IP地址</th>
+                                                <th class="text-center">用途</th>
                                                 <th class="text-center">操作</th>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">34432</td>
+                                                <td class="text-center">118.240.13.0/24</td>
                                                 <td class="text-center">118.240.13.25</td>
-                                                <td class="text-center">自动获取</td>
-                                                <td class="text-center">已生成</td>
+                                                <td class="text-center">网关</td>
                                                 <td class="text-center">
                                                     <button class="btn btn-xs btn-success">IP池初始化</button>
 
@@ -276,10 +277,10 @@
         });
     });
 
-    $('#ip-add-btn').click(function(event) {
+    /*$('#ip-add-btn').click(function(event) {
         html = "<tr><td class='text-center'>3223</td><td class='text-center'>192.222.22.1</td><td class='text-center'>人工录入</td><td class='text-center'>未初始化</td><td class='text-center'><button class='btn btn-xs btn-success'>IP池初始化</button></td></tr>"
         $("#ip-table").append(html)
-    });
+    });*/
     
     var oscount = $("#os-table tr").length-1;
     $('#add-os').click(function(event) {
@@ -287,6 +288,10 @@
         html = "<tr><td class='text-center'>"+oscount+"</td><td class='text-center'><input type='text' placeholder='输入系统名称' id='os-input"+oscount+"' style='width:100px'></td><td class='text-center'><input type='text' placeholder='输入版本' id='os-version-input"+oscount+"' style='width:60px'></td><td class='text-center'><input type='text' placeholder='输入备注' id='os-state-input"+oscount+"' style='width:100px'></td><td class='text-center' id='os-btn-td-"+oscount+"'><button class='btn btn-xs btn-success' id='add-os-"+oscount+"'>确认添加</button></td></tr>"
         $("#os-table").append(html);
         $("#os-table input").focus();
+        $("#add-os-"+oscount).click(function(event) {
+            //ajax提交
+            console.log("good")
+        });
     });
    
 </script>

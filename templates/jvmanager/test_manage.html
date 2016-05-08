@@ -53,24 +53,24 @@
                     </thead>
                     <tbody>
                     {% for key in applys %}
-                      <tr class="detail-table"  id="{{ key.id }}tr">
-                        <td class="text-center" id="{{ key.id }}">{{ key.id }}</td>
-                        <td class="text-center">{{ key.user.username}}</td>
-                        <td class="text-center">{{ key.cpu}}C/{{ key.memory_gb}}G/{{key.datadisk_gb}}G</td>
-                        <td class="text-center">{{ key.env_type}}/{% ifequal key.fun_type "normal"  %}
+                      <tr class="detail-table"  id="{{ key.application_id }}tr">
+                        <td class="text-center" id="{{ key.application_id }}">{{ key.application_id }}</td>
+                        <td class="text-center">{{ key.application.user.username}}</td>
+                        <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
+                        <td class="text-center">{{ key.appro_env_type}}/{% ifequal key.appro_fun_type "normal"  %}
                           普通型
-                        {% endifequal %} {% ifequal key.fun_type "was" %}
+                        {% endifequal %} {% ifequal key.appro_fun_type "was" %}
                           WAS型
-                        {% endifequal %} {% ifequal key.fun_type "database" %}
+                        {% endifequal %} {% ifequal key.appro_fun_type "database" %}
                           数据库型
                         {% endifequal %}</td>
-                        <td class="text-center">{{ key.request_vm_num}}台</td>
-                        <td class="text-center">{{ key.apply_reason}}</td>
+                        <td class="text-center">{{ key.appro_vm_num}}台</td>
+                        <td class="text-center">{{ key.application.apply_reason}}</td>
                         <td class="text-center">
                           <div >
-                          <button class="btn btn-primary btn-xs modify-btn" id="{{ key.id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
+                          <button class="btn btn-primary btn-xs modify-btn" id="{{ key.application_id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.application_id}}modal">修改</button>
                         {% include 'jvmanager/modify_modal.html' %}  
-                            <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.id }}approved" data-toggle="modal" data-target="#{{ key.id}}AGModal">同意</button>
+                            <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.application_id }}approved" data-toggle="modal" data-target="#{{ key.application_id}}AGModal">同意</button>
                         {% include 'jvmanager/agree_modal.html' %}                  
                             <button class="btn btn-danger btn-xs delete-btn" type="submit" id="delete">删除</button>
                           </div>
@@ -126,10 +126,10 @@
                       {% for list in apply_confirm_list %}
                       <tr id="{{list.id}}tr">
                         <td class="text-center">{{list.id}}</td>
-                        <td class="text-center">{{list.user.username}}</td>
-                        <td class="text-center">{{list.appro_env_type}}/{{list.appro_fun_type}}/{{list.appro_os_type}}</td>
-                        <td class="text-center">{{list.user.username}}</td>
-                        <td class="text-center">{{list.user.username}}</td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
                         <td class="text-center">{% if list.appro_status == "AP" %}
                               待生成
                         {% else %}
@@ -137,7 +137,7 @@
                         {% endif %} </td>
                         <td class="text-center">success</td>
                         <td class="text-center">
-                          <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.request_id_id}}"></td>
+                          <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.application_id}}"></td>
                       </tr>
                       {% endfor %}
                     </tbody>
@@ -178,13 +178,13 @@ $(".modify-btn").click(function(event) {
      $.post('{% url "show_apply_machinedetail" %}', { "id": request_id}, function(data) {
        var detail_list = eval($.parseJSON(data));
        //数据获取
-       $(".dropdownMenu1").text(detail_list[0].fields.env_type).append('&nbsp;<span class="caret"></span>');
-       $("#"+request_id+"modal input[value='"+detail_list[0].fields.fun_type+"']").prop("checked",true).parent("label").addClass('active').siblings('label').removeClass('active');
-       $(".dropdownMenu2").text(detail_list[0].fields.os_type).append('&nbsp;<span class="caret"></span>');
-       $("#"+request_id+"modal ."+detail_list[0].fields.cpu+"C").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');
-       $("#"+request_id+"modal ."+detail_list[0].fields.memory+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
-       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.datadisk_gb);
-       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.request_vm_num);
+       $(".dropdownMenu1").text(detail_list[0].fields.appro_env_type).append('&nbsp;<span class="caret"></span>');
+       $("#"+request_id+"modal input[value='"+detail_list[0].fields.appro_fun_type+"']").prop("checked",true).parent("label").addClass('active').siblings('label').removeClass('active');
+       $(".dropdownMenu2").text(detail_list[0].fields.appro_os_type).append('&nbsp;<span class="caret"></span>');
+       $("#"+request_id+"modal ."+detail_list[0].fields.appro_cpu+"C").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');
+       $("#"+request_id+"modal ."+detail_list[0].fields.appro_memory_gb+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
+       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.appro_datadisk_gb);
+       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.appro_vm_num);
      });
      var saving_data_disk = $("#"+request_id+"data_volume").val();
      var saving_request_num = $("#"+request_id+"request_num").val();
@@ -262,6 +262,22 @@ $(".conf-agree-btn").click(function(event) {
       var confirm_memory_num = $("#"+id+"memory").val();
     　　var confirm_os_type = $("#"+id+"os_type").val();
       var confirm_data_disk = $("#"+id+"data_disk").val();
+      var confirm_vm_num = $("#"+id+"vm_num").val();
+      var dist_plan = []
+      for (var i = 1; i <= confirm_vm_num; i++) {
+        var tem_arry = []
+        var res_pool = $("#"+id+i+"resourcepool").val()
+        tem_arry.push(res_pool)
+        var ip_addr = $("#"+id+i+"ipaddress").text()
+        tem_arry.push(ip_addr)
+        var storage  = $("#"+id+i+"storage").val()
+        tem_arry.push(storage)
+        var machinename =  $("#"+id+i+"machinename").text()
+        tem_arry.push(machinename)
+        var cluster  = $("#"+id+i+"cluster").val()
+        tem_arry.push(cluster)
+        dist_plan.push(tem_arry)
+      }
       var confirm_form = {
         "request_id":id,
         "confirm_fun_type":confirm_fun_type,
@@ -270,15 +286,14 @@ $(".conf-agree-btn").click(function(event) {
         "confirm_memory_num":confirm_memory_num,
         "confirm_os_type":confirm_os_type,
         "confirm_data_disk":confirm_data_disk,
+        "confirm_vm_num":confirm_vm_num,
+        "confirm_dist_plan":dist_plan,
       }
       $.post('{% url "agree_apply" %}', confirm_form, function(data) {
           var list = eval($.parseJSON(data));
           alert("提交成功！");
-          $("#"+id+"AGModal").modal("hide")
-          var html = "<tr><td class='text-center'>"+list[0].pk+"</td><td class='text-center'>"+list[0].fields.request_id+"</td><td class='text-center'>"+list[0].fields.appro_env_type+'/'+list[0].fields.appro_fun_type+'/'+list[0].fields.appro_os_type+"</td><td class='text-center'><input type='checkbox' name='option1' id=''></td><td class='text-center'>"+list[0].fields.appro_status+"</td><td class='text-center'></td></tr>"
           setTimeout(function(e){
-            $("#agree-table").prepend(html)
-            $("#"+id+"tr").remove()
+            location.href = '{% url "VM_list" %}'
           },200);          
       });
 });

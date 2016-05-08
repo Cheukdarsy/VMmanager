@@ -21,17 +21,15 @@
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">端口:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="text" name="vcport" id="vcport" placeholder="23"></div>
+                                        <input type="text" name="vcport" id="vcport" placeholder="43"></div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
                                     <div class="col-sm-9 dropdown">
-                                        <select name='typeselect' id='typeselect' class='selectpicker'>
-                                            <option id='type1'>开发环境</option>
-                                            <option id='type2'>测试环境</option>
-                                            <option id='type3'>生产环境</option>
-                                            <option id='type4'>灾备环境</option>
-                                        </select>
+                                        <input type="checkbox" name="dev-env">开发环境
+                                        <input type="checkbox" name="test-env">测试环境
+                                        <input type="checkbox" name="product-env">生产环境
+                                        <input type="checkbox" name="backup-env">灾备环境
                                     </div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">

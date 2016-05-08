@@ -171,11 +171,7 @@ $("#slider").slider({
             step:1,
             slide:function(event,ui){
                 $("#amount").val(ui.value);
-                
-                $("#apply_reason").children("li").remove();
-                for(var i=1;i<=parseInt(ui.value);i++){
-                    $("#apply_reason").append("<li class='list-group-item'><label>"+ i +".&nbsp;&nbsp;"+"</label>"+"<input type='text' name='app_name' placeholder='标题'>"+"<input type='text' name='apply_reason' placeholder='原因,不超过40字' style='margin:5px;width:300px;'>"+"</li>");
-                }                
+                               
             }
         });
         $("#amount").val($("#slider1").slider("value"));

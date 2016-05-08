@@ -10,7 +10,7 @@ from .models import Application, Approvel
 @require_role('admin')
 def VM_list(request):
     username = request.user.username
-    applylist = Application.objects.filter(apply_status='SM').order_by('-id')
+    applylist = Approvel.objects.filter(appro_status='AI').order_by('-id')
     apply_confirm_list = Approvel.objects.filter(
         appro_status='AP').order_by('-appro_date')
     applylist, p, applys, page_range, current_page, show_first, show_end = pages(applylist, request)
@@ -23,7 +23,7 @@ def show_apply_machinedetail(request):
     """ajax获取机器详细信息"""
     if request.method == "POST":
         id = int(request.POST.get('id', ''))
-        applydetail = Application.objects.filter(id=id)
+        applydetail = Approvel.objects.filter(application_id=id)
         applydetail_dict = simplejson.dumps(applydetail, cls=QuerySetEncoder)
         return JsonResponse(applydetail_dict)
     else:
@@ -44,15 +44,15 @@ def modify_machine_detail(request, *call_args):
         saving_os_type = request.POST.get('saving_os_type', '')
         saving_data_disk = int(request.POST.get('saving_data_disk', ''))
         saving_apply_num = int(request.POST.get('saving_request_num', ''))
-        saving_apply_status = 'SM'
+        saving_apply_status = 'AI'
         saving_datetime = datetime.datetime.now()
         try:
-            Application.objects.filter(id=request_id).update(fun_type=saving_fun_type, os_type=saving_os_type,
-                                                             cpu=saving_cpu_num, env_type=saving_env_type,
-                                                             memory_gb=saving_memory_num, datadisk_gb=saving_data_disk,
-                                                             request_vm_num=saving_apply_num,
-                                                             apply_date=saving_datetime,
-                                                             apply_status=saving_apply_status)
+            Approvel.objects.filter(application_id=request_id).update(appro_fun_type=saving_fun_type, appro_os_type=saving_os_type,
+                                                             appro_cpu=saving_cpu_num, appro_env_type=saving_env_type,
+                                                             appro_memory_gb=saving_memory_num, appro_datadisk_gb=saving_data_disk,
+                                                             appro_vm_num=saving_apply_num,
+                                                             appro_date=saving_datetime,
+                                                             appro_status=saving_apply_status)
         except Exception, e:
             raise e
         else:
@@ -77,25 +77,35 @@ def agree_apply(request):
         approving_memory_num = int(request.POST.get('confirm_memory_num', ''))
         approving_os_type = request.POST.get('confirm_os_type', '')
         approving_data_disk = int(request.POST.get('confirm_data_disk', ''))
-        approving_apply_num = 1
+        approving_apply_num = int(request.POST.get('confirm_vm_num',''))
+        approving_dist_plan = request.POST.get('confirm_dist_plan', '')
         approving_status = "AP"
         approving_datetime = datetime.datetime.now()
         try:
-            Application.objects.filter(id=request_id).update(apply_status=approving_status)
-            confirm_apply = Approvel(application=application, appro_env_type=approving_env_type,
-                                     appro_fun_type=approving_fun_type,
-                                     appro_cpu=approving_cpu_num, appro_memory_gb=approving_memory_num,
-                                     appro_os_type=approving_os_type, appro_datadisk_gb=approving_data_disk,
-                                     appro_vm_num=approving_apply_num, appro_status=approving_status,
-                                     appro_date=approving_datetime)
-            confirm_apply.save()
+            Approvel.objects.filter(id=request_id).update(appro_status=approving_status)
+            approvel = Approvel.objects.get(application_id=request_id)
+            # src_template = Template.objects.get()
+            # loc_ip = IPUsage.objects.get()
+            # loc_cluster = ComputeResource.objects.get()
+            # loc_resp = ResourcePool.objects.get()
+            # loc_storage = Datastore.get_object()
+            vmorder = VMOrder(approvel=approvel)
+            vmorder.save()
+            # for x in xrange(1,approving_apply_num):
+            #     dist_plan = approving_dist_plan[:5*x]
+            #     vmorder = VMOrder(approvel=approvel,loc_resp=dist_plan[0], loc_ip=dist_plan[1],
+            #                          loc_storage=dist_plan[2],
+            #                          src_template=dist_plan[3], loc_cluster=dist_plan[4])
+            #     vmorder.save()
         except Exception, e:
             raise e
         else:
 
-            confirmlist = Approvel.objects.filter(application=application)
-            list_dict = simplejson.dumps(confirmlist, cls=QuerySetEncoder)
-            return JsonResponse(list_dict)
+            # confirmlist = Approvel.objects.filter(application=application)
+            # list_dict = simplejson.dumps(confirmlist, cls=QuerySetEncoder)
+            # return JsonResponse(list_dict)
+            success_dict = {"info": "success"}
+            return JsonResponse(success_dict)
     else:
         error_dict = {'error': 'pajax post not good'}
         return JsonResponse(error_dict)
@@ -148,19 +158,28 @@ def apply_machine(request):
         submitt = request.POST.get('submit', '')
         if submitt == 'submit':
             apply_status = "SM"
-        else:
-            apply_status = "HD"
-
-        try:
-            db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory, os_type=os_type,
+            try:
+                application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory, os_type=os_type,
                              datadisk_gb=data_disk, request_vm_num=request_num,
                              apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
                              apply_date=datetime.datetime.now(), user=user)
-        except ServerError:
-            pass
-        else:
-            return HttpResponseRedirect(reverse('resource_view'))
+                db_add_approvel(application=application, appro_env_type=env_type, appro_fun_type=fun_type, appro_cpu=cpu, appro_memory_gb=memory, appro_os_type=os_type, appro_datadisk_gb=data_disk, appro_vm_num=request_num, appro_status='AI', appro_date=datetime.datetime.now())
 
+            except ServerError:
+                pass
+            else:
+                return HttpResponseRedirect(reverse('resource_view'))
+        else:
+            apply_status = "HD"
+            try:
+                application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory, os_type=os_type,
+                             datadisk_gb=data_disk, request_vm_num=request_num,
+                             apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
+                             apply_date=datetime.datetime.now(), user=user)
+            except Exception, e:
+                raise e
+            else:
+                return HttpResponseRedirect(reverse('saving_resource_view'))
     return my_render('jvmanager/apply_machine.html', locals(), request)
 
 

@@ -634,6 +634,7 @@ class Approvel(models.Model):
     """审核表"""
     APPROVE_STATUS = (
         ('AP', 'approved'),
+        ('AI', 'approving'),
         ('RB', 'return back')
     )
     application = models.OneToOneField('Application')
