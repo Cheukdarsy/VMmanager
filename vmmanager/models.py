@@ -753,3 +753,12 @@ class VMOrder(models.Model):
     gen_log = models.TextField(null=True)
     gen_time = models.DateTimeField(null=True)
     gen_progress = models.PositiveIntegerField()
+
+    def add_log(self, log):
+        genlog = str(log) + '\n'
+        if self.gen_log:
+            self.gen_log = str(self.gen_log) + genlog
+        else:
+            self.gen_log = genlog
+        self.save(update_fields=['gen_log'])
+        return str(self.gen_log)

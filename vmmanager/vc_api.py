@@ -7,6 +7,7 @@ import time
 
 from pyVmomi import vim
 
+from jumpserver.settings import TIME_ZONE, DNS_LIST
 from .models import *
 
 _typeMap = {
@@ -174,12 +175,11 @@ def wait_for_task(task):
     """ wait for a vCenter task to finish """
     task_done = False
     while not task_done:
-        if task.info.state == 'success':
-            return task.info.result
-
-        if task.info.state == 'error':
-            print "there was an error"
-            task_done = True
+        status = task.info.state
+        if status == 'success':
+            return True, task.info.result
+        elif status == 'error':
+            return False, str(task.info.error)
         time.sleep(5)
 
 
@@ -203,20 +203,25 @@ def vim_create_cluster(content, cluster_name, dc_name=None):
     return cluster_moid
 
 
-def vim_vm_poweron(vim_vm, host=None):
+def _vim_vm_poweron(vim_vm, host=None):
     if isinstance(vim_vm, vim.VirtualMachine):
         try:
             if isinstance(host, vim.HostSystem):
-                vim_vm.PowerOn(host)
+                return wait_for_task(vim_vm.PowerOn(host))
             else:
-                vim_vm.PowerOn()
-            return True
-        except:
-            print("Can not power on the vm")
+                return wait_for_task(vim_vm.PowerOn())
+        except Exception, e:
+            raise e
 
 
-DNS_LIST = []
-VM_TZ = "Asia/Shanghai"
+def poweron_vm(vm, host=None):
+    content = vm.vcenter.connect()
+    vim_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=vm.getMoid())
+
+    vim_host = None
+    if host:
+        vim_host = get_obj(content, vimtype=[vim.HostSystem], moid=host.getMoid())
+    return _vim_vm_poweron(vim_vm, vim_host)
 
 
 def _vim_gen_spec_customize(is_windows, ipusage=None, hostname=None):
@@ -250,7 +255,7 @@ def _vim_gen_spec_customize(is_windows, ipusage=None, hostname=None):
         identity.hostName = namegen
         identity.domain = hostname + '.site'
         identity.hwClockUTC = False
-        identity.timeZone = VM_TZ
+        identity.timeZone = TIME_ZONE
     else:
         identity = vim.vm.customization.IdentitySettings()
     custspec.globalIPSettings = glb_ipsetting
@@ -361,7 +366,7 @@ def _vim_gen_spec_disk(disk_size, unit_number, controller_key, thin_disk=False):
 
 
 def vim_vm_reconfig(vim_vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, tg_mem_mb=-1, tg_datadisk_gb=-1):
-    configspec = vim.vm.ConfigSpec
+    configspec = vim.vm.ConfigSpec()
     if tg_annotation:
         configspec.annotation = tg_annotation
     if tg_cpu_num > 0:

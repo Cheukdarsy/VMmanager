@@ -164,13 +164,5 @@ CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 
 
 # vmmanager settings
-FUN_NET_MAP = {
-    'TEST':{
-        'WIN':'VLAN0145-118.241.45.0',
-        'LX':'VLAN0129-118.241.29.0'
-    },
-    'DEV':{
-        'WIN':'VLAN0145-118.241.45.0',
-        'LX':'VLAN0129-118.241.29.0'
-    }
-}
+
+DNS_LIST = []
