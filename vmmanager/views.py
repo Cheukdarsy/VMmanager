@@ -377,11 +377,32 @@ def ajax_get_storage(request):
 
 
 # VM参数配置页面
-def ajax_add_IP():
+
+def ajax_initial_network(request):
     """
-    动态激活IP段
+    初始化网络IP池
+    参数对照POST
+        net_id: 网络ID
+        net_addr: 网络地址
+        net_mask: 掩码位数
+        gw_addr: 网关地址
     """
-    pass
+    if request.method == 'POST':
+        net_id = int(request.POST['net_id'])
+        net_addr = request.POST['net_addr']
+        net_mask = int(request.POST['net_mask'])
+        gw_addr = request.POST['gw_addr']
+        try:
+            network = Network.objects.get(pk=net_id)
+            network.update_manual(nw=net_addr, mask=net_mask)
+            gw, countip = IPUsage.create(network, gw_addr=gw_addr)
+        except Exception, e:
+            raise e
+        else:
+            return countip
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
 
 
 def ajax_get_IP():
@@ -391,15 +412,60 @@ def ajax_get_IP():
     pass
 
 
-def ajax_add_template():
-    """
-        添加template
-        """
-    pass
-
-
 def get_templates():
     """
-        获取所有模板信息
-        """
-    pass
+    获取所有模板信息
+    返回每个条目的字段对照
+        环境类型       'env_type':templ.env_type,
+        系统类型       'os_type':templ.os_type,
+        虚拟机ID       'vmid':templ.virtualmachine_id,
+        虚拟机名称     'vmname':templ.virtualmachine.name,
+        虚拟机备注     'vm_anno':templ.virtualmachine.annotation
+    """
+    result_list = []
+    try:
+        # Return all templates
+        for templ in Template.objects.all():
+            result_list.append({
+                'env_type': templ.env_type,
+                'os_type': templ.os_type,
+                'vmid': templ.virtualmachine_id,
+                'vmname': templ.virtualmachine.name,
+                'vm_anno': templ.virtualmachine.annotation
+            })
+    except Exception, e:
+        raise e
+    else:
+        return json.dumps(result_list)
+
+
+def ajax_add_template(request):
+    """
+    配置虚拟机模板
+    参数对照POST
+        vmid: 虚拟机ID
+        os_typee: 操作系统类型
+        env_type: 环境类型(开发、测试、生产、灾备)
+    返回每个条目的字段对照
+        环境类型       'env_type':templ.env_type,
+        系统类型       'os_type':templ.os_type,
+        虚拟机ID       'vmid':templ.virtualmachine_id,
+        虚拟机名称     'vmname':templ.virtualmachine.name,
+        虚拟机备注     'vm_anno':templ.virtualmachine.annotation
+    """
+    if request.method == 'POST':
+        vmid = int(request.POST['vmid'])
+        virtualmachine = VirtualMachine.objects.get(pk=vmid)
+        os_type = str(request.POST['os_type'])
+        env_type = str(request.POST['env_type'])
+        try:
+            template = Template(virtualmachine=virtualmachine, env_type=env_type, os_type=os_type)
+            template.save()
+        except Exception, e:
+            raise e
+        else:
+            # Return all templates
+            return get_templates()
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)

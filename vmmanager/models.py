@@ -308,11 +308,13 @@ class Network(VMObject):
             return
         name = vimobj.name.strip()
         self.name = name
-        try:
-            self.net = name.split('-')[-1]
-        except:
-            self.net = "1.1.1.0"
-        self.netmask = 24
+        if not self.net:
+            try:
+                self.net = name.split('-')[-1]
+            except:
+                self.net = "1.1.1.0"
+        if not self.netmask:
+            self.netmask = 24
         self.save()
 
     @classmethod
@@ -345,7 +347,7 @@ class IPUsage(models.Model):
         unique_together = ('network', 'ipaddress')
 
     @classmethod
-    def create(cls, network):
+    def create(cls, network, gw_addr=None):
         if not isinstance(network, Network):
             return None, False
         qset = cls.objects.filter(network=network)
@@ -358,13 +360,19 @@ class IPUsage(models.Model):
         iplist_int = range(int(net_bin, 2) + 1,
                            int(net_bin[:mask] + '1' * (32 - mask), 2))
         iplist_bin = [bin(subn)[2:].rjust(32, str(0)) for subn in iplist_int]
-        gw = cls.objects.create(ipaddress=bin2str(iplist_bin.pop()), network=network, used_manage=True,
+        if isinstance(gw_addr, str):
+            if str2bin(gw_addr) in iplist_bin:
+                iplist_bin.remove(str2bin(gw_addr))
+                gw = cls.objects.create(ipaddress=gw_addr, network=network, used_manage=True,
+                                        used_manage_app='GW')
+            else:
+                raise Exception("network doesn't cover the gw address!")
+        else:
+            gw = cls.objects.create(ipaddress=bin2str(iplist_bin.pop()), network=network, used_manage=True,
                                 used_manage_app='GW')
-        new_ipusage = [gw]
         for ip_bin in iplist_bin:
-            new_ipusage.append(
-                cls.objects.create(ipaddress=bin2str(ip_bin), network=network))
-        return new_ipusage, True
+            cls.objects.create(ipaddress=bin2str(ip_bin), network=network)
+        return gw, len(iplist_int)
 
     def occupy(self):
         self.used_manage = False
@@ -668,12 +676,10 @@ class VirtualMachine(VMObject):
         return new_obj, created
 
 
-class Template(VirtualMachine):
+class Template(models.Model):
+    virtualmachine = models.OneToOneField(VirtualMachine, primary_key=True)
     os_type = models.CharField(max_length=10)
     env_type = models.CharField(max_length=30)
-
-    class Meta:
-        pass
 
     @classmethod
     def select_template(cls, env_type, os_type):
