@@ -115,7 +115,7 @@
                         <th class="text-center">申请单号</th>
                         <th class="text-center">系统名称</th>
                         <th class="text-center">IP</th>
-                        <th class="text-center">物理主机</th>
+                        <th class="text-center">集群/资源池</th>
                         <th class="text-center">存储</th>
                         <th class="text-center">生成进度</th>
                         <th class="text-center">生成日志</th>
@@ -211,6 +211,24 @@ $(".modify-btn").click(function(event) {
 
 $(".agree-btn").click(function(event) {
      id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+     $.ajax({
+       url: '{% url "ajax_get_agree_form" %}',
+       type: 'post',
+       dataType: 'json',
+       data: {"id":parseInt(id) },
+       success:function(data){
+          var detail_list = eval($.parseJSON(data));
+          var show_list = [detail_list[0].fields.appro_env_type,detail_list[0].fields.appro_fun_type,detail_list[0].fields.appro_cpu,detail_list[0].fields.appro_memory_gb,detail_list[0].fields.appro_datadisk_gb,detail_list[0].fields.appro_vm_num,detail_list[0].fields.appro_os_type];
+          for (var i = 0; i < show_list.length; i++) {
+            $("#"+id+"AgreeForm em").eq(i).text(show_list[i])
+          }
+       },
+       error:function() {
+         /* Act on the event */
+         alert("ajax 异常")
+       }
+     })
+     
 });
 $(".delete-btn").click(function(event) {
      id = $(this).parents(".detail-table").children('td:first-child').attr("id");
@@ -255,8 +273,89 @@ $(".modify-save-btn").click(function(event) {
       });
 
 });
+
+$(".cluster").focus(function(event) {
+  $(this).empty().append("<option value='value'></option>");
+  $.ajax({
+     url: '{% url "ajax_get_cluster" %}',
+    type: 'post',
+    dataType: 'json',
+    data: {"id": parseInt(id)},
+    success:function(data){
+      var cluster_list = eval($.parseJSON(data));
+      for (var i = 0; i < cluster_list.length; i++) {
+        $(this).append("<option value='"+cluster_list[i].id+"'>"+cluster_list[i].cluster_name+"</option>")
+      }
+    }
+    error(function() {
+      alert("ajax 异常")
+    });
+  })
+});
+$(".cluster").change(function(event) {
+  /*$("#"+id+$(this).get(0).selectedIndex+"block").css("display","block");*/
+  $("#"+id+$(this).get(0).selectedIndex+"resourcepool").empty();
+  $("#"+id+$(this).get(0).selectedIndex+"storage").empty();
+  $.ajax({
+    url: '{% url "ajax_get_resource" %}',
+    type: 'post',
+    dataType: 'json',
+    data: {"id": parseInt($(this).val())},
+    success:function(data){
+      for (var i = 0; i < data.length; i++) {
+        $(this).append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
+      }
+    },
+    error:function(){
+      alert("ajax 异常");
+    }
+  });
+  $.ajax({
+    url: '{% url "ajax_get_storage" %}',
+    type: 'post',
+    dataType: 'json',
+    data: {"id": parseInt($(this).val())},
+    success:function(data){
+      for (var i = 0; i < data.length; i++) {
+        $(this).append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
+      }
+    },
+    error:function(){
+      alert("ajax 异常");
+    }
+  })
+  
+});
 $(".conf-agree-btn").click(function(event) {
-      var confirm_fun_type = $("#"+id+"fun_type").val();
+      var basic_data_array = []
+      var assign_data_array = []
+      var temp_array = []
+      for (var i = 0; i < $("#"+id+"AgreeForm em").length; i++) {
+        basic_data_array.push($("#"+id+"AgreeForm em").eq(i).text())
+      }
+      for (var j = 1; j <= $(".pannel-body").length-1; j++) {
+          temp_array.push($("#"+id+j+"ipaddress").text())
+          temp_array.push($("#"+id+j+"machinename").text())
+          temp_array.push($("#"+id+j+"cluster").val())
+          temp_array.push($("#"+id+j+"resourcepool").val())
+          temp_array.push($("#"+id+j+"storage").val())
+          assign_data_array[j-1] = temp_array
+          temp_array = []
+        }
+        var confirm_form = {
+          "request_id":id,
+          "basic_data":basic_data_array,
+          "assign_data":assign_data_array,
+        }
+      $.post('{% url "agree_apply" %}', confirm_form, function(data) {
+          var list = eval($.parseJSON(data));
+          alert("提交成功！");
+          setTimeout(function(e){
+            location.href = '{% url "VM_list" %}'
+          },200);          
+      });
+      console.log("get basic data successfully!")
+      /*var confirm_fun_type = $("#"+id+"fun_type").val();
       var confirm_env_type = $("#"+id+"env_type").val();
       var confirm_cpu_num = $("#"+id+"cpu").val();
       var confirm_memory_num = $("#"+id+"memory").val();
@@ -295,7 +394,7 @@ $(".conf-agree-btn").click(function(event) {
           setTimeout(function(e){
             location.href = '{% url "VM_list" %}'
           },200);          
-      });
+      });*/
 });
 $(".gen-btn").click(function(event) {
   var str=""

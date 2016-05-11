@@ -17,4 +17,8 @@ urlpatterns = patterns('',
                        url(r'^ajax_submit_saving_resource/$',
                            submit_saving_resource, name='submit_saving_resource'),
                        url(r'^set_vm/$',set_vm,name='set_vm'),
+                       url(r'^ajax_get_agree_form/$',ajax_get_agree_form,name='ajax_get_agree_form'),
+                       url(r'^ajax_get_cluster/$',ajax_get_cluster,name='ajax_get_cluster'),
+                       url(r'^ajax_get_resource/$',ajax_get_resource,name='ajax_get_resource'),
+                       url(r'^ajax_get_storage/$',ajax_get_storage,name='ajax_get_storage'),
                        )

@@ -73,15 +73,17 @@ def agree_apply(request):
     """
     if request.method == "POST":
         request_id = int(request.POST.get('request_id', ''))
-        application = Application.objects.get(id=request_id)
-        approving_env_type = request.POST.get('confirm_env_type', '')
-        approving_fun_type = request.POST.get('confirm_fun_type', '')
-        approving_cpu_num = int(request.POST.get('confirm_cpu_num', ''))
-        approving_memory_num = int(request.POST.get('confirm_memory_num', ''))
-        approving_os_type = request.POST.get('confirm_os_type', '')
-        approving_data_disk = int(request.POST.get('confirm_data_disk', ''))
-        approving_apply_num = int(request.POST.get('confirm_vm_num',''))
-        approving_dist_plan = request.POST.get('confirm_dist_plan', '')
+        # application = Application.objects.get(id=request_id)
+        # approving_env_type = request.POST.get('confirm_env_type', '')
+        # approving_fun_type = request.POST.get('confirm_fun_type', '')
+        # approving_cpu_num = int(request.POST.get('confirm_cpu_num', ''))
+        # approving_memory_num = int(request.POST.get('confirm_memory_num', ''))
+        # approving_os_type = request.POST.get('confirm_os_type', '')
+        # approving_data_disk = int(request.POST.get('confirm_data_disk', ''))
+        # approving_apply_num = int(request.POST.get('confirm_vm_num',''))
+        # approving_dist_plan = request.POST.get('confirm_dist_plan', '')
+        basic_data = request.POST.get('basic_data','')
+        assign_data = request.POST.get('assign_data','')
         approving_status = "AP"
         approving_datetime = datetime.now()
         try:
@@ -139,6 +141,21 @@ def agree_apply_list(request):
     """
     pass
 
+@require_role('admin')
+def ajax_get_agree_form(request):
+    agree_form = []
+    if request.method == 'POST':
+        pk = request.POST.get('id','')
+        try:
+            agree_form = Approvel.objects.filter(application_id=pk)
+
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse(simplejson.dumps(agree_form, cls=QuerySetEncoder))
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
 
 @require_role(role='user')
 def apply_machine(request):
