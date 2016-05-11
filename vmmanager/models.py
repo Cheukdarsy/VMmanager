@@ -1,6 +1,6 @@
 # -*- coding:utf8 -*-
 
-import warnings
+import warnings, json
 from datetime import datetime, timedelta
 from os import system
 
@@ -18,6 +18,34 @@ class SheetField(models.Model):
     field_name = models.CharField(max_length=45)
     option = models.CharField(max_length=45, null=True)
     option_display = models.CharField(max_length=50, null=True)
+
+    @classmethod
+    def get_options(cls, field, sheet='global'):
+        return cls.objects.filter(sheet_name=sheet, field_name=field)
+
+    @classmethod
+    def add_field(cls, field, fld_display, sheet='global'):
+        pre_check_field = cls.objects.filter(sheet_name='field', field_name=sheet, option=field)
+        if pre_check_field.exists():
+            raise Exception("Field already exists!")
+        else:
+            cls.objects.create(sheet_name='field', field_name=sheet, option=field, option_display=fld_display)
+            return {'sheet': sheet, 'field': field}
+
+    @classmethod
+    def add_option(cls, option, opt_display, field, sheet='global'):
+        pre_check_field = cls.objects.filter(sheet_name='field', field_name=sheet, option=field)
+        if not pre_check_field.exists():
+            raise Exception("Field doesn't exist" + str(sheet) + " : " + str(field))
+        pre_check_option = cls.get_options(field, sheet).filter(option=option)
+        if pre_check_option.exists():
+            raise Exception("Option already exists!")
+        else:
+            new_opt = cls.objects.create(sheet_name=sheet, field_name=field, option=option, option_display=opt_display)
+            return new_opt
+
+    def __str__(self):
+        return ""
 
 
 _sis = {}
@@ -40,7 +68,7 @@ class VCenter(models.Model):
     version = models.CharField(max_length=30)
     ip = models.GenericIPAddressField(protocol='ipv4')
     port = models.PositiveIntegerField()
-    env_type = models.CharField(max_length=50)
+    env_type = models.CharField(max_length=200)
     user = models.CharField(max_length=30)
     password = models.CharField(max_length=30)
     last_connect = models.DateTimeField(null=True)
@@ -54,11 +82,12 @@ class VCenter(models.Model):
         content = si.RetrieveContent()
         new_uuid = content.about.instanceUuid
         new_version = content.about.apiVersion
-        if env_type:
-            env_type_str = ','.join(sorted(env_type))
-        else:
-            env_type_str = ''
-        vc = cls(ip=ip, port=port, env_type=env_type_str, user=user, password=pwd, uuid=new_uuid,
+        qs_envtype = SheetField.get_options('env_type')
+        env_type_dict = {}
+        if isinstance(env_type, list) and qs_envtype.exists():
+            for opt in qs_envtype:
+                env_type_dict[opt.option] = (opt.option in env_type)
+        vc = cls(ip=ip, port=port, env_type=json.dumps(env_type_dict), user=user, password=pwd, uuid=new_uuid,
                  version=new_version, last_connect=datetime.now())
         vc.save()
         SetSiByVCid(vc.id, si)
