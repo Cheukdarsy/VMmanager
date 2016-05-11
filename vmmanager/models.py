@@ -1,7 +1,7 @@
 # -*- coding:utf8 -*-
 
 import warnings
-from datetime import datetime
+from datetime import datetime, timedelta
 from os import system
 
 from django.db import models
@@ -342,6 +342,7 @@ class IPUsage(models.Model):
     used_manage_app = models.CharField(max_length=30, null=True)
     used_occupy = models.BooleanField(default=False)
     use_unknown = models.BooleanField(default=False)
+    lock_until = models.DateTimeField(null=True)
 
     class Meta:
         unique_together = ('network', 'ipaddress')
@@ -369,16 +370,20 @@ class IPUsage(models.Model):
                 raise Exception("network doesn't cover the gw address!")
         else:
             gw = cls.objects.create(ipaddress=bin2str(iplist_bin.pop()), network=network, used_manage=True,
-                                used_manage_app='GW')
+                                    used_manage_app='GW')
         for ip_bin in iplist_bin:
             cls.objects.create(ipaddress=bin2str(ip_bin), network=network)
         return gw, len(iplist_int)
 
-    def occupy(self):
+    def get_occupy(self):
         self.used_manage = False
         self.use_unknown = False
         self.used_occupy = True
         self.save(update_fields=['used_manage', 'use_unknown', 'use_occupy'])
+
+    def release_occupy(self):
+        self.used_occupy = False
+        self.save(update_fields=['use_occupy'])
 
     def manage(self, app):
         self.use_unknown = False
@@ -387,23 +392,31 @@ class IPUsage(models.Model):
         self.used_manage_app = app
         self.save(update_fields=['used_manage', 'used_manage_app', 'use_unknown', 'use_occupy'])
 
-    def ping(self):
-        status = system("ping -c 3 " + self.ipaddress)
+    def ping(self, count=2):
+        status = system("ping -c " + str(count) + " " + self.ipaddress)
         return status == 0
 
     @classmethod
-    def select_ip(cls, network, occupy=True):
+    def select_ip(cls, network, lock_sec=600, test=False, ip_num=1, occupy=False):
         test_list = cls.objects.filter(network=network, used_manage=False, used_occupy=False, use_unknown=False,
-                                       vm__isnull=True)
+                                       vm__isnull=True).order_by('id')
+        result_li = []
         for ipusage in test_list:
-            if ipusage.ping():
+            if ipusage.lock_until and ipusage.lock_until > datetime.now():
+                continue
+            if test and ipusage.ping():
                 ipusage.use_unknown = True
                 ipusage.save(update_fields=['use_unknown'])
                 continue
+            if occupy:
+                ipusage.occupy()
             else:
-                if occupy:
-                    ipusage.occupy()
-                return ipusage
+                ipusage.lock_until = datetime.now() + timedelta(seconds=lock_sec)
+                ipusage.save(update_fields=['lock_until'])
+            result_li.append(ipusage)
+            if len(result_li) >= ip_num:
+                break
+        return result_li
 
 
 class Datastore(VMObject):
