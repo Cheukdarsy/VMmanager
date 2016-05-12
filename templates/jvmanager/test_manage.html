@@ -295,6 +295,7 @@ $(".cluster").focus(function(event) {
 });
 $(".cluster").change(function(event) {
   /*$("#"+id+$(this).get(0).selectedIndex+"block").css("display","block");*/
+  vm_num = $("#"+id+"uni").text()
   $("#"+id+$(this).get(0).selectedIndex+"resourcepool").empty();
   $("#"+id+$(this).get(0).selectedIndex+"storage").empty();
   $.ajax({
@@ -304,7 +305,7 @@ $(".cluster").change(function(event) {
     data: {"id": parseInt($(this).val())},
     success:function(data){
       for (var i = 0; i < data.length; i++) {
-        $(".cluster").append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
+        $("#"+id+vm_num+"resourcepool").append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
       }
     },
     error:function(){
@@ -318,7 +319,7 @@ $(".cluster").change(function(event) {
     data: {"id": parseInt($(this).val())},
     success:function(data){
       for (var i = 0; i < data.length; i++) {
-        $(".cluster").append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
+        $("#"+id+vm_num+"storage").append("<option value='"+data[i].datastore_id+"'>"+data[i].datastore_name+"</option>")
       }
     },
     error:function(){
@@ -334,7 +335,7 @@ $(".conf-agree-btn").click(function(event) {
       for (var i = 0; i < $("#"+id+"AgreeForm em").length; i++) {
         basic_data_array.push($("#"+id+"AgreeForm em").eq(i).text())
       }
-      for (var j = 1; j <= $(".pannel-body").length-1; j++) {
+      for (var j = 1; j <= $(".panel-body").length-1; j++) {
           temp_array.push($("#"+id+j+"ipaddress").text())
           temp_array.push($("#"+id+j+"machinename").text())
           temp_array.push($("#"+id+j+"cluster").val())
@@ -348,6 +349,7 @@ $(".conf-agree-btn").click(function(event) {
           "basic_data":basic_data_array,
           "assign_data":assign_data_array,
         }
+        alert(confirm_form)
       $.post('{% url "agree_apply" %}', confirm_form, function(data) {
           var list = eval($.parseJSON(data));
           alert("提交成功！");

@@ -68,7 +68,7 @@
                                          <div class="panel-heading">分配计划:</div>
                                          {% for i in key.appro_vm_num|times %}
                                           <div class="panel-body" id="{{key.id}}{{i}}" style="border:1px solid;border-color:#DDD">
-                                           
+                                           <p id="{{key.id}}uni">{{i}}</p>
                                           <div class="form-group col-sm-6">
                                              <label class="col-sm-6 control-label">IP地址:&nbsp;</label>
                                              <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
@@ -92,8 +92,6 @@
                                              <label class="col-sm-3 control-label">集群(主机):&nbsp;</label>
                                              <div class="col-sm-9">
                                                <select name="cluster" class="form-control cluster" id="{{key.id}}{{i}}cluster">
-                                                 <option value="cluster1">cluster1</option>
-                                                 <option value="cluster2">cluster2</option>
                                                </select>
                                              </div>
                                            </div>
@@ -102,7 +100,6 @@
                                              <label class="col-sm-6 control-label">资源池:&nbsp;</label>
                                              <div class="col-sm-6"  style="margin-top:5px">
                                                <select name="cluster" id="{{key.id}}{{i}}resourcepool">
-                                                 <option value="cluster1">cluster1</option>
                                                </select>
                                              </div>
                                            </div>
@@ -111,10 +108,10 @@
                                              <label class="col-sm-6 control-label" >存储:&nbsp;</label>
                                              <div class="col-sm-6" style="margin-top:5px">
                                                <select name="cluster" id="{{key.id}}{{i}}storage">
-                                                 <option value="cluster1">cluster1</option>
                                                </select>
                                              </div>
                                            </div>
+                                          <p id="{{key.id}}uni" style="display:none">{{i}}</p>
                                          </div> 
                                            </div>
                                            
