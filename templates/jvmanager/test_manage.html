@@ -349,6 +349,7 @@ $(".conf-agree-btn").click(function(event) {
           "basic_data":basic_data_array,
           "assign_data":assign_data_array,
         }
+        alert(confirm_form)
       $.post('{% url "agree_apply" %}', confirm_form, function(data) {
           var list = eval($.parseJSON(data));
           alert("提交成功！");

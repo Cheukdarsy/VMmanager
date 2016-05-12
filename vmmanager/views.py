@@ -380,13 +380,7 @@ def ajax_get_storage(request):
         cluster_id = int(request.POST['id'])
         try:
             cluster = ComputeResource.objects.get(pk=cluster_id)
-            resp_set = cluster.resourcepool_set.filter(parent__isnull=False)
-            result_list = []
-            for resp in resp_set:
-                result_list.append({
-                    'datastore_id': resp.id,
-                    'datastore_name': resp.name
-                })
+            result_list = get_capi_datastore(cluster)
         except Exception, e:
             raise e
         else:
@@ -434,7 +428,9 @@ def ajax_select_IP(request):
         try:
             approvel = Approvel.objects.get(pk=approvel_id)
             env_type = approvel.appro_env_type
-            result_list = get_lociphostname(env_type)
+            os_type = approvel.appro_os_type
+            vm_num = approvel.appro_vm_num
+            result_list = get_lociphostname(env_type, os_type, vm_num)
         except Exception, e:
             raise e
         else:

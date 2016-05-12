@@ -478,5 +478,21 @@ def get_capi_cluster(env_type):
     return result_list
 
 
-def get_lociphostname(env_type):
-    pass
+def get_lociphostname(env_type, os_type, vm_num):
+    nw_set = []
+    qset = Network.objects.all()
+    for nw in qset:
+        envt_dict = json.loads(nw.env_type)
+        ost_dict = json.loads(nw.os_type)
+        if envt_dict[env_type] and ost_dict[os_type]:
+            nw_set.append(nw)
+    ip_list = []
+    for nw in nw_set:
+        ip_count = len(ip_list)
+        if ip_count < vm_num:
+            ip_list.extend(IPUsage.select_ip(nw, ip_num=vm_num - ip_count))
+        else:
+            break
+    result_list = []
+    for ipusage in ip_list:
+        prefix = str(env_type)[0].upper() + str(env_type)[1:].lower()
