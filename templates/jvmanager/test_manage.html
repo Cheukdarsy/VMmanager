@@ -54,7 +54,8 @@
                     <tbody>
                     {% for key in applys %}
                       <tr class="detail-table"  id="{{ key.application_id }}tr">
-                        <td class="text-center" id="{{ key.application_id }}">{{ key.application_id }}</td>
+                      <td class="text-center" id="{{ key.id }}" style="display:none">{{ key.id }}</td>
+                        <td class="text-center">{{ key.application_id }}</td>
                         <td class="text-center">{{ key.application.user.username}}</td>
                         <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
                         <td class="text-center">{{ key.appro_env_type}}/{% ifequal key.appro_fun_type "normal"  %}
@@ -211,6 +212,7 @@ $(".modify-btn").click(function(event) {
 
 $(".agree-btn").click(function(event) {
      id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+     alert(id);
      $.ajax({
        url: '{% url "ajax_get_agree_form" %}',
        type: 'post',
@@ -224,7 +226,6 @@ $(".agree-btn").click(function(event) {
           }
        },
        error:function() {
-         /* Act on the event */
          alert("ajax 异常")
        }
      })
@@ -284,7 +285,7 @@ $(".cluster").focus(function(event) {
     success:function(data){
       var cluster_list = eval($.parseJSON(data));
       for (var i = 0; i < cluster_list.length; i++) {
-        $(this).append("<option value='"+cluster_list[i].id+"'>"+cluster_list[i].cluster_name+"</option>")
+        $(this).append("<option value='"+cluster_list[i].cluster_id+"'>"+cluster_list[i].cluster_name+"</option>")
       }
     }
     error(function() {
@@ -354,48 +355,9 @@ $(".conf-agree-btn").click(function(event) {
             location.href = '{% url "VM_list" %}'
           },200);          
       });
-      console.log("get basic data successfully!")
-      /*var confirm_fun_type = $("#"+id+"fun_type").val();
-      var confirm_env_type = $("#"+id+"env_type").val();
-      var confirm_cpu_num = $("#"+id+"cpu").val();
-      var confirm_memory_num = $("#"+id+"memory").val();
-    　　var confirm_os_type = $("#"+id+"os_type").val();
-      var confirm_data_disk = $("#"+id+"data_disk").val();
-      var confirm_vm_num = $("#"+id+"vm_num").val();
-      var dist_plan = []
-      for (var i = 1; i <= confirm_vm_num; i++) {
-        var tem_arry = []
-        var res_pool = $("#"+id+i+"resourcepool").val()
-        tem_arry.push(res_pool)
-        var ip_addr = $("#"+id+i+"ipaddress").text()
-        tem_arry.push(ip_addr)
-        var storage  = $("#"+id+i+"storage").val()
-        tem_arry.push(storage)
-        var machinename =  $("#"+id+i+"machinename").text()
-        tem_arry.push(machinename)
-        var cluster  = $("#"+id+i+"cluster").val()
-        tem_arry.push(cluster)
-        dist_plan.push(tem_arry)
-      }
-      var confirm_form = {
-        "request_id":id,
-        "confirm_fun_type":confirm_fun_type,
-        "confirm_env_type":confirm_env_type,
-        "confirm_cpu_num":confirm_cpu_num,
-        "confirm_memory_num":confirm_memory_num,
-        "confirm_os_type":confirm_os_type,
-        "confirm_data_disk":confirm_data_disk,
-        "confirm_vm_num":confirm_vm_num,
-        "confirm_dist_plan":dist_plan,
-      }
-      $.post('{% url "agree_apply" %}', confirm_form, function(data) {
-          var list = eval($.parseJSON(data));
-          alert("提交成功！");
-          setTimeout(function(e){
-            location.href = '{% url "VM_list" %}'
-          },200);          
-      });*/
+      console.log("get data successfully!")
 });
+
 $(".gen-btn").click(function(event) {
   var str=""
   $("#agree-table input[name='checkbox']:checkbox").each(function() {

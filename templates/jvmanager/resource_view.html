@@ -38,7 +38,7 @@
                   <th class="text-center">memory</th>
                   <th class="text-center">数量</th>
                   <th class="text-center">处理结果</th> 
-                  <th class="text-center">IP</th>
+                  <th class="text-center">返回信息</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -58,13 +58,14 @@
                         <td class="text-center">{{ key.memory_gb}}</td>
                         <td class="text-center">{{ key.request_vm_num}}</td>
                         <td class="text-center">{% ifequal key.apply_status "SM"  %}
-                          待审核
+                          待审核</td><td class="text-center"></td>
                         {% endifequal %} {% ifequal key.apply_status "RB"  %}
-                          被退回&nbsp;{{key.apply_reason}}
+                          被退回&nbsp;</td><td class="text-center">{{key.apply_reason}}</td>
                         {% endifequal %} {% ifequal key.apply_status "SC" %}
-                          已生成
-                        {% endifequal %}</td>
-                        <td class="text-center"><button type="button" class="btn btn-xs btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">弹出框</button></td>
+                          已生成</td><td class="text-center"><button type="button" class="btn btn-xs btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">详细</button></td>
+                        {% endifequal %}
+
+                        
                     </tr>
                      {% endfor %} 
                 </tbody></table>
