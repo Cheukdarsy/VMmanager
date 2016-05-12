@@ -69,9 +69,9 @@
                         <td class="text-center">{{ key.application.apply_reason}}</td>
                         <td class="text-center">
                           <div >
-                          <button class="btn btn-primary btn-xs modify-btn" id="{{ key.application_id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.application_id}}modal">修改</button>
+                          <button class="btn btn-primary btn-xs modify-btn" id="{{ key.application_id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
                         {% include 'jvmanager/modify_modal.html' %}  
-                            <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.application_id }}approved" data-toggle="modal" data-target="#{{ key.application_id}}AGModal">同意</button>
+                            <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.application_id }}approved" data-toggle="modal" data-target="#{{ key.id}}AGModal">同意</button>
                         {% include 'jvmanager/agree_modal.html' %}                  
                             <button class="btn btn-danger btn-xs delete-btn" type="submit" id="delete">删除</button>
                           </div>
@@ -124,21 +124,21 @@
                       </tr>
                     </thead>
                     <tbody id="agree-table">
-                      {% for list in apply_confirm_list %}
+                      {% for list in vmorder %}
                       <tr id="{{list.id}}tr">
                         <td class="text-center">{{list.id}}</td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
                         <td class="text-center"></td>
-                        <td class="text-center">{% if list.appro_status == "AP" %}
+                        <td class="text-center">{% if list.gen_status == "AP" %}
                               待生成
                         {% else %}
                           　　显示进度
                         {% endif %} </td>
                         <td class="text-center">success</td>
                         <td class="text-center">
-                          <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.application_id}}"></td>
+                          <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}"></td>
                       </tr>
                       {% endfor %}
                     </tbody>
@@ -233,11 +233,13 @@ $(".agree-btn").click(function(event) {
 });
 $(".delete-btn").click(function(event) {
      id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+     application_id = $(this).parents(".detail-table").children('td').eq(1).attr('id');
      var reason = prompt("确认删除？填写原因，将会退回给申请人哦")
      if(reason){
        reason = $.trim(reason);
        var dict = {
         "id":id,
+        "application_id":application_id,
         "reason":reason,
        }
        $.post('{% url "delete_apply" %}', dict, function(data) {

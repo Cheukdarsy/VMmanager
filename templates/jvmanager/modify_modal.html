@@ -1,4 +1,4 @@
-                            <div class="modal fade" id="{{ key.application_id}}modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal fade" id="{{ key.id}}modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                   <div class="modal-header">
@@ -156,9 +156,9 @@
                                             <div class="form-group">
                                               <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
                                               <div class="col-sm-9">
-                                                <div id="{{ key.application_id }}modifyslider" class="modifyslider"></div>
+                                                <div id="{{ key.id }}modifyslider" class="modifyslider"></div>
                                                 <p>
-                                                  <input type="text" id="{{ key.application_id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.appro_datadisk_gb }}">
+                                                  <input type="text" id="{{ key.id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.appro_datadisk_gb }}">
                                                   <label for="data_volume">&nbsp;G</label>
                                                 </p>
                                               </div>
@@ -169,9 +169,9 @@
                                           <div class="form-group">
                                             <label class="col-sm-3 control-label">数量:&nbsp;</label>
                                             <div class="col-sm-9">
-                                            <div id="{{ key.application_id }}modifyslider_num" class="modifyslider"></div>
+                                            <div id="{{ key.id }}modifyslider_num" class="modifyslider"></div>
                                             <p style="float:left">
-                                            <input type="text" style="width:30px;" id="{{ key.application_id }}request_num" name="request_num" value="{{ key.appro_vm_num }}">
+                                            <input type="text" style="width:30px;" id="{{ key.id }}request_num" name="request_num" value="{{ key.appro_vm_num }}">
                                             <label for="amount">&nbsp;台</label>
                                         </p>
                                           </div>
