@@ -1,6 +1,7 @@
 # -*- coding:utf8 -*-
 
-import warnings, json
+import json
+import warnings
 from datetime import datetime, timedelta
 from os import system
 
@@ -63,6 +64,24 @@ def SetSiByVCid(vcid, si):
     _sis[vcid] = si
 
 
+def env_type2json(env_type):
+    qs_envtype = SheetField.get_options('env_type')
+    env_type_dict = {}
+    if isinstance(env_type, list) and qs_envtype.exists():
+        for opt in qs_envtype:
+            env_type_dict[opt.option] = (opt.option in env_type)
+    return json.dumps(env_type_dict)
+
+
+def os_type2json(os_type):
+    qs_ostype = SheetField.get_options('os_type')
+    env_type_dict = {}
+    if isinstance(os_type, list) and qs_ostype.exists():
+        for opt in qs_ostype:
+            env_type_dict[opt.option] = (opt.option in os_type)
+    return json.dumps(env_type_dict)
+
+
 class VCenter(models.Model):
     uuid = models.CharField(max_length=50, unique=True)
     version = models.CharField(max_length=30)
@@ -82,12 +101,7 @@ class VCenter(models.Model):
         content = si.RetrieveContent()
         new_uuid = content.about.instanceUuid
         new_version = content.about.apiVersion
-        qs_envtype = SheetField.get_options('env_type')
-        env_type_dict = {}
-        if isinstance(env_type, list) and qs_envtype.exists():
-            for opt in qs_envtype:
-                env_type_dict[opt.option] = (opt.option in env_type)
-        vc = cls(ip=ip, port=port, env_type=json.dumps(env_type_dict), user=user, password=pwd, uuid=new_uuid,
+        vc = cls(ip=ip, port=port, env_type=env_type2json(env_type), user=user, password=pwd, uuid=new_uuid,
                  version=new_version, last_connect=datetime.now())
         vc.save()
         SetSiByVCid(vc.id, si)
@@ -229,6 +243,7 @@ class ResourcePool(VMObject):
     share_mem_level = models.CharField(max_length=30)
     limit_cpu_mhz = models.BigIntegerField()
     limit_mem_mb = models.BigIntegerField()
+    env_type = models.CharField(max_length=200)
     # related fields
     owner = models.ForeignKey('ComputeResource', null=True)
     parent = models.ForeignKey('ResourcePool', null=True)
@@ -238,6 +253,7 @@ class ResourcePool(VMObject):
             super(ResourcePool, self)._sum_hash() +
             hash(self.share_cpu_level) + hash(self.share_mem_level) +
             hash(self.limit_cpu_mhz) + hash(self.limit_mem_mb) +
+            hash(self.env_type) +
             hash(self.owner_id) + hash(self.parent_id)
         )
 
@@ -250,6 +266,7 @@ class ResourcePool(VMObject):
         self.share_mem_level = config.memoryAllocation.shares.level
         self.limit_cpu_mhz = config.cpuAllocation.limit
         self.limit_mem_mb = config.memoryAllocation.limit
+        self.env_type = vc.env_type
         if related:
             # update owner
             clus = vimobj.owner
@@ -306,18 +323,21 @@ def str2bin(i_str):
 class Network(VMObject):
     net = models.GenericIPAddressField(protocol='ipv4')
     netmask = models.PositiveSmallIntegerField(default=24)
+    env_type = models.CharField(max_length=200, null=True)
+    os_type = models.CharField(max_length=200, null=True)
 
     def _sum_hash(self):
         return (
             super(Network, self)._sum_hash() +
-            hash(self.net) + hash(self.netmask)
+            hash(self.net) + hash(self.netmask) +
+            hash(self.env_type) + hash(self.os_type)
         )
 
     def getmask_str(self):
         mask_bin = (self.netmask * '1').ljust(32, str(0))
         return bin2str(mask_bin)
 
-    def update_manual(self, nw=None, mask=None):
+    def update_manual(self, nw=None, mask=None, env_type=None, os_type=None):
         """
         Update network infomations manually
         :param nw: network address,e.g.192.168.1.0
@@ -328,9 +348,13 @@ class Network(VMObject):
         """
         if nw:
             self.net = nw
-        if type(mask) == int:
+        if isinstance(mask, int):
             self.netmask = mask
-        self.save(update_fields=['net', 'netmask'])
+        if isinstance(env_type, list):
+            self.env_type = env_type2json(env_type)
+        if isinstance(os_type, list):
+            self.os_type = os_type2json(os_type)
+        self.save()
 
     def update_by_vim(self, vimobj):
         if not isinstance(vimobj, vim.Network):

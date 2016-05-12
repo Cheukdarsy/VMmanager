@@ -430,7 +430,7 @@ def get_capi_datastore(cluster):
         dslist = host.datastores.filter(multi_hosts_access=True)
         for ds in dslist:
             if ds.accessible and ds.id not in ds_count:
-                ds_count.add(ds_count)
+                ds_count.add(ds.id)
                 result_list.append({
                     'datastore_id': ds.id,
                     'datastore_name': ds.name,
@@ -447,10 +447,16 @@ def get_capi_cluster(env_type):
     :type env_type:unicode
     :return:
     """
-    vc_set = list(VCenter.objects.filter(env_type__contains=env_type))
+    qset = VCenter.objects.all()
+    vc_set = []
+    for vc in qset:
+        envt_dict = json.loads(vc.env_type)
+        if envt_dict[env_type]:
+            vc_set.append(vc)
     result_list = []
     for vc in vc_set:
         for clus in vc.computeresource_set.all():
+            print(clus.name)
             hostnum = clus.hostsystem_set.count()
             stor_capi = get_capi_datastore(clus)
             free_space_all = 0
