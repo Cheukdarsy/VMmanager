@@ -476,3 +476,7 @@ def get_capi_cluster(env_type):
             }
             result_list.append(clus_capi)
     return result_list
+
+
+def get_lociphostname(env_type):
+    pass

@@ -286,7 +286,7 @@ def ajax_get_process(request):
         except Exception, e:
             raise e
         else:
-            return json.dumps(result_list)
+            return JsonResponse(result_list)
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
@@ -329,7 +329,7 @@ def ajax_get_cluster(request):
         except Exception, e:
             raise e
         else:
-            return json.dumps(result_list)
+            return JsonResponse(result_list)
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
@@ -358,7 +358,7 @@ def ajax_get_resource(request):
         except Exception, e:
             raise e
         else:
-            return json.dumps(result_list)
+            return JsonResponse(result_list)
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
@@ -390,7 +390,7 @@ def ajax_get_storage(request):
         except Exception, e:
             raise e
         else:
-            return json.dumps(result_list)
+            return JsonResponse(result_list)
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
@@ -425,11 +425,24 @@ def ajax_initial_network(request):
         return JsonResponse(error_dict)
 
 
-def ajax_get_IP():
+def ajax_select_IP(request):
     """
-        获取可用IP列表，用于下拉框选择
-        """
-    pass
+    获取可用IP列表，用于下拉框选择
+    """
+    if request.method == 'POST':
+        approvel_id = int(request.POST['id'])
+        try:
+            approvel = Approvel.objects.get(pk=approvel_id)
+            env_type = approvel.appro_env_type
+            result_list = get_lociphostname(env_type)
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse(result_list)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
+
 
 
 def get_templates():
