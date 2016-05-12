@@ -166,3 +166,15 @@ CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 # vmmanager settings
 
 DNS_LIST = []
+VM_PREFIX_ENV = {
+    'DEVP': 'd',
+    'PROD': 'p',
+    'DRCV': 'r',
+    'TEST': 't',
+    'default': 't'
+}
+VM_PREFIX_LOC = {
+    '241': 'DF',
+    '240': 'CG',
+    'default': 'DF'
+}

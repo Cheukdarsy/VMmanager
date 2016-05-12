@@ -7,7 +7,7 @@ import time
 
 from pyVmomi import vim
 
-from jumpserver.settings import TIME_ZONE, DNS_LIST
+from jumpserver.settings import TIME_ZONE, DNS_LIST, VM_PREFIX_ENV, VM_PREFIX_LOC
 from .models import *
 
 _typeMap = {
@@ -425,19 +425,17 @@ def get_task(content, taskid):
 def get_capi_datastore(cluster):
     hostlist = cluster.hostsystem_set.all()
     result_list = []
-    ds_count = set()
+    ds_set = Datastore.objects.none()
     for host in hostlist:
-        dslist = host.datastores.filter(multi_hosts_access=True)
-        for ds in dslist:
-            if ds.accessible and ds.id not in ds_count:
-                ds_count.add(ds.id)
-                result_list.append({
-                    'datastore_id': ds.id,
-                    'datastore_name': ds.name,
-                    'free_space_gb': ds.free_space_mb / 1024,
-                    'total_space_gb': ds.total_space_mb / 1024,
-                    'free_percent': ds.free_space_mb * 100 / ds.total_space_mb
-                })
+        ds_set = ds_set | host.datastores
+    for ds in ds_set.filter(multi_hosts_access=True, accessible=True).distinct():
+        result_list.append({
+            'datastore_id': ds.id,
+            'datastore_name': ds.name,
+            'free_space_gb': ds.free_space_mb / 1024,
+            'total_space_gb': ds.total_space_mb / 1024,
+            'free_percent': ds.free_space_mb * 100 / ds.total_space_mb
+        })
     return result_list
 
 
@@ -456,7 +454,6 @@ def get_capi_cluster(env_type):
     result_list = []
     for vc in vc_set:
         for clus in vc.computeresource_set.all():
-            print(clus.name)
             hostnum = clus.hostsystem_set.count()
             stor_capi = get_capi_datastore(clus)
             free_space_all = 0
@@ -478,28 +475,32 @@ def get_capi_cluster(env_type):
     return result_list
 
 
-def get_lociphostname(env_type, os_type, vm_num):
-    nw_set = []
-    qset = Network.objects.all()
-    for nw in qset:
-        envt_dict = json.loads(nw.env_type)
-        ost_dict = json.loads(nw.os_type)
-        if envt_dict[env_type] and ost_dict[os_type]:
-            nw_set.append(nw)
-    ip_list = []
-    for nw in nw_set:
-        ip_count = len(ip_list)
-        if ip_count < vm_num:
-            ip_list.extend(IPUsage.select_ip(nw, ip_num=vm_num - ip_count))
-        else:
-            break
+def select_ip_and_vmname(env_type, os_type, num=1):
     result_list = []
-    for ipusage in ip_list:
-        prefix = 'tDF'
-        ipaddr = str(ipusage.ipaddress).split('.')
-        vmname = prefix + ipaddr[2].rjust(3, str(0)) + ipaddr[3].rjust(3, str(0))
-        logger.debug(vmname)
-        result_list.append({
-            'ipaddress': ipusage.ipaddress,
-            'vmname': vmname
-        })
+    nw_set = Network.match(env_type=env_type, os_type=os_type)
+    for nw in nw_set:
+        while len(result_list) < num:
+            ipusage = IPUsage.select_ip(nw)
+            if not ipusage:
+                break
+            ipaddress = str(ipusage.ipaddress)
+            ip_split = ipaddress.split('.')
+            # determine vmname prefix_env as t/d/p/r
+            if env_type in VM_PREFIX_ENV.keys():
+                prefix_env = VM_PREFIX_ENV[env_type]
+            else:
+                prefix_env = VM_PREFIX_ENV['default']
+            # determin vmname prefix_loc
+            if ip_split[1] in VM_PREFIX_LOC.keys():
+                prefix_loc = VM_PREFIX_LOC[ip_split[1]]
+            else:
+                prefix_loc = VM_PREFIX_LOC['default']
+            # Join vmname together
+            vmname = prefix_env + prefix_loc + "%03d%03d" % (int(ip_split[2]), int(ip_split[3]))
+            result_list.append({
+                'ipaddress': ipaddress,
+                'vmname': vmname
+            })
+        if len(result_list) == num:
+            return result_list
+    return result_list
