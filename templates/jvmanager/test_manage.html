@@ -277,16 +277,15 @@ $(".modify-save-btn").click(function(event) {
 });
 
 $(".cluster").focus(function(event) {
-  $(this).empty().append("<option value='value'></option>");
+  $(".cluster").empty().append("<option value='value'></option>");
   $.ajax({
      url: '{% url "ajax_get_cluster" %}',
     type: 'post',
     dataType: 'json',
     data: {"id": parseInt(id)},
     success:function(data){
-      var cluster_list = eval($.parseJSON(data));
-      for (var i = 0; i < cluster_list.length; i++) {
-        $(this).append("<option value='"+cluster_list[i].cluster_id+"'>"+cluster_list[i].cluster_name+"</option>")
+      for (var i = 0; i < data.length; i++) {
+        $(".cluster").append("<option value='"+data[i].cluster_id+"'>"+data[i].cluster_name+"</option>")
       }
     },
     error:function(){
@@ -305,7 +304,7 @@ $(".cluster").change(function(event) {
     data: {"id": parseInt($(this).val())},
     success:function(data){
       for (var i = 0; i < data.length; i++) {
-        $(this).append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
+        $(".cluster").append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
       }
     },
     error:function(){
@@ -319,7 +318,7 @@ $(".cluster").change(function(event) {
     data: {"id": parseInt($(this).val())},
     success:function(data){
       for (var i = 0; i < data.length; i++) {
-        $(this).append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
+        $(".cluster").append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
       }
     },
     error:function(){

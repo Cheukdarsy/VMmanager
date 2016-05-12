@@ -89,7 +89,7 @@ def agree_apply(request):
         approving_datetime = datetime.now()
         try:
             Approvel.objects.filter(id=request_id).update(appro_status=approving_status)
-            approvel = Approvel.objects.get(application_id=request_id)
+            approvel = Approvel.objects.get(id=request_id)
             # src_template = Template.objects.get()
             # loc_ip = IPUsage.objects.get()
             # loc_cluster = ComputeResource.objects.get()
