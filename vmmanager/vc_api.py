@@ -495,4 +495,11 @@ def get_lociphostname(env_type, os_type, vm_num):
             break
     result_list = []
     for ipusage in ip_list:
-        prefix = str(env_type)[0].upper() + str(env_type)[1:].lower()
+        prefix = 'tDF'
+        ipaddr = str(ipusage.ipaddress).split('.')
+        vmname = prefix + ipaddr[2].rjust(3, str(0)) + ipaddr[3].rjust(3, str(0))
+        logger.debug(vmname)
+        result_list.append({
+            'ipaddress': ipusage.ipaddress,
+            'vmname': vmname
+        })
