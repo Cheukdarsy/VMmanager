@@ -318,7 +318,7 @@ def ajax_get_cluster(request):
         LUN剩余百分比    'free_space': stor_capi_percent
     """
     if request.method == 'POST':
-        application_id = int(request.POST['id'])
+        approvel_id = int(request.POST['id'])
         try:
             approvel = Approvel.objects.get(pk=approvel_id)
             env_type = approvel.appro_env_type
