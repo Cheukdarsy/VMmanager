@@ -384,8 +384,8 @@ def ajax_get_storage(request):
             result_list = []
             for resp in resp_set:
                 result_list.append({
-                    'resp_id': resp.id,
-                    'resp_name': resp.name
+                    'datastore_id': resp.id,
+                    'datastore_name': resp.name
                 })
         except Exception, e:
             raise e
