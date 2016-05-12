@@ -16,6 +16,7 @@ def VM_list(request):
     applylist = Approvel.objects.filter(appro_status='AI').order_by('-id')
     apply_confirm_list = Approvel.objects.filter(
         appro_status='AP').order_by('-appro_date')
+    vmorder = VMOrder.objects.all()
     applylist, p, applys, page_range, current_page, show_first, show_end = pages(applylist, request)
 
     return my_render('jvmanager/test_manage.html', locals(), request)
@@ -26,7 +27,7 @@ def show_apply_machinedetail(request):
     """ajax获取机器详细信息"""
     if request.method == "POST":
         id = int(request.POST.get('id', ''))
-        applydetail = Approvel.objects.filter(application_id=id)
+        applydetail = Approvel.objects.filter(id=id)
         applydetail_dict = simplejson.dumps(applydetail, cls=QuerySetEncoder)
         return JsonResponse(applydetail_dict)
     else:
@@ -121,9 +122,11 @@ def delete_apply(request):
     """删除申请"""
     if request.method == 'POST':
         id = int(request.POST.get("id", ""))
+        application_id = int(request.POST.get("application_id", ""))
         reason = request.POST.get("reason", "")
         try:
-            Application.objects.filter(id=id).update(apply_status='RB', apply_reason=reason)
+            Approvel.objects.filter(id=id).update(approv_status='RB')
+            Application.objects.filter(id=application_id).update(apply_status='RB', apply_reason=reason)
         except Exception, e:
             raise e
         else:
