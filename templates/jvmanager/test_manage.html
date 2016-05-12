@@ -212,7 +212,6 @@ $(".modify-btn").click(function(event) {
 
 $(".agree-btn").click(function(event) {
      id = $(this).parents(".detail-table").children('td:first-child').attr("id");
-     alert(id);
      $.ajax({
        url: '{% url "ajax_get_agree_form" %}',
        type: 'post',
@@ -289,10 +288,10 @@ $(".cluster").focus(function(event) {
       for (var i = 0; i < cluster_list.length; i++) {
         $(this).append("<option value='"+cluster_list[i].cluster_id+"'>"+cluster_list[i].cluster_name+"</option>")
       }
+    },
+    error:function(){
+      alert("ajax 异常");
     }
-    error(function() {
-      alert("ajax 异常")
-    });
   })
 });
 $(".cluster").change(function(event) {
