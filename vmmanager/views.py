@@ -1,10 +1,6 @@
 # -*- coding:utf-8 -*-
 
-import json
-from datetime import datetime
-
 from .jvm_api import *
-from .models import Application, Approvel, VMOrder
 from .tasks import vmtask_clone_vm
 from .vc_api import *
 
@@ -475,11 +471,7 @@ def ajax_select_template(request):
             approvel = Approvel.objects.get(pk=approvel_id)
             env_type = approvel.appro_env_type
             os_type = approvel.appro_os_type
-            if request.POST.has_key('num'):
-                vm_num = int(request.POST['num'])
-            else:
-                vm_num = approvel.appro_vm_num
-            result_list = select_ip_and_vmname(env_type, os_type, vm_num)
+            result_list = select_template(env_type=env_type, os_type=os_type)
         except Exception, e:
             raise e
         else:

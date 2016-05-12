@@ -504,3 +504,16 @@ def select_ip_and_vmname(env_type, os_type, num=1):
         if len(result_list) == num:
             return result_list
     return result_list
+
+
+def select_template(**kwargs):
+    templ_set = Template.match(**kwargs).order_by('id')
+    result_list = []
+    for template in templ_set:
+        result_list.append({
+            'template_id': template.id,
+            'template_name': template.virtualmachine.name,
+            'template_os_version': template.virtualmachine.guestos_shortname,
+            'template_os_fullname': template.virtualmachine.guestos_fullname
+        })
+    return result_list
