@@ -74,42 +74,26 @@ def agree_apply(request):
     """
     if request.method == "POST":
         request_id = int(request.POST.get('request_id', ''))
-        # application = Application.objects.get(id=request_id)
-        # approving_env_type = request.POST.get('confirm_env_type', '')
-        # approving_fun_type = request.POST.get('confirm_fun_type', '')
-        # approving_cpu_num = int(request.POST.get('confirm_cpu_num', ''))
-        # approving_memory_num = int(request.POST.get('confirm_memory_num', ''))
-        # approving_os_type = request.POST.get('confirm_os_type', '')
-        # approving_data_disk = int(request.POST.get('confirm_data_disk', ''))
-        # approving_apply_num = int(request.POST.get('confirm_vm_num',''))
-        # approving_dist_plan = request.POST.get('confirm_dist_plan', '')
-        basic_data = request.POST.get('basic_data','')
-        assign_data = request.POST.get('assign_data','')
+        basic_data = request.POST.getlist('basic_data[]')
+        assign_data = request.POST.getlist('assign_data[]')
         approving_status = "AP"
         approving_datetime = datetime.now()
+        vmorder = []
         try:
             Approvel.objects.filter(id=request_id).update(appro_status=approving_status)
-            approvel = Approvel.objects.get(id=request_id)
-            # src_template = Template.objects.get()
-            # loc_ip = IPUsage.objects.get()
-            # loc_cluster = ComputeResource.objects.get()
-            # loc_resp = ResourcePool.objects.get()
-            # loc_storage = Datastore.get_object()
-            vmorder = VMOrder(approvel=approvel)
-            vmorder.save()
-            # for x in xrange(1,approving_apply_num):
-            #     dist_plan = approving_dist_plan[:5*x]
-            #     vmorder = VMOrder(approvel=approvel,loc_resp=dist_plan[0], loc_ip=dist_plan[1],
-            #                          loc_storage=dist_plan[2],
-            #                          src_template=dist_plan[3], loc_cluster=dist_plan[4])
-            #     vmorder.save()
+            for vm in xrange(1,int(basic_data[5])):
+                approvel = Approvel.objects.get(id=request_id)
+                src_template = Template.objects.get(pk=1)
+                loc_ip = IPUsage.objects.get(ipaddress=assign_data[vm][0])
+                loc_cluster = ComputeResource.objects.get(id=assign_data[vm][2])
+                loc_resp = ResourcePool.objects.get(id=assign_data[vm][3])
+                loc_storage = Datastore.objects.get(id=assign_data[vm][4])
+                vmorder[vm] = VMOrder(approvel=approvel,loc_hostname="443",loc_resp=loc_resp,loc_ip=loc_ip,loc_storage=loc_storage,src_template=src_template,loc_cluster=loc_cluster,gen_progress=1)
+                vmorder[vm].save()
+
         except Exception, e:
             raise e
         else:
-
-            # confirmlist = Approvel.objects.filter(application=application)
-            # list_dict = simplejson.dumps(confirmlist, cls=QuerySetEncoder)
-            # return JsonResponse(list_dict)
             success_dict = {"info": "success"}
             return JsonResponse(success_dict)
     else:

@@ -21,4 +21,6 @@ urlpatterns = patterns('',
                        url(r'^ajax_get_cluster/$',ajax_get_cluster,name='ajax_get_cluster'),
                        url(r'^ajax_get_resource/$',ajax_get_resource,name='ajax_get_resource'),
                        url(r'^ajax_get_storage/$',ajax_get_storage,name='ajax_get_storage'),
+                       url(r'^ajax_select_IP/$',ajax_select_IP,name='ajax_select_IP'),
+                       url(r'^generate_machine/$',generate_machine,name='generate_machine'),
                        )

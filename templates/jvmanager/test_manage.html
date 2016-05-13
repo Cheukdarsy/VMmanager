@@ -127,10 +127,10 @@
                       {% for list in vmorder %}
                       <tr id="{{list.id}}tr">
                         <td class="text-center">{{list.id}}</td>
-                        <td class="text-center"></td>
-                        <td class="text-center"></td>
-                        <td class="text-center"></td>
-                        <td class="text-center"></td>
+                        <td class="text-center">{{list.approvel.appro_os_type}}</td>
+                        <td class="text-center">{{list.loc_ip.ipaddress}}</td>
+                        <td class="text-center">{{list.loc_cluster.name}}</td>
+                        <td class="text-center">{{list.loc_storage.name}}</td>
                         <td class="text-center">{% if list.gen_status == "AP" %}
                               待生成
                         {% else %}
@@ -276,8 +276,28 @@ $(".modify-save-btn").click(function(event) {
 
 });
 
+$(".change-ip").click(function(event) {
+  vm_num=$(this).attr('name');
+  alert(id)
+  $.ajax({
+     url: '{% url "ajax_select_IP" %}',
+    type: 'post',
+    dataType: 'json',
+    data: {"id": parseInt(id)},
+    success:function(data){
+      alert(JSON.stringify(data))
+        $("#"+id+vm_num+"ipaddress").text(data.ipaddress)
+    },
+    error:function(){
+      alert("ajax 异常");
+    }
+  })
+  
+});
+
 $(".cluster").focus(function(event) {
-  $(".cluster").empty().append("<option value='value'></option>");
+  vm_num=$(this).siblings('strong').text()
+  $("#"+id+vm_num+"cluster").empty().append("<option value='value'></option>");
   $.ajax({
      url: '{% url "ajax_get_cluster" %}',
     type: 'post',
@@ -285,7 +305,7 @@ $(".cluster").focus(function(event) {
     data: {"id": parseInt(id)},
     success:function(data){
       for (var i = 0; i < data.length; i++) {
-        $(".cluster").append("<option value='"+data[i].cluster_id+"'>"+data[i].cluster_name+"</option>")
+        $("#"+id+vm_num+"cluster").append("<option value='"+data[i].cluster_id+"'>"+data[i].cluster_name+"</option>")
       }
     },
     error:function(){
@@ -295,15 +315,17 @@ $(".cluster").focus(function(event) {
 });
 $(".cluster").change(function(event) {
   /*$("#"+id+$(this).get(0).selectedIndex+"block").css("display","block");*/
-  vm_num = $("#"+id+"uni").text()
-  $("#"+id+$(this).get(0).selectedIndex+"resourcepool").empty();
-  $("#"+id+$(this).get(0).selectedIndex+"storage").empty();
+  vm_num=$(this).siblings('strong').text()
+  /*vm_num = $("#"+id+"uni").text()*/
+  $("#"+id+vm_num+"resourcepool").empty();
+  $("#"+id+vm_num+"storage").empty();
   $.ajax({
     url: '{% url "ajax_get_resource" %}',
     type: 'post',
     dataType: 'json',
     data: {"id": parseInt($(this).val())},
     success:function(data){
+      $("#"+id+vm_num+"resourcepool").empty();
       for (var i = 0; i < data.length; i++) {
         $("#"+id+vm_num+"resourcepool").append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
       }
@@ -318,6 +340,7 @@ $(".cluster").change(function(event) {
     dataType: 'json',
     data: {"id": parseInt($(this).val())},
     success:function(data){
+      $("#"+id+vm_num+"storage").empty();
       for (var i = 0; i < data.length; i++) {
         $("#"+id+vm_num+"storage").append("<option value='"+data[i].datastore_id+"'>"+data[i].datastore_name+"</option>")
       }
@@ -335,7 +358,7 @@ $(".conf-agree-btn").click(function(event) {
       for (var i = 0; i < $("#"+id+"AgreeForm em").length; i++) {
         basic_data_array.push($("#"+id+"AgreeForm em").eq(i).text())
       }
-      for (var j = 1; j <= $(".panel-body").length-1; j++) {
+      for (var j = 1; j <= $("#"+id+"AgreeForm strong").length-1; j++) {
           temp_array.push($("#"+id+j+"ipaddress").text())
           temp_array.push($("#"+id+j+"machinename").text())
           temp_array.push($("#"+id+j+"cluster").val())
@@ -349,9 +372,9 @@ $(".conf-agree-btn").click(function(event) {
           "basic_data":basic_data_array,
           "assign_data":assign_data_array,
         }
-        alert(confirm_form)
+        alert(JSON.stringify(confirm_form))
       $.post('{% url "agree_apply" %}', confirm_form, function(data) {
-          var list = eval($.parseJSON(data));
+
           alert("提交成功！");
           setTimeout(function(e){
             location.href = '{% url "VM_list" %}'
@@ -368,7 +391,20 @@ $(".gen-btn").click(function(event) {
       }
   });
   //ajax传输数据
+  $.ajax({
+    url: '{% url "generate_machine" %}',
+    type: 'post',
+    dataType: 'json',
+    data: {"id": parseInt(id)},
+    success:function(data){
+      alert(data)
+    },
+    error:function(){
+      alert("ajax 异常");
+    }
+  });
   
+  alert(str)
   $(".gen-btn").text('正在生成资源');
   var count = 0;
   setInterval(function(){

@@ -65,16 +65,16 @@
                                              </div>
                                            </div>
                                          </div>
-                                         <div class="panel-heading">分配计划:</div>
+                                         <div class="panel-heading" id="disct_plan">分配计划:</div>
                                          {% for i in key.appro_vm_num|times %}
                                           <div class="panel-body" id="{{key.id}}{{i}}" style="border:1px solid;border-color:#DDD">
-                                           <p id="{{key.id}}uni">{{i}}</p>
+                                           
                                           <div class="form-group col-sm-6">
                                              <label class="col-sm-6 control-label">IP地址:&nbsp;</label>
                                              <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
                                                <p style="width:200px">
-                                                 <label id="{{ key.id }}{{i}}ipaddress">118.240.67.5</label>
-                                                 <a class="btn btn-success btn-xs">换</a>
+                                                 <label id="{{ key.id }}{{i}}ipaddress" class="change-ip" name="{{i}}">118.241.29.254</label>
+                                                 <button class="change-ip btn btn-success btn-xs">换</button>
                                                </p>
                                              </div>
                                            </div>
@@ -93,6 +93,7 @@
                                              <div class="col-sm-9">
                                                <select name="cluster" class="form-control cluster" id="{{key.id}}{{i}}cluster">
                                                </select>
+                                               <strong id="{{i}}uni">{{i}}</strong>
                                              </div>
                                            </div>
                                            <div class="form-group col-sm-12" id="{{key.id}}{{i}}block">
@@ -111,7 +112,6 @@
                                                </select>
                                              </div>
                                            </div>
-                                          <p id="{{key.id}}uni" style="display:none">{{i}}</p>
                                          </div> 
                                            </div>
                                            

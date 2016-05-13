@@ -179,7 +179,7 @@ $("#slider").slider({
 function selectMenu(factor,name){
             factor.next().find("a").click(function(){
             factor.text($(this).text()).append('&nbsp;<span class="caret"></span>');
-            name.val($(this).text());
+            name.val($(this).attr('name'));
         })
         }
         
