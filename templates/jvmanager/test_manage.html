@@ -284,9 +284,8 @@ $(".change-ip").click(function(event) {
     type: 'post',
     dataType: 'json',
     data: {"id": parseInt(id)},
-    success:function(data){
-      alert(JSON.stringify(data))
-        $("#"+id+vm_num+"ipaddress").text(data.ipaddress)
+    success:function(data){      
+        $("#"+id+vm_num+"ipaddress").text(data[vm_num-1].ipaddress)
     },
     error:function(){
       alert("ajax 异常");
@@ -396,14 +395,7 @@ $(".gen-btn").click(function(event) {
     data: {"id": parseInt(id)},
     success:function(data){
       alert(data)
-    },
-    error:function(){
-      alert("ajax 异常");
-    }
-  });
-  
-  alert(str)
-  $(".gen-btn").text('正在生成资源');
+      $(".gen-btn").text('正在生成资源');
   var count = 0;
   setInterval(function(){
     $(".gen-btn").append('<span>.</span>');
@@ -413,6 +405,11 @@ $(".gen-btn").click(function(event) {
       count = 0;
     }
   },200)
+    },
+    error:function(){
+      alert("ajax 异常");
+    }
+  });
 });
 function selectMenu(factor,name){
             factor.next().find("a").click(function(){

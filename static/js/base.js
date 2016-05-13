@@ -166,7 +166,7 @@ $("#slider").slider({
         $("#data_volume").val($("#slider").slider("value"));
  $("#slider1").slider({
             value:1,
-            min:0,
+            min:1,
             max:6,
             step:1,
             slide:function(event,ui){
