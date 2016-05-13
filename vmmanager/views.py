@@ -77,26 +77,27 @@ def agree_apply(request):
         request_id = int(request.POST.get('request_id', ''))
         basic_data = request.POST.getlist('basic_data[]')
         assign_data = request.POST.getlist('assign_data[]')
-        approving_status = "AP"
+        approving_status = "AI"
         approving_datetime = datetime.now()
         vmorder = []
         try:
+            vmorder = basic_data[5]
             Approvel.objects.filter(id=request_id).update(appro_status=approving_status)
-            for vm in xrange(1,int(basic_data[5])):
+            for vm in xrange(0,int(basic_data[5])):
+                one_data = assign_data[vm*6:(vm+1)*6]
                 approvel = Approvel.objects.get(id=request_id)
-                src_template = Template.objects.get(pk=1)
-                loc_ip = IPUsage.objects.get(ipaddress=assign_data[vm][0])
-                loc_cluster = ComputeResource.objects.get(id=assign_data[vm][2])
-                loc_resp = ResourcePool.objects.get(id=assign_data[vm][3])
-                loc_storage = Datastore.objects.get(id=assign_data[vm][4])
-                vmorder[vm] = VMOrder(approvel=approvel,loc_hostname="443",loc_resp=loc_resp,loc_ip=loc_ip,loc_storage=loc_storage,src_template=src_template,loc_cluster=loc_cluster,gen_progress=1)
-                vmorder[vm].save()
+                src_template = Template.objects.get(pk=2)
+                loc_ip = IPUsage.objects.get(ipaddress=one_data[0])
+                loc_cluster = ComputeResource.objects.get(id=int(one_data[2]))
+                loc_resp = ResourcePool.objects.get(id=int(one_data[3]))
+                loc_storage = Datastore.objects.get(id=int(one_data[4]))
+                VMOrder.objects.create(approvel=approvel,loc_hostname="43",loc_resp=loc_resp,loc_ip=loc_ip,loc_storage=loc_storage,src_template=src_template,loc_cluster=loc_cluster,gen_progress=1)
 
         except Exception, e:
             raise e
         else:
             success_dict = {"info": "success"}
-            return JsonResponse(success_dict)
+            return JsonResponse(vmorder)
     else:
         error_dict = {'error': 'pajax post not good'}
         return JsonResponse(error_dict)
@@ -204,7 +205,8 @@ def resource_view(request):
     用户资源概览
     """
     username = request.user.username
-    applylist = Application.objects.exclude(apply_status="HD").order_by('-id')
+    user=get_object(User,username=username)
+    applylist = Application.objects.exclude(apply_status="HD").filter(user=user).order_by('-id')
     applylist, p, applys, page_range, current_page, show_first, show_end = pages(
         applylist, request)
     return my_render('jvmanager/resource_view.html', locals(), request)

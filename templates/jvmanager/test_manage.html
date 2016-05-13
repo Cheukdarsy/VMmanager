@@ -364,18 +364,16 @@ $(".conf-agree-btn").click(function(event) {
           temp_array.push($("#"+id+j+"cluster").val())
           temp_array.push($("#"+id+j+"resourcepool").val())
           temp_array.push($("#"+id+j+"storage").val())
-          assign_data_array[j-1] = temp_array
-          temp_array = []
+          
         }
         var confirm_form = {
           "request_id":id,
           "basic_data":basic_data_array,
-          "assign_data":assign_data_array,
+          "assign_data":temp_array,
         }
         alert(JSON.stringify(confirm_form))
       $.post('{% url "agree_apply" %}', confirm_form, function(data) {
-
-          alert("提交成功！");
+          alert("提交成功！"+data);
           setTimeout(function(e){
             location.href = '{% url "VM_list" %}'
           },200);          
