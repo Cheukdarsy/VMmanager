@@ -528,8 +528,18 @@ def ajax_add_template(request):
         os_type = str(request.POST['os_type'])
         env_type = str(request.POST['env_type'])
         try:
-            template = Template(virtualmachine=virtualmachine, env_type=env_type, os_type=os_type)
+            template = Template(virtualmachine=virtualmachine, env_type=env_type)
+            os_versions = SheetField.get_options(field='os_version', sheet='os_type_' + str(os_type))
+            if os_versions.exists():
+                try:
+                    SheetField.add_option(virtualmachine.guestos_shortname, virtualmachine.guestos_fullname,
+                                          field='os_version', sheet='os_type_' + str(os_type))
+                except:
+                    pass
+            else:
+                raise Exception("os_type not exist, please add it first!")
             template.save()
+
         except Exception, e:
             raise e
         else:

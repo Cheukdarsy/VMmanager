@@ -427,7 +427,7 @@ def get_capi_datastore(cluster):
     result_list = []
     ds_set = Datastore.objects.none()
     for host in hostlist:
-        ds_set = ds_set | host.datastores
+        ds_set = ds_set | host.datastores.all()
     for ds in ds_set.filter(multi_hosts_access=True, accessible=True).distinct():
         result_list.append({
             'datastore_id': ds.id,
@@ -461,7 +461,7 @@ def get_capi_cluster(env_type):
             for capi in stor_capi:
                 free_space_all += capi['free_space_gb']
                 total_space_all += capi['total_space_gb']
-            stor_capi_percent = free_space_all * 100 / total_space_all
+            stor_capi_percent = float(free_space_all) * 100 / total_space_all
             clus_capi = {
                 'cluster_id': clus.id,
                 'cluster_name': clus.name,

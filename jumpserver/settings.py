@@ -165,7 +165,7 @@ CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 
 # vmmanager settings
 
-DNS_LIST = []
+DNS_LIST = ["84.32.241.1", "84.32.145.2"]
 VM_PREFIX_ENV = {
     'DEVP': 'd',
     'PROD': 'p',

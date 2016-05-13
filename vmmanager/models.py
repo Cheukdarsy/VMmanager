@@ -221,9 +221,9 @@ class ComputeResource(VMObject):
         if not qset.exists():
             return 0
         for host in qset:
-            total_cpu += host.total_cpu_mhz
+            total_cpu += host.cpu_total()
             usage_cpu += host.usage_cpu_mhz
-        return 100 - (usage_cpu / total_cpu)
+        return 100 - (float(usage_cpu) * 100 / total_cpu)
 
     def free_mem(self):
         """
@@ -237,7 +237,7 @@ class ComputeResource(VMObject):
         for host in qset:
             total_mem += host.total_mem_mb
             usage_mem += host.usage_mem_mb
-        return 100 - (usage_mem / total_mem)
+        return 100 - (float(usage_mem) * 100 / total_mem)
 
 
 class ResourcePool(VMObject):
