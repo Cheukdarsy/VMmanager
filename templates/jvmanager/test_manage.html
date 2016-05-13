@@ -228,6 +228,22 @@ $(".agree-btn").click(function(event) {
          alert("ajax 异常")
        }
      })
+     $.ajax({
+     url: '{% url "ajax_select_IP" %}',
+    type: 'post',
+    dataType: 'json',
+    data: {"id": parseInt(id)},
+    success:function(data){ 
+       for (var vm_num = 0; i < data.length; i++) {
+          v_id = vm_num+1
+          $("#"+id+v_id+"ipaddress").text(data[vm_num].ipaddress)
+            }     
+ 
+    },
+    error:function(){
+      alert("ajax 异常");
+    }
+  })
      
 });
 $(".delete-btn").click(function(event) {
@@ -278,14 +294,13 @@ $(".modify-save-btn").click(function(event) {
 
 $(".change-ip").click(function(event) {
   vm_num=$(this).attr('name');
-  alert(id)
   $.ajax({
      url: '{% url "ajax_select_IP" %}',
     type: 'post',
     dataType: 'json',
     data: {"id": parseInt(id)},
     success:function(data){      
-        $("#"+id+vm_num+"ipaddress").text(data[vm_num-1].ipaddress)
+        $("#"+id+vm_num+"ipaddress").text(data[Math.random(1,data.length)].ipaddress)
     },
     error:function(){
       alert("ajax 异常");
