@@ -1,11 +1,9 @@
 # -*- coding:utf-8 -*-
 
 from .jvm_api import *
-from .vc_api import *
-import json
-from .models import VCenter, Application, Approvel, VMOrder
 from .tasks import vmtask_clone_vm
-from datetime import datetime
+from .vc_api import *
+
 
 # Create your views here.
 
@@ -51,12 +49,15 @@ def modify_machine_detail(request, *call_args):
         saving_apply_status = 'AI'
         saving_datetime = datetime.now()
         try:
-            Approvel.objects.filter(application_id=request_id).update(appro_fun_type=saving_fun_type, appro_os_type=saving_os_type,
-                                                             appro_cpu=saving_cpu_num, appro_env_type=saving_env_type,
-                                                             appro_memory_gb=saving_memory_num, appro_datadisk_gb=saving_data_disk,
-                                                             appro_vm_num=saving_apply_num,
-                                                             appro_date=saving_datetime,
-                                                             appro_status=saving_apply_status)
+            Approvel.objects.filter(application_id=request_id).update(appro_fun_type=saving_fun_type,
+                                                                      appro_os_type=saving_os_type,
+                                                                      appro_cpu=saving_cpu_num,
+                                                                      appro_env_type=saving_env_type,
+                                                                      appro_memory_gb=saving_memory_num,
+                                                                      appro_datadisk_gb=saving_data_disk,
+                                                                      appro_vm_num=saving_apply_num,
+                                                                      appro_date=saving_datetime,
+                                                                      appro_status=saving_apply_status)
         except Exception, e:
             raise e
         else:
@@ -128,11 +129,12 @@ def agree_apply_list(request):
     """
     pass
 
+
 @require_role('admin')
 def ajax_get_agree_form(request):
     agree_form = []
     if request.method == 'POST':
-        pk = request.POST.get('id','')
+        pk = request.POST.get('id', '')
         try:
             agree_form = Approvel.objects.filter(application_id=pk)
 
@@ -143,6 +145,7 @@ def ajax_get_agree_form(request):
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
+
 
 @require_role(role='user')
 def apply_machine(request):
@@ -166,11 +169,15 @@ def apply_machine(request):
         if submitt == 'submit':
             apply_status = "SM"
             try:
-                application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory, os_type=os_type,
-                             datadisk_gb=data_disk, request_vm_num=request_num,
-                             apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
-                             apply_date=datetime.now(), user=user)
-                db_add_approvel(application=application, appro_env_type=env_type, appro_fun_type=fun_type, appro_cpu=cpu, appro_memory_gb=memory, appro_os_type=os_type, appro_datadisk_gb=data_disk, appro_vm_num=request_num, appro_status='AI', appro_date=datetime.now())
+                application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory,
+                                               os_type=os_type,
+                                               datadisk_gb=data_disk, request_vm_num=request_num,
+                                               apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
+                                               apply_date=datetime.now(), user=user)
+                db_add_approvel(application=application, appro_env_type=env_type, appro_fun_type=fun_type,
+                                appro_cpu=cpu, appro_memory_gb=memory, appro_os_type=os_type,
+                                appro_datadisk_gb=data_disk, appro_vm_num=request_num, appro_status='AI',
+                                appro_date=datetime.now())
 
             except ServerError:
                 pass
@@ -179,10 +186,11 @@ def apply_machine(request):
         else:
             apply_status = "HD"
             try:
-                application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory, os_type=os_type,
-                             datadisk_gb=data_disk, request_vm_num=request_num,
-                             apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
-                             apply_date=datetime.now(), user=user)
+                application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory,
+                                               os_type=os_type,
+                                               datadisk_gb=data_disk, request_vm_num=request_num,
+                                               apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
+                                               apply_date=datetime.now(), user=user)
             except Exception, e:
                 raise e
             else:
@@ -266,7 +274,8 @@ def ajax_get_process(request):
             for x in id:
                 vmorder = VMOrder.objects.get(pk=x)
                 if vmorder.gen_status:
-                    result_list.append({'id': x, 'progress': vmorder.gen_progress, 'log': vmorder.gen_log, 'status': vmorder.gen_status})
+                    result_list.append({'id': x, 'progress': vmorder.gen_progress, 'log': vmorder.gen_log,
+                                        'status': vmorder.gen_status})
         except Exception, e:
             raise e
         else:
@@ -405,7 +414,13 @@ def ajax_initial_network(request):
 
 def ajax_select_IP(request):
     """
-    获取可用IP列表，用于下拉框选择
+    选取IP和VMNAME
+    参数对照POST
+        id: Approvel id审批表ID
+        num: 需要获取的IP数量(可选,默认为所有,单独选取为1)
+    返回每个条目的字段对照[dict]
+        IP地址         'ipaddress': ipaddress,
+        虚拟机名称     'vmname': vmname
     """
     if request.method == 'POST':
         approvel_id = int(request.POST['id'])
@@ -413,8 +428,11 @@ def ajax_select_IP(request):
             approvel = Approvel.objects.get(pk=approvel_id)
             env_type = approvel.appro_env_type
             os_type = approvel.appro_os_type
-            vm_num = approvel.appro_vm_num
-            result_list = get_lociphostname(env_type, os_type, vm_num)
+            if request.POST.has_key('num'):
+                vm_num = int(request.POST['num'])
+            else:
+                vm_num = approvel.appro_vm_num
+            result_list = select_ip_and_vmname(env_type, os_type, vm_num)
         except Exception, e:
             raise e
         else:
@@ -423,6 +441,28 @@ def ajax_select_IP(request):
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
 
+
+def ajax_select_template(request):
+    """
+    选取IP和VMNAME
+    参数对照POST
+        id: Approvel id审批表ID
+    返回每个条目的字段对照[dict]
+    """
+    if request.method == 'POST':
+        approvel_id = int(request.POST['id'])
+        try:
+            approvel = Approvel.objects.get(pk=approvel_id)
+            env_type = approvel.appro_env_type
+            os_type = approvel.appro_os_type
+            result_list = select_template(env_type=env_type, os_type=os_type)
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse(result_list)
+    else:
+        error_dict = {"error": "ajax not good"}
+        return JsonResponse(error_dict)
 
 
 def get_templates():
@@ -472,8 +512,18 @@ def ajax_add_template(request):
         os_type = str(request.POST['os_type'])
         env_type = str(request.POST['env_type'])
         try:
-            template = Template(virtualmachine=virtualmachine, env_type=env_type, os_type=os_type)
+            template = Template(virtualmachine=virtualmachine, env_type=env_type)
+            os_versions = SheetField.get_options(field='os_version', sheet='os_type_' + str(os_type))
+            if os_versions.exists():
+                try:
+                    SheetField.add_option(virtualmachine.guestos_shortname, virtualmachine.guestos_fullname,
+                                          field='os_version', sheet='os_type_' + str(os_type))
+                except:
+                    pass
+            else:
+                raise Exception("os_type not exist, please add it first!")
             template.save()
+
         except Exception, e:
             raise e
         else:

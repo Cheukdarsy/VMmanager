@@ -17,11 +17,13 @@ from juser.models import User, UserGroup
 class SheetField(models.Model):
     sheet_name = models.CharField(max_length=45)
     field_name = models.CharField(max_length=45)
-    option = models.CharField(max_length=45, null=True)
-    option_display = models.CharField(max_length=50, null=True)
+    option = models.CharField(max_length=50, null=True)
+    option_display = models.CharField(max_length=200, null=True)
 
     @classmethod
     def get_options(cls, field, sheet='global'):
+        if not sheet:
+            return cls.objects.filter(field_name=field)
         return cls.objects.filter(sheet_name=sheet, field_name=field)
 
     @classmethod
@@ -219,9 +221,9 @@ class ComputeResource(VMObject):
         if not qset.exists():
             return 0
         for host in qset:
-            total_cpu += host.total_cpu_mhz
+            total_cpu += host.cpu_total()
             usage_cpu += host.usage_cpu_mhz
-        return 100 - (usage_cpu / total_cpu)
+        return 100 - (float(usage_cpu) * 100 / total_cpu)
 
     def free_mem(self):
         """
@@ -235,7 +237,7 @@ class ComputeResource(VMObject):
         for host in qset:
             total_mem += host.total_mem_mb
             usage_mem += host.usage_mem_mb
-        return 100 - (usage_mem / total_mem)
+        return 100 - (float(usage_mem) * 100 / total_mem)
 
 
 class ResourcePool(VMObject):
@@ -286,6 +288,20 @@ class ResourcePool(VMObject):
                 finally:
                     self.parent = parent
         self.save()
+
+    @classmethod
+    def match(cls, env_type=None):
+        result_set = cls.objects.none()
+        # match env_type
+        if not env_type:
+            env_type = []
+        elif isinstance(env_type, list):
+            pass
+        else:
+            env_type = [str(env_type)]
+        for qry in env_type:
+            result_set = result_set | cls.objects.filter(env_type__contains="\"" + qry + "\": true")
+        return result_set.distinct()
 
     @classmethod
     def create_or_update_by_vim(cls, vimobj, vc, related=False):
@@ -371,6 +387,30 @@ class Network(VMObject):
         self.save()
 
     @classmethod
+    def match(cls, env_type=None, os_type=None):
+        env_match_set = cls.objects.none()
+        # match env_type
+        if not env_type:
+            env_type = []
+        elif isinstance(env_type, list):
+            pass
+        else:
+            env_type = [str(env_type)]
+        for qry in env_type:
+            env_match_set = env_match_set | cls.objects.filter(env_type__contains="\"" + qry + "\": true")
+        # match os_type
+        result_set = cls.objects.none()
+        if not os_type:
+            os_type = []
+        elif isinstance(os_type, list):
+            pass
+        else:
+            os_type = [str(os_type)]
+        for qry in os_type:
+            result_set = result_set | env_match_set.filter(os_type__contains="\"" + qry + "\": true")
+        return result_set.distinct()
+
+    @classmethod
     def create_or_update_by_vim(cls, vimobj, vc):
         new_obj = None
         created = False
@@ -450,10 +490,9 @@ class IPUsage(models.Model):
         return status == 0
 
     @classmethod
-    def select_ip(cls, network, lock_sec=600, test=False, ip_num=1, occupy=False):
+    def select_ip(cls, network, lock_sec=600, test=False, occupy=False):
         test_list = cls.objects.filter(network=network, used_manage=False, used_occupy=False, use_unknown=False,
                                        vm__isnull=True).order_by('id')
-        result_li = []
         for ipusage in test_list:
             if ipusage.lock_until and ipusage.lock_until > datetime.now():
                 continue
@@ -466,10 +505,7 @@ class IPUsage(models.Model):
             else:
                 ipusage.lock_until = datetime.now() + timedelta(seconds=lock_sec)
                 ipusage.save(update_fields=['lock_until'])
-            result_li.append(ipusage)
-            if len(result_li) >= ip_num:
-                break
-        return result_li
+            return ipusage
 
 
 class Datastore(VMObject):
@@ -743,17 +779,31 @@ class VirtualMachine(VMObject):
 
 
 class Template(models.Model):
-    virtualmachine = models.OneToOneField(VirtualMachine, primary_key=True)
-    os_type = models.CharField(max_length=10)
-    env_type = models.CharField(max_length=30)
+    virtualmachine = models.OneToOneField(VirtualMachine)
+    env_type = models.CharField(max_length=200)
 
     @classmethod
-    def select_template(cls, env_type, os_type):
-        match = cls.objects.filter(env_type=env_type, os_type=os_type)
-        if match.exists():
-            return match[0]
+    def match(cls, env_type=None, os_type=None, os_version=None):
+        env_match_set = cls.objects.none()
+        # match env_type
+        if not env_type:
+            env_type = []
+        elif isinstance(env_type, list):
+            pass
         else:
-            return None
+            env_type = [str(env_type)]
+        for qry in env_type:
+            env_match_set = env_match_set | cls.objects.filter(env_type__contains="\"" + qry + "\": true")
+        # match os_type and os_version
+        ovset = SheetField.get_options(field="os_version", sheet='')
+        if os_type:
+            ovset = ovset.filter(sheet_name="os_type_" + str(os_type))
+        if os_version:
+            ovset = ovset.filter(option=str(os_version))
+        result_set = cls.objects.none()
+        for qry in ovset.values('option'):
+            result_set = result_set | env_match_set.filter(virtualmachine__guestos_shortname=qry['option'])
+        return result_set.distinct()
 
 
 class Application(models.Model):
