@@ -74,30 +74,33 @@ def agree_apply(request):
     同意申请
     """
     if request.method == "POST":
-        request_id = int(request.POST.get('request_id', ''))
-        basic_data = request.POST.getlist('basic_data[]')
-        assign_data = request.POST.getlist('assign_data[]')
-        approving_status = "AI"
-        approving_datetime = datetime.now()
-        vmorder = []
+        approvel_id = int(request.POST['approvel_id'])
+        vm_num = int(request.POST['vm_num'])
+        assign_data = json.loads(request.POST['assign_data'])
+        if not isinstance(assign_data, list) or vm_num != len(assign_data):
+            raise Exception("Accepted data illegal")
         try:
-            vmorder = basic_data[5]
-            Approvel.objects.filter(id=request_id).update(appro_status=approving_status)
-            for vm in xrange(0,int(basic_data[5])):
-                one_data = assign_data[vm*6:(vm+1)*6]
-                approvel = Approvel.objects.get(id=request_id)
-                src_template = Template.objects.get(pk=2)
-                loc_ip = IPUsage.objects.get(ipaddress=one_data[0])
-                loc_cluster = ComputeResource.objects.get(id=int(one_data[2]))
-                loc_resp = ResourcePool.objects.get(id=int(one_data[3]))
-                loc_storage = Datastore.objects.get(id=int(one_data[4]))
-                VMOrder.objects.create(approvel=approvel,loc_hostname="43",loc_resp=loc_resp,loc_ip=loc_ip,loc_storage=loc_storage,src_template=src_template,loc_cluster=loc_cluster,gen_progress=1)
-
+            approvel = Approvel.objects.get(id=approvel_id)
+            env_type = approvel.appro_env_type
+            os_type = approvel.appro_os_type
+            src_template = Template.match(env_type=env_type, os_type=os_type)
+            for each_order in assign_data:
+                loc_ip = IPUsage.objects.get(ipaddress=each_order['ipaddress'])
+                loc_hostname = str(each_order['vmname'])
+                loc_cluster = ComputeResource.objects.get(pk=int(each_order['cluster']))
+                loc_storage = Datastore.objects.get(pk=int(each_order['storage']))
+                loc_resp = ResourcePool.objects.get(pk=int(each_order['resourcepool']))
+                VMOrder.objects.create(approvel=approvel, loc_ip=loc_ip, loc_hostname=loc_hostname,
+                                       loc_cluster=loc_cluster, loc_storage=loc_storage,
+                                       loc_resp=loc_resp, src_template=src_template)
+            approvel.appro_date = datetime.now()
+            approvel.appro_status = "AP"
+            approvel.save(update_fields=['appro_date', 'appro_status'])
         except Exception, e:
             raise e
         else:
             success_dict = {"info": "success"}
-            return JsonResponse(vmorder)
+            return JsonResponse(success_dict)
     else:
         error_dict = {'error': 'pajax post not good'}
         return JsonResponse(error_dict)

@@ -263,6 +263,19 @@ def _vim_gen_spec_customize(is_windows, ipusage=None, hostname=None):
     return custspec
 
 
+def _get_customize(content, spec_name, is_windows, ipusage=None):
+    custspec = content.customizationSpecManager.Get(spec_name).spec
+    # ipsettings
+    if ipusage:
+        if is_windows:
+            ipsetting = custspec.nicSettingMap[0].adapter
+            fixip = vim.vm.customization.FixedIp()
+            fixip.ipAddress = ipusage.ipaddress
+            ipsetting.ip = fixip
+    return custspec
+
+
+
 def _vim_set_customize(vim_vm, *args, **kwargs):
     try:
         guestos = vim_vm.guest.guestFamily
@@ -276,7 +289,7 @@ def _vim_set_customize(vim_vm, *args, **kwargs):
     vim_vm.Customize(_vim_gen_spec_customize(is_windows, *args, **kwargs))
 
 
-def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_on=False):
+def _vim_vm_clone(content, vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_on=False):
     try:
         guestos = vim_src_vm.summary.config.guestId
     except:
@@ -284,8 +297,10 @@ def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_o
         return -1
     if 'win' in str(guestos).lower():
         is_windows = True
+        logger.debug("Clone a Windows vm")
     else:
         is_windows = False
+        logger.debug("Clone a Linux/Unix vm")
     vm_folder = vim_src_vm.parent
     while (isinstance(vm_folder.parent, vim.Folder)):
         vm_folder = vm_folder.parent
@@ -298,7 +313,10 @@ def _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage, power_o
     clonespec.location = relospec
     clonespec.powerOn = power_on
     clonespec.template = False
-    clonespec.customization = _vim_gen_spec_customize(is_windows, ipusage, vm_name)
+    if is_windows:
+        clonespec.customization = _get_customize(content, "win2k8_r2_118.241.45.0/24", is_windows=True, ipusage=ipusage)
+    else:
+        clonespec.customization = _vim_gen_spec_customize(is_windows, ipusage, vm_name)
     # start clone task
     try:
         taskid = vim_src_vm.Clone(folder=vm_folder, name=vm_name, spec=clonespec)._GetMoId()
@@ -347,7 +365,7 @@ def clone_vm(content, src_vm, vm_name, ipusage, datastore, cluster=None, resourc
     else:
         errmsg = "Neither Cluster nor ResourcePool is given as a parameter"
         return task, errmsg
-    return _vim_vm_clone(vim_src_vm, vm_name, vim_datastore, vim_resourcepool, ipusage, power_on)
+    return _vim_vm_clone(content, vim_src_vm, vm_name, vim_datastore, vim_resourcepool, ipusage, power_on)
 
 
 def _vim_gen_spec_disk(disk_size, unit_number, controller_key, thin_disk=False):

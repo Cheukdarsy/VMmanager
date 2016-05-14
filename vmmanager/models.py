@@ -93,6 +93,7 @@ class VCenter(models.Model):
     user = models.CharField(max_length=30)
     password = models.CharField(max_length=30)
     last_connect = models.DateTimeField(null=True)
+    last_sync = models.DateTimeField(null=True)
 
     @classmethod
     def discover(cls, ip='localhost', port=443, env_type=None, user='root', pwd='vmware'):
@@ -259,6 +260,10 @@ class ResourcePool(VMObject):
             hash(self.owner_id) + hash(self.parent_id)
         )
 
+    def update_env_type(self, env_type):
+        self.env_type = env_type2json(env_type)
+        self.save(update_fields=['env_type'])
+
     def update_by_vim(self, vimobj, vc, related=False):
         if not isinstance(vimobj, vim.ResourcePool):
             return
@@ -268,7 +273,6 @@ class ResourcePool(VMObject):
         self.share_mem_level = config.memoryAllocation.shares.level
         self.limit_cpu_mhz = config.cpuAllocation.limit
         self.limit_mem_mb = config.memoryAllocation.limit
-        self.env_type = vc.env_type
         if related:
             # update owner
             clus = vimobj.owner
@@ -315,7 +319,7 @@ class ResourcePool(VMObject):
             new_obj = qset[0]
         else:
             created = True
-            new_obj = cls(moid=moid, vcenter=vc)
+            new_obj = cls(moid=moid, vcenter=vc, env_type=vc.env_type)
         new_obj.update_by_vim(vimobj, vc, related)
         return new_obj, created
 
@@ -684,9 +688,17 @@ class VirtualMachine(VMObject):
         old_ip = list(self.ipusage_set.all())
         try:
             for vimip in vm_guest.net:
-                qset = IPUsage.objects.filter(network__name=vimip.network.strip(), ipaddress=vimip.ipAddress[0])
+                ipaddress_li = vimip.ipAddress
+                ipaddress = None
+                for address in ipaddress_li:
+                    if str(address).count('.') == 3:
+                        ipaddress = address
+                        break
+                if not ipaddress:
+                    ipaddress = '0.0.0.0'
+                qset = IPUsage.objects.filter(network__name=vimip.network.strip(), ipaddress=ipaddress)
                 if not qset.exists():
-                    print("IPAddress: " + str(vimip.ipAddress[0]) + "-- not initialed")
+                    print("IPAddress: " + str(ipaddress) + "-- not initialed")
                     continue
                 ip = qset[0]
                 if ip in old_ip:
