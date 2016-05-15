@@ -83,7 +83,7 @@ def agree_apply(request):
             approvel = Approvel.objects.get(id=approvel_id)
             env_type = approvel.appro_env_type
             os_type = approvel.appro_os_type
-            src_template = Template.match(env_type=env_type, os_type=os_type)
+            src_template = Template.match(env_type=env_type, os_type=os_type)[0]
             for each_order in assign_data:
                 loc_ip = IPUsage.objects.get(ipaddress=each_order['ipaddress'])
                 loc_hostname = str(each_order['vmname'])
@@ -93,10 +93,12 @@ def agree_apply(request):
                 VMOrder.objects.create(approvel=approvel, loc_ip=loc_ip, loc_hostname=loc_hostname,
                                        loc_cluster=loc_cluster, loc_storage=loc_storage,
                                        loc_resp=loc_resp, src_template=src_template)
+                loc_ip.get_occupy()
             approvel.appro_date = datetime.now()
             approvel.appro_status = "AP"
             approvel.save(update_fields=['appro_date', 'appro_status'])
         except Exception, e:
+            logger.error(e)
             raise e
         else:
             success_dict = {"info": "success"}

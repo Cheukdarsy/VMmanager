@@ -812,6 +812,7 @@ class Template(models.Model):
             ovset = ovset.filter(sheet_name="os_type_" + str(os_type))
         if os_version:
             ovset = ovset.filter(option=str(os_version))
+        logger.debug(ovset)
         result_set = cls.objects.none()
         for qry in ovset.values('option'):
             result_set = result_set | env_match_set.filter(virtualmachine__guestos_shortname=qry['option'])
@@ -886,7 +887,7 @@ class VMOrder(models.Model):
     gen_status = models.CharField(max_length=20, choices=GEN_STATUS, null=True)
     gen_log = models.TextField(null=True)
     gen_time = models.DateTimeField(null=True)
-    gen_progress = models.PositiveIntegerField()
+    gen_progress = models.PositiveIntegerField(default=0)
 
     def add_log(self, log):
         genlog = str(log) + '\n'
