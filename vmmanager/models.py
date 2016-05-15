@@ -438,7 +438,7 @@ class IPUsage(models.Model):
     used_manage = models.BooleanField(default=False)
     used_manage_app = models.CharField(max_length=30, null=True)
     used_occupy = models.BooleanField(default=False)
-    use_unknown = models.BooleanField(default=False)
+    used_unknown = models.BooleanField(default=False)
     lock_until = models.DateTimeField(null=True)
 
     class Meta:
@@ -474,20 +474,20 @@ class IPUsage(models.Model):
 
     def get_occupy(self):
         self.used_manage = False
-        self.use_unknown = False
+        self.used_unknown = False
         self.used_occupy = True
-        self.save(update_fields=['used_manage', 'use_unknown', 'use_occupy'])
+        self.save(update_fields=['used_manage', 'used_unknown', 'used_occupy'])
 
     def release_occupy(self):
         self.used_occupy = False
-        self.save(update_fields=['use_occupy'])
+        self.save(update_fields=['used_occupy'])
 
     def manage(self, app):
-        self.use_unknown = False
+        self.used_unknown = False
         self.used_occupy = False
         self.used_manage = True
         self.used_manage_app = app
-        self.save(update_fields=['used_manage', 'used_manage_app', 'use_unknown', 'use_occupy'])
+        self.save(update_fields=['used_manage', 'used_manage_app', 'used_unknown', 'used_occupy'])
 
     def ping(self, count=2):
         status = system("ping -c " + str(count) + " " + self.ipaddress)
@@ -495,14 +495,14 @@ class IPUsage(models.Model):
 
     @classmethod
     def select_ip(cls, network, lock_sec=600, test=False, occupy=False):
-        test_list = cls.objects.filter(network=network, used_manage=False, used_occupy=False, use_unknown=False,
+        test_list = cls.objects.filter(network=network, used_manage=False, used_occupy=False, used_unknown=False,
                                        vm__isnull=True).order_by('id')
         for ipusage in test_list:
             if ipusage.lock_until and ipusage.lock_until > datetime.now():
                 continue
             if test and ipusage.ping():
-                ipusage.use_unknown = True
-                ipusage.save(update_fields=['use_unknown'])
+                ipusage.used_unknown = True
+                ipusage.save(update_fields=['used_unknown'])
                 continue
             if occupy:
                 ipusage.occupy()
@@ -812,7 +812,6 @@ class Template(models.Model):
             ovset = ovset.filter(sheet_name="os_type_" + str(os_type))
         if os_version:
             ovset = ovset.filter(option=str(os_version))
-        logger.debug(ovset)
         result_set = cls.objects.none()
         for qry in ovset.values('option'):
             result_set = result_set | env_match_set.filter(virtualmachine__guestos_shortname=qry['option'])
