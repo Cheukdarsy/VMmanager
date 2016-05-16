@@ -10,12 +10,21 @@ def vmtask_trace(vcid, vmtaskid, vmorder=None, begin_per=0, weight=100, parse_re
     content = vc.connect()
     vmtask = get_task(content, vmtaskid)
     if not vmtask:
-        return vmtask_trace.delay(vcid, vmtaskid, vmorder, begin_per, weight, parse_result, retry - 1, nexttask)
+        if retry > 0:
+            return vmtask_trace.delay(vcid, vmtaskid, vmorder, begin_per, weight, parse_result, retry - 1, nexttask)
+        else:
+            if vmorder:
+                vmorder.gen_status = 'FAILED'
+                period_log = "Unknown : Failed.--Cannot find task"
+                vmorder.add_log(period_log)
+                vmorder.save(update_fields=['gen_status', 'gen_log'])
+            raise Exception("Can't find vmtask")
     status = vmtask.info.state
     if not vmorder:
+        print("VMtask: " + str(vmtask.info.descriptionId))
         print("Status: " + str(status))
         if status == 'running':
-            return vmtask_trace.delay(vcid, vmtaskid, vmorder, begin_per, weight, parse_result, retry - 1, nexttask)
+            return vmtask_trace.delay(vcid, vmtaskid, vmorder, begin_per, weight, parse_result, retry, nexttask)
     if status == 'running':
         vmorder.gen_progress = begin_per + vmtask.info.progress * weight / 100
         vmorder.save(update_fields=['gen_progress'])
@@ -88,7 +97,7 @@ def vmtask_reconfig_vm(vmorder, from_result=None, virtualmachine=None, begin_per
     application = vmorder.approvel.application
     annotation_username = application.user.get_full_name()
     annotation = str(annotation_username) + str(' - ') + str(application.apply_reason)
-    templ = vmorder.src_template
+    templ = vmorder.src_template.virtualmachine
     order_cpu = vmorder.approvel.appro_cpu
     templ_cpu = templ.cpu_cores * templ.cpu_num
     adjust_cpu = (order_cpu != templ_cpu)
@@ -119,7 +128,7 @@ def vmtask_reconfig_vm(vmorder, from_result=None, virtualmachine=None, begin_per
 
 @task
 def vmtask_clone_vm(vmorder, begin_per=0, weight=100, parse_result=False, nexttask=None):
-    template = vmorder.src_template
+    template = vmorder.src_template.virtualmachine
     vcid = template.vcenter_id
     content = template.vcenter.connect()
 
@@ -134,7 +143,7 @@ def vmtask_clone_vm(vmorder, begin_per=0, weight=100, parse_result=False, nextta
     order_disk = vmorder.approvel.appro_datadisk_gb if vmorder.approvel.appro_datadisk_gb else 0
     adjust_disk = (order_disk == 0)
 
-    clone_taskid, errmsg = clone_vm(content, vmorder.src_template, vmorder.loc_hostname, vmorder.loc_ip,
+    clone_taskid, errmsg = clone_vm(content, vmorder.src_template.virtualmachine, vmorder.loc_hostname, vmorder.loc_ip,
                                     vmorder.loc_storage,
                                     vmorder.loc_cluster, vmorder.loc_resp)
     vmorder.gen_status = 'RUNNING'
@@ -148,3 +157,14 @@ def vctask_create_cluster(vcid, cluster_name, dc_name=None):
     content = VCenter.objects.get(pk=vcid).connect()
     if content:
         print(vim_create_cluster(content, cluster_name, dc_name))
+
+
+@task
+def sync_vc(vcenter, sync_vm=False):
+    content = vcenter.connect()
+    if content:
+        refresh_all_assets(content, True)
+        if sync_vm:
+            refresh_all_vms(content, True)
+        vcenter.last_sync = datetime.now()
+        vcenter.save(update_fields=['last_sync'])

@@ -93,6 +93,7 @@ class VCenter(models.Model):
     user = models.CharField(max_length=30)
     password = models.CharField(max_length=30)
     last_connect = models.DateTimeField(null=True)
+    last_sync = models.DateTimeField(null=True)
 
     @classmethod
     def discover(cls, ip='localhost', port=443, env_type=None, user='root', pwd='vmware'):
@@ -259,6 +260,10 @@ class ResourcePool(VMObject):
             hash(self.owner_id) + hash(self.parent_id)
         )
 
+    def update_env_type(self, env_type):
+        self.env_type = env_type2json(env_type)
+        self.save(update_fields=['env_type'])
+
     def update_by_vim(self, vimobj, vc, related=False):
         if not isinstance(vimobj, vim.ResourcePool):
             return
@@ -268,7 +273,6 @@ class ResourcePool(VMObject):
         self.share_mem_level = config.memoryAllocation.shares.level
         self.limit_cpu_mhz = config.cpuAllocation.limit
         self.limit_mem_mb = config.memoryAllocation.limit
-        self.env_type = vc.env_type
         if related:
             # update owner
             clus = vimobj.owner
@@ -315,7 +319,7 @@ class ResourcePool(VMObject):
             new_obj = qset[0]
         else:
             created = True
-            new_obj = cls(moid=moid, vcenter=vc)
+            new_obj = cls(moid=moid, vcenter=vc, env_type=vc.env_type)
         new_obj.update_by_vim(vimobj, vc, related)
         return new_obj, created
 
@@ -434,7 +438,7 @@ class IPUsage(models.Model):
     used_manage = models.BooleanField(default=False)
     used_manage_app = models.CharField(max_length=30, null=True)
     used_occupy = models.BooleanField(default=False)
-    use_unknown = models.BooleanField(default=False)
+    used_unknown = models.BooleanField(default=False)
     lock_until = models.DateTimeField(null=True)
 
     class Meta:
@@ -470,20 +474,20 @@ class IPUsage(models.Model):
 
     def get_occupy(self):
         self.used_manage = False
-        self.use_unknown = False
+        self.used_unknown = False
         self.used_occupy = True
-        self.save(update_fields=['used_manage', 'use_unknown', 'use_occupy'])
+        self.save(update_fields=['used_manage', 'used_unknown', 'used_occupy'])
 
     def release_occupy(self):
         self.used_occupy = False
-        self.save(update_fields=['use_occupy'])
+        self.save(update_fields=['used_occupy'])
 
     def manage(self, app):
-        self.use_unknown = False
+        self.used_unknown = False
         self.used_occupy = False
         self.used_manage = True
         self.used_manage_app = app
-        self.save(update_fields=['used_manage', 'used_manage_app', 'use_unknown', 'use_occupy'])
+        self.save(update_fields=['used_manage', 'used_manage_app', 'used_unknown', 'used_occupy'])
 
     def ping(self, count=2):
         status = system("ping -c " + str(count) + " " + self.ipaddress)
@@ -491,14 +495,14 @@ class IPUsage(models.Model):
 
     @classmethod
     def select_ip(cls, network, lock_sec=600, test=False, occupy=False):
-        test_list = cls.objects.filter(network=network, used_manage=False, used_occupy=False, use_unknown=False,
+        test_list = cls.objects.filter(network=network, used_manage=False, used_occupy=False, used_unknown=False,
                                        vm__isnull=True).order_by('id')
         for ipusage in test_list:
             if ipusage.lock_until and ipusage.lock_until > datetime.now():
                 continue
             if test and ipusage.ping():
-                ipusage.use_unknown = True
-                ipusage.save(update_fields=['use_unknown'])
+                ipusage.used_unknown = True
+                ipusage.save(update_fields=['used_unknown'])
                 continue
             if occupy:
                 ipusage.occupy()
@@ -684,9 +688,17 @@ class VirtualMachine(VMObject):
         old_ip = list(self.ipusage_set.all())
         try:
             for vimip in vm_guest.net:
-                qset = IPUsage.objects.filter(network__name=vimip.network.strip(), ipaddress=vimip.ipAddress[0])
+                ipaddress_li = vimip.ipAddress
+                ipaddress = None
+                for address in ipaddress_li:
+                    if str(address).count('.') == 3:
+                        ipaddress = address
+                        break
+                if not ipaddress:
+                    ipaddress = '0.0.0.0'
+                qset = IPUsage.objects.filter(network__name=vimip.network.strip(), ipaddress=ipaddress)
                 if not qset.exists():
-                    print("IPAddress: " + str(vimip.ipAddress[0]) + "-- not initialed")
+                    print("IPAddress: " + str(ipaddress) + "-- not initialed")
                     continue
                 ip = qset[0]
                 if ip in old_ip:
@@ -874,7 +886,7 @@ class VMOrder(models.Model):
     gen_status = models.CharField(max_length=20, choices=GEN_STATUS, null=True)
     gen_log = models.TextField(null=True)
     gen_time = models.DateTimeField(null=True)
-    gen_progress = models.PositiveIntegerField()
+    gen_progress = models.PositiveIntegerField(default=0)
 
     def add_log(self, log):
         genlog = str(log) + '\n'
