@@ -38,3 +38,43 @@
 2016-05-16 08:59:43,532 - views.py - DEBUG - 2
 2016-05-16 09:00:18,230 - views.py - DEBUG - 2
 2016-05-16 09:18:52,255 - views.py - DEBUG - "[{\"pk\": 11, \"model\": \"vmmanager.application\", \"fields\": {\"apply_status\": \"HD\", \"memory_gb\": 4, \"apply_reason\": \"43243\", \"app_name\": \"3243\", \"fun_type\": \"normal\", \"request_vm_num\": 4, \"env_type\": \"TEST\", \"datadisk_gb\": 20, \"apply_date\": \"2016-05-15T22:41:26\", \"os_type\": \"WINDOWS 2003 R2\", \"cpu\": 2, \"user\": 5}}]"
+2016-05-16 13:17:31,321 - views.py - DEBUG - start..
+2016-05-16 13:18:19,220 - views.py - DEBUG - start..
+2016-05-16 13:20:12,309 - views.py - DEBUG - start..
+2016-05-16 13:47:22,293 - views.py - ERROR - (1054, "Unknown column 'vmmanager_template.id' in 'field list'")
+2016-05-16 13:47:27,600 - views.py - ERROR - (1054, "Unknown column 'vmmanager_template.id' in 'field list'")
+2016-05-16 16:18:17,334 - views.py - DEBUG - start
+2016-05-16 16:19:08,872 - views.py - DEBUG - <QueryDict: {u'env_type': [u'fdssfd'], u'env_option': [u'123']}>
+2016-05-16 16:20:10,036 - views.py - DEBUG - <QueryDict: {u'env_type': [u'terst'], u'env_option': [u'TETTE']}>
+2016-05-16 16:21:42,932 - views.py - DEBUG - <QueryDict: {u'env_type': [u'dsdada'], u'env_option': [u'DSSS']}>
+2016-05-16 16:22:57,952 - views.py - DEBUG - <QueryDict: {u'env_type': [u'fsdfs'], u'env_option': [u'3424324']}>
+2016-05-16 16:25:30,609 - views.py - DEBUG - <QueryDict: {u'env_type': [u'dfsdfds'], u'env_option': [u'34324']}>
+2016-05-16 16:26:19,799 - views.py - DEBUG - <QueryDict: {u'env_type': [u'sdfsd'], u'env_option': [u'fdsfsd']}>
+2016-05-16 16:28:24,460 - views.py - DEBUG - <QueryDict: {u'env_type': [u'fdsfdds'], u'env_option': [u'123']}>
+2016-05-16 16:29:34,207 - views.py - DEBUG - <QueryDict: {u'env_type': [u'fdsfds'], u'env_option': [u'1243']}>
+2016-05-16 16:31:02,212 - views.py - DEBUG - <QueryDict: {u'env_type': [u'dasd'], u'env_option': [u'4565']}>
+2016-05-16 16:31:40,864 - views.py - DEBUG - <QueryDict: {u'env_type': [u'gfdgfdg'], u'env_option': [u'123344']}>
+2016-05-16 16:37:13,515 - views.py - DEBUG - <QueryDict: {u'env_type': [u'dsfdsfds'], u'env_option': [u'67676']}>
+2016-05-16 16:38:30,692 - views.py - DEBUG - <QueryDict: {u'env_type': [u'fdgfdgfd'], u'env_option': [u'1232321']}>
+2016-05-16 17:10:52,136 - views.py - DEBUG - 22
+2016-05-16 17:10:55,041 - views.py - DEBUG - 21
+2016-05-16 17:10:57,745 - views.py - DEBUG - 20
+2016-05-16 17:11:00,149 - views.py - DEBUG - 19
+2016-05-16 17:11:02,620 - views.py - DEBUG - 18
+2016-05-16 17:11:05,253 - views.py - DEBUG - 17
+2016-05-16 17:11:07,633 - views.py - DEBUG - 16
+2016-05-16 17:11:10,324 - views.py - DEBUG - 15
+2016-05-16 17:11:12,712 - views.py - DEBUG - 14
+2016-05-16 17:12:23,269 - views.py - DEBUG - 13
+2016-05-16 17:12:53,291 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\u6d4b\u8bd5\u73af\u5883'], u'env_option': [u'TEST']}>
+2016-05-16 17:13:18,576 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\u5f00\u53d1\u73af\u5883'], u'env_option': [u'DEVP']}>
+2016-05-16 19:23:10,770 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\u58eb\u5927\u592b\u5927\u8d5b'], u'env_option': [u'\uff14\uff13\uff14']}>
+2016-05-16 19:29:04,296 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\u58eb\u5927\u592b\u5927\u8d5b'], u'env_option': [u'\uff12'], u'id': [u'25']}>
+2016-05-16 19:29:52,253 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\u58eb\u5927\u592b\u5927\u8d5b'], u'env_option': [u'\uff14'], u'id': [u'25']}>
+2016-05-16 19:31:43,719 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\u58eb\u5927\u592b\u5927\u8d5b'], u'env_option': [u'\uff14'], u'id': [u'25']}>
+2016-05-16 19:32:01,607 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\uff14'], u'env_option': [u'\u58eb\u5927\u592b\u5927\u8d5b'], u'id': [u'25']}>
+2016-05-16 19:32:41,244 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\u58eb\u5927\u592b\u5927\u8d5b'], u'env_option': [u'\uff14\uff12'], u'id': [u'25']}>
+2016-05-16 19:33:57,639 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\uff11\uff12'], u'env_option': [u'\u5927\u8d5b\u5927\u8d5b\u7684'], u'id': [u'25']}>
+2016-05-16 19:34:15,262 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\uff11\uff12'], u'env_option': [u'\u5927\u8d5b\u5927\u8d5b\u7684\u5927\u58f0\u5730\u8bf4'], u'id': [u'25']}>
+2016-05-16 19:40:48,763 - views.py - DEBUG - <QueryDict: {u'env_type': [u'DEVP'], u'env_option': [u'\u5f00\u53d1\u73af\u5883'], u'id': [u'24']}>
+2016-05-16 19:40:50,554 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\uff11\uff12'], u'env_option': [u'\u5927\u8d5b\u5927\u8d5b\u7684\u5927\u58f0\u5730\u8bf4'], u'id': [u'25']}>

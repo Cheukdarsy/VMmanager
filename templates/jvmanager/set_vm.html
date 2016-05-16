@@ -1,9 +1,4 @@
-{% extends 'base.html' %}
-{% load mytags %}
-
-
-{% block content %}
-    {% include 'nav_cat_bar.html' %}
+{% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-sm-10">
@@ -20,7 +15,6 @@
                         </a>
                     </div>
                 </div>
-
                 <div class="ibox-content">
                     <div class="panel blank-panel">
                         <div class="panel-heading">
@@ -30,240 +24,238 @@
                                     <a data-toggle="tab" href="#tab-default" aria-expanded="true">默认设置</a>
                                 </li>
                                 -->
-                                <li id="tab1" class="active">
-                                    <a data-toggle="tab" href="#tab-vmware" aria-expanded="true">VMware环境配置</a>
-                                </li>
-                                <li id="tab２">
-                                    <a data-toggle="tab" href="#tab-parameter" aria-expanded="true">申请参数配置</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="panel-body">
-                        <div class="tab-content">
-                            <div id="tab-vmware" class="tab-pane active col-sm-10">
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        vCenter配置
-                                        <button id='vcenter-setting' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
-                                            添加VC
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="panel-body">
-                                        <table class="table table-striped table-hover table-cendensed" id="vcenter-table" >
-                                            <tr>
-                                                <th class="text-center">IP</th>
-                                                <th class="text-center">用户</th>
-                                                <th class="text-center">密码</th>
-                                                <th class="text-center">端口</th>
-                                                <th class="text-center">操作</th>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">das</td>
-                                                <td class="text-center">118.240.13.25</td>
-                                                <td class="text-center">12345</td>
-                                                <td class="text-center">23</td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-xs btn-success"  data-toggle="modal" data-target="#modify-vm-modal">修改</button>
-                                                    {% include 'jvmanager/modify_vcenter_modal.html' %}
-                                                    <button class="btn btn-xs btn-primary">同步</button>
-                                                    <button class="btn btn-xs btn-danger">删除</button>
-                                                </td>
-                                                <td class="text-center"></td>
-                                            </tr>
-                                        </table>
-                                        {% include 'jvmanager/add_vcenter_modal.html' %}
-                                    </div>
-                                </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        IP池配置
-                                        <button id='ip-add-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#manage-IP-modal" style="float:right">
-                                          管理IP  
-                                        </button>
-                                        <div class="modal fade" id="add-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                        <h4 class="modal-title" id="myModalLabel">初始化网络</h4>
-                                                    </div>
-                                                    <div class="modal-body" style="padding-bottom:10px">
-                                                        <div class="ibox-content form-horizontal">
-                                                            <form method="post" action="" id="vc-setting-form">
-                                                                {% csrf_token %}
-                                                                <div class="panel panel-default">
-                                                                    <div class="panel-body">
-                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                            <label class="col-sm-3 control-label">网络:&nbsp;</label>
-                                                                            <div class="dropdown col-sm-9">
-                                                                                <select name="network" id="network">
-                                                                                    <option value="123.1.1.1">123.1.1.1</option>
-                                                                                    <option value="123.1.1.1">123.1.1.2</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                            <label class="col-sm-3 control-label">网关:&nbsp;</label>
-                                                                            <div class="dropdown col-sm-9">
-                                                                                <input type="text" name="netgate" id="netgate"　value="123.1.1.240"></div>
-                                                                        </div>
-                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                            <label class="col-sm-3 control-label">子网掩码:&nbsp;</label>
-                                                                            <div class="dropdown col-sm-9">
-                                                                                <input type="text" name="netcode" id="netcode"　value="255.255.255.0"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button id='ip-add-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#add-IP-modal" style="float:right margin-left:10px">初始化网络</button>
-                                        <div class="modal fade" id="manage-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                        <h4 class="modal-title" id="myModalLabel">管理IP</h4>
-                                                    </div>
-                                                    <div class="modal-body" style="padding-bottom:10px">
-                                                        <div class="ibox-content form-horizontal">
-                                                            <form method="post" action="" id="vc-setting-form">
-                                                                {% csrf_token %}
-                                                                <div class="panel panel-default">
-                                                                    <div class="panel-body">
-                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                            <label class="col-sm-3 control-label">网络:&nbsp;</label>
-                                                                            <div class="dropdown col-sm-9">
-                                                                                <select name="network" id="network">
-                                                                                    <option value="123.1.1.1">123.1.1.1</option>
-                                                                                    <option value="123.1.1.1">123.1.1.2</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                            <label class="col-sm-3 control-label">IP:&nbsp;</label>
-                                                                            <div class="dropdown col-sm-9">
-                                                                                <input type="text" name="netgate" id="netgate"　value="123.1.1.240"></div>
-                                                                        </div>
-                                                                        <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                            <label class="col-sm-3 control-label">用途:&nbsp;</label>
-                                                                            <div class="dropdown col-sm-9">
-                                                                                <select name="network" id="network">
-                                                                                    <option value="123.1.1.1">网关</option>
-                                                                                    <option value="123.1.1.1">普通地址</option>
-                                                                                </select></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel-body">
-                                        <table class="table table-striped table-hover table-cendensed" id="ip-table" >
-                                            <tr>
-                                                <th class="text-center">网络</th>
-                                                <th class="text-center">IP地址</th>
-                                                <th class="text-center">用途</th>
-                                                <th class="text-center">操作</th>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">118.240.13.0/24</td>
-                                                <td class="text-center">118.240.13.25</td>
-                                                <td class="text-center">网关</td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-xs btn-success">修改用途</button>
-
-                                                </td>
-                                                <td class="text-center"></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-
-                                </div>
-
+                                    <li id="tab1" class="active">
+                                        <a data-toggle="tab" href="#tab-vmware" aria-expanded="true">VMware环境配置</a>
+                                    </li>
+                                    <li id="tab２">
+                                        <a data-toggle="tab" href="#tab-parameter" aria-expanded="true">申请参数配置</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div id="tab-parameter" class="tab-pane col-sm-10">
-                                <div class="panel panel-default">
-
-                                    <div class="panel-heading">
-                                        环境类型
-                                        <button id='add-env' class="btn btn-xs btn-primary" style="float:right">
-                                            添加环境类型
-                                            <i class="fa fa-plus"></i>
-                                        </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div id="tab-vmware" class="tab-pane active col-sm-10">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            vCenter配置
+                                            <button id='vcenter-setting' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
+                                                添加VC
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="panel-body">
+                                            <table class="table table-striped table-hover table-cendensed" id="vcenter-table">
+                                                <tr>
+                                                    <th class="text-center">IP</th>
+                                                    <th class="text-center">用户</th>
+                                                    <th class="text-center">密码</th>
+                                                    <th class="text-center">端口</th>
+                                                    <th class="text-center">操作</th>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">das</td>
+                                                    <td class="text-center">118.240.13.25</td>
+                                                    <td class="text-center">12345</td>
+                                                    <td class="text-center">23</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modify-vm-modal">修改</button>
+                                                        {% include 'jvmanager/modify_vcenter_modal.html' %}
+                                                        <button class="btn btn-xs btn-primary">同步</button>
+                                                        <button class="btn btn-xs btn-danger">删除</button>
+                                                    </td>
+                                                    <td class="text-center"></td>
+                                                </tr>
+                                            </table>
+                                            {% include 'jvmanager/add_vcenter_modal.html' %}
+                                        </div>
                                     </div>
-                                    <div class="panel-body">
-                                        <table class="table table-striped table-hover table-bordered" id="env-table" >
-                                            <tr>
-                                                <th class="text-center">标识符</th>
-                                                <th class="text-center" style='width:300px'>环境类型</th>
-                                                <th class="text-center">操作</th>
-
-                                            </tr>
-                                            {% for env in envs%}
-                                                <tr id="tr{{env.id}}">
-                                                <td class="text-center" id="env-option-{{env.id}}">{{env.option}}</td>
-                                                <td class="text-center" id="env-td-{{env.id}}">{{env.option_display}}</td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-xs btn-success" name="{{env.id}}">修改</button>
-                                                    <button class="btn btn-xs btn-danger" name="{{env.id}}">删除</button>
-                                                </td>
-                                                <td class="text-center"></td>
-                                            </tr>
-                                            {% endfor %}
-                                            
-                                        </table>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            IP池配置
+                                            <button id='ip-add-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#manage-IP-modal" style="float:right">
+                                                管理IP
+                                            </button>
+                                            <div class="modal fade" id="add-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel">初始化网络</h4>
+                                                        </div>
+                                                        <div class="modal-body" style="padding-bottom:10px">
+                                                            <div class="ibox-content form-horizontal">
+                                                                <form method="post" action="" id="vc-setting-form">
+                                                                    {% csrf_token %}
+                                                                    <div class="panel panel-default">
+                                                                        <div class="panel-body">
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">网络:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <select name="network" id="network">
+                                                                                        <option value="123.1.1.1">123.1.1.1</option>
+                                                                                        <option value="123.1.1.1">123.1.2.2</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">网关:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <input type="text" name="netgate" id="netgate"　value="123.1.1.240" placeholder="123.1.1.240">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">子网掩码:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <input type="text" name="netcode" id="netcode" 　value="255.255.255.0" placeholder="255.255.255.0">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary modify-save-btn">初始化</button>
+                                  </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button id='ip-add-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#add-IP-modal" style="float:right margin-left:10px">初始化网络</button>
+                                            <div class="modal fade" id="manage-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel">管理IP</h4>
+                                                        </div>
+                                                        <div class="modal-body" style="padding-bottom:10px">
+                                                            <div class="ibox-content form-horizontal">
+                                                                <form method="post" action="" id="vc-setting-form">
+                                                                    {% csrf_token %}
+                                                                    <div class="panel panel-default">
+                                                                        <div class="panel-body">
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">网络:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <select name="network" id="network">
+                                                                                        <option value="123.1.1.1">123.1.1.1</option>
+                                                                                        <option value="123.1.1.1">123.1.1.2</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">IP:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <input type="text" name="netgate" id="netgate" 　value="123.1.1.240">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">用途:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <select name="network" id="network">
+                                                                                        <option value="123.1.1.1">网关</option>
+                                                                                        <option value="123.1.1.1">普通地址</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <table class="table table-striped table-hover table-cendensed" id="ip-table">
+                                                <tr>
+                                                    <th class="text-center">网络</th>
+                                                    <th class="text-center">IP地址</th>
+                                                    <th class="text-center">用途</th>
+                                                    <th class="text-center">操作</th>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">118.240.13.0/24</td>
+                                                    <td class="text-center">118.240.13.25</td>
+                                                    <td class="text-center">网关</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-xs btn-success">修改用途</button>
+                                                    </td>
+                                                    <td class="text-center"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="panel panel-default">
-
-                                    <div class="panel-heading">
-                                        操作系统类型
-                                        <button id='add-os' class="btn btn-xs btn-primary" style="float:right">
-                                            添加系统
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="panel-body">
-                                        <table class="table table-striped table-hover table-cendensed" id="os-table" >
-                                            <tr>
-                                                <th class="text-center" style='width:70px'>标识符</th>
-                                                <th class="text-center" style='width:150px'>类型描述</th>
-                                                <th class="text-center" style='width:100px'>版本标识符</th>
-                                                <th class="text-center" style='width:150px'>备注</th>
-                                                <th class="text-center">操作</th>
-
-                                            </tr>
-                                            {% for o in os %}
+                                <div id="tab-parameter" class="tab-pane col-sm-10">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            环境类型
+                                            <button id='add-env' class="btn btn-xs btn-primary" style="float:right">
+                                                添加环境类型
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="panel-body">
+                                            <table class="table table-striped table-hover table-bordered" id="env-table">
                                                 <tr>
-                                                <td class="text-center">{{o.option}}</td>
-                                                <td class="text-center">{{o.option_display}}</td>
-                                                <td class="text-center">R2</td>
-                                                <td class="text-center">仅用于测试环境</td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-xs btn-success">修改</button>
-                                                    <button class="btn btn-xs btn-danger">删除</button>
-                                                </td>
-                                                <td class="text-center"></td>
-                                            </tr>
-                                            {% endfor %}
-                                            
-                                        </table>
+                                                    <th class="text-center">标识符</th>
+                                                    <th class="text-center" style='width:300px'>环境类型</th>
+                                                    <th class="text-center">操作</th>
+                                                </tr>
+                                                {% for env in envs%}
+                                                <tr id="tr{{env.id}}">
+                                                    <td class="text-center" id="env-option-{{env.id}}">{{env.option}}</td>
+                                                    <td class="text-center" id="env-td-{{env.id}}">{{env.option_display}}</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-xs btn-success" name="{{env.id}}">修改</button>
+                                                        <button class="btn btn-xs btn-danger" name="{{env.id}}">删除</button>
+                                                    </td>
+                                                    <td class="text-center"></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            操作系统类型
+                                            <button id='add-os' class="btn btn-xs btn-primary" style="float:right">
+                                                添加系统
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="panel-body">
+                                            <table class="table table-striped table-hover table-cendensed" id="os-table">
+                                                <tr>
+                                                    <th class="text-center" style='width:70px'>标识符</th>
+                                                    <th class="text-center" style='width:150px'>类型描述</th>
+                                                    <th class="text-center" style='width:100px'>版本标识符</th>
+                                                    <th class="text-center" style='width:150px'>备注</th>
+                                                    <th class="text-center">操作</th>
+                                                </tr>
+                                                {% for o in os %}
+                                                <tr>
+                                                    <td class="text-center">{{o.option}}</td>
+                                                    <td class="text-center">{{o.option_display}}</td>
+                                                    <td class="text-center">R2</td>
+                                                    <td class="text-center">仅用于测试环境</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-xs btn-success">修改</button>
+                                                        <button class="btn btn-xs btn-danger">删除</button>
+                                                    </td>
+                                                    <td class="text-center"></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -274,149 +266,173 @@
         </div>
     </div>
 </div>
-</div>
-{% endblock %}
-{% block self_footer_js %}
-<style type="text/css">.selectpicker {  width: 120px;height: 30px;}</style>
+{% endblock %} {% block self_footer_js %}
+<style type="text/css">
+.selectpicker {
+    width: 120px;
+    height: 30px;
+}
+</style>
 <script>
-    $('#vc-setting-form').validator({
-        timely: 2,
-        theme: "yellow_right_effect",
-        rules: {
-            check_name: [/^\w{2,20}$/, '大小写字母数字和下划线,2-20位'],
-            check_port: [/^\d{1,5}$/, '端口号不正确'],
-            check_ip:[/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,'IP格式不正确']
-        },
+$('#vc-setting-form').validator({
+    timely: 2,
+    theme: "yellow_right_effect",
+    rules: {
+        check_name: [/^\w{2,20}$/, '大小写字母数字和下划线,2-20位'],
+        check_port: [/^\d{1,5}$/, '端口号不正确'],
+        check_ip: [/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, 'IP格式不正确']
+    },
 
-        fields: {
-            "vcip": {
-                rule: "required;check_ip",
-                tip: "输入VC的IP",
-                ok: "",
-                msg: {required: "IP必填"}
-            },
-            "vcport":{
-                rule:"required;check_port",
-                tip:"输入端口，默认23",
-                ok:"",
-                msg:{required:"端口必填"}
-            },
-            "vcname":{
-                rule:"required;check_name",
-                tip:"输入用户名",
-                ok:"",
-                msg:{required:"用户名不能为空"}
-            },
-            "vcpw":{
-                rule:"required",
-                tip:"输入密码",
-                ok:"",
-                msg:{required:"密码必填"}
-            },
-            "vcpw-conf":{
-                rule:"required;match[vcpw]",
-                tip:"",
-                ok:"",
-                msg:{required:"密码确认",match:"密码不一致"}
+    fields: {
+        "vcip": {
+            rule: "required;check_ip",
+            tip: "输入VC的IP",
+            ok: "",
+            msg: {
+                required: "IP必填"
             }
         },
-        valid: function(form) {
-                alert("提交成功");
-                form.submit()
-                //ajax;
+        "vcport": {
+            rule: "required;check_port",
+            tip: "输入端口，默认443",
+            ok: "",
+            msg: {
+                required: "端口必填"
             }
-    })
-    var ipcount = $("#env-table tr").length-1;
-    
-    $(document).on('click', '#add-env', function(event) {
-        $("#add-env").attr('disabled', 'true');
-        ipcount++;
-        html = "<tr><td class='text-center' id='env-option-"+ipcount+"'><input type='text' placeholder='标识符' id='inner-option"+ipcount+"' style='width:50px'></td><td class='text-center' id='env-td-"+ipcount+"'><input type='text' placeholder='输入环境名称' id='inner-input"+ipcount+"'></td><td class='text-center' id='env-btn-td-"+ipcount+"'><button class='btn btn-xs btn-success' id='add-env-"+ipcount+"'>确认添加</button></td></tr>";
-        $("#env-table").append(html);
-        $("#inner-input"+ipcount).focus();
-        $("#add-env-"+ipcount).click(function(event) {
-             if($("#inner-input"+ipcount).val()){
-                //ajax提交
-                $("#add-env").removeAttr('disabled');
-                 $("#env-option-"+ipcount).html($("#inner-option"+ipcount).val())
-                $("#env-td-"+ipcount).html($("#inner-input"+ipcount).val())
-                $("#env-btn-td-"+ipcount).html("<button class='btn btn-xs btn-success' id='env-mf-"+ipcount+"-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
-        $('#env-mf-'+ipcount+'-btn').click(function(event) {
-            var count = $(this).parent().siblings().eq(0).text();
-            var text = $(this).parent().siblings().eq(1).text();
+        },
+        "vcname": {
+            rule: "required;check_name",
+            tip: "输入用户名",
+            ok: "",
+            msg: {
+                required: "用户名不能为空"
+            }
+        },
+        "vcpw": {
+            rule: "required",
+            tip: "输入密码",
+            ok: "",
+            msg: {
+                required: "密码必填"
+            }
+        },
+        "vcpw-conf": {
+            rule: "required;match[vcpw]",
+            tip: "",
+            ok: "",
+            msg: {
+                required: "密码确认",
+                match: "密码不一致"
+            }
+        }
+    },
+    valid: function(form) {
+        alert("提交成功");
+        form.submit()
+            //ajax;
+    }
+})
+var ipcount = $("#env-table tr").length - 1;
 
-        $("#env-td-"+count).html("<input type='text' value='"+text+"' id='inner-input"+count+"'>");
-        $("#inner-input"+count).focus();
-        $("#inner-input"+count).blur(function(event) {
-             var val = $("#inner-input"+count).val()
-             $("#env-td-"+count).html(val)
-        });
-        });
-
-             }
-        });
-
-    });
-    /*var btn_len = $('#env-table tr button:first-child').length
-    for (var i = 0; i < btn_len; i++) {
-        $('#env-table tr button:first-child').eq(i).click(function(event) {
-         var  vcount = $(this).attr('name')
-        var text = $("#env-td-"+vcount).text()
-        var option = $("#env-option-"+vcount).text()
-        $("#env-option-"+vcount).html("<input type='text' value='"+option+"' id='inner-option"+vcount+"' style='width:50px'>");
-        $("#env-td-"+vcount).html("<input type='text' value='"+text+"' id='inner-input"+vcount+"'>");
-        $("#inner-input"+vcount).focus();
-        $("#inner-option"+vcount).blur(function(event) {
-             var val = $("#inner-input"+vcount).val()
-             $("#env-td-"+vcount).html(val)
-             var val = $("#inner-option"+vcount).val()
-             $("#env-option-"+vcount).html(val)
-        });
-        
-        });
-    }*/
-    $('#env-table tr button:first-child').each(function(index, el) {
-        $('#env-table tr button:first-child').eq(index).click(function(event) {
-         var  vcount = $(this).attr('name')
-        var text = $("#env-td-"+vcount).text()
-        var option = $("#env-option-"+vcount).text()
-        $("#env-option-"+vcount).html("<input type='text' value='"+option+"' id='inner-option"+vcount+"' style='width:50px'>");
-        $("#env-td-"+vcount).html("<input type='text' value='"+text+"' id='inner-input"+vcount+"'>");
-        $("#inner-input"+vcount).focus();
-        $("#inner-input"+vcount).blur(function(event) {
-             var val = $("#inner-input"+vcount).val()
-             $("#env-td-"+vcount).html(val)
-             $("#inner-option"+vcount).focus();
-             
-        });
-        $("#inner-option"+vcount).blur(function(){
-                var val = $("#inner-option"+vcount).val()
-             $("#env-option-"+vcount).html(val)
-             });
-        });
-    });
-
-    /*$('#ip-add-btn').click(function(event) {
-        html = "<tr><td class='text-center'>3223</td><td class='text-center'>192.222.22.1</td><td class='text-center'>人工录入</td><td class='text-center'>未初始化</td><td class='text-center'><button class='btn btn-xs btn-success'>IP池初始化</button></td></tr>"
-        $("#ip-table").append(html)
-    });*/
-    
-    var oscount = $("#os-table tr").length-1;
-    $('#add-os').click(function(event) {
-        $("#add-os").attr('disabled', 'true');
-        oscount++;
-        html = "<tr><td class='text-center'>"+oscount+"</td><td class='text-center' id='os-td-"+oscount+"''><input type='text' placeholder='输入系统名称' id='os-input"+oscount+"' style='width:100px'></td><td class='text-center' id='os-ver-td-"+oscount+"'><input type='text' placeholder='输入版本' id='os-version-input"+oscount+"' style='width:60px'></td><td class='text-center' id='os-state-td-"+oscount+"'><input type='text' placeholder='输入备注' id='os-state-input"+oscount+"' style='width:100px'></td><td class='text-center' id='os-btn-td-"+oscount+"'><button class='btn btn-xs btn-success' id='add-os-"+oscount+"'>确认添加</button></td></tr>"
-        $("#os-table").append(html);
-        $("#os-table input").focus();
-        $("#add-os-"+oscount).click(function(event) {
+$(document).on('click', '#add-env', function(event) {
+    $("#add-env").attr('disabled', 'true');
+    var id = $('#env-table tr button:first-child').attr('name');
+    ipcount++;
+    html = "<tr><td class='text-center' id='env-option-" + ipcount + "'><input type='text' placeholder='标识符' id='inner-option" + ipcount + "' style='width:50px'></td><td class='text-center' id='env-td-" + ipcount + "'><input type='text' placeholder='输入环境名称' id='inner-input" + ipcount + "'></td><td class='text-center' id='env-btn-td-" + ipcount + "'><button class='btn btn-xs btn-success' id='add-env-" + ipcount + "'>确认添加</button></td></tr>";
+    $("#env-table").append(html);
+    $("#inner-input" + ipcount).focus();
+    $("#add-env-" + ipcount).click(function(event) {
+        if ($("#inner-input" + ipcount).val() && $("#inner-option" + ipcount).val()) {
             //ajax提交
-            $("#add-os").removeAttr('disabled');
-            $("#os-td-"+oscount).html($("#os-input"+oscount).val());
-            $("#os-ver-td-"+oscount).html($("#os-version-input"+oscount).val());
-            $("#os-state-td-"+oscount).html($("#os-state-input"+oscount).val())
-            $("#os-btn-td-"+oscount).html("<button class='btn btn-xs btn-success' id='env-mf-"+oscount+"-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
+            var env_option = $("#inner-option" + ipcount).val();
+            var env_type = $("#inner-input" + ipcount).val()
+            var data = {
+                "env_option": env_option,
+                "env_type": env_type
+            }
+            $.post('{% url "ajax_add_env" %}', data, function(data) {
+                alert("添加成功")
+            });
+            $("#add-env").removeAttr('disabled');
+            $("#env-option-" + ipcount).html($("#inner-option" + ipcount).val())
+            $("#env-td-" + ipcount).html($("#inner-input" + ipcount).val())
+            $("#env-btn-td-" + ipcount).html("<button class='btn btn-xs btn-success' id='env-mf-" + ipcount + "-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
+            $('#env-mf-' + ipcount + '-btn').click(function(event) {
+                var count = $(this).parent().siblings().eq(0).attr('name');
+                var text = $(this).parent().siblings().eq(1).text();
+                $("#env-td-" + count).html("<input type='text' value='" + text + "' id='inner-input" + count + "'>");
+                $("#inner-input" + count).focus();
+                $("#inner-input" + count).blur(function(event) {
+                    var val = $("#inner-input" + count).val()
+                    $("#env-td-" + count).html(val)
+                });
+            });
+
+        }
+    });
+
+});
+
+$('#env-table tr button:first-child').each(function(index, el) {
+    $('#env-table tr button:first-child').eq(index).click(function(event) {
+        var vcount = $(this).attr('name')
+        var text = $("#env-td-" + vcount).text()
+        var option = $("#env-option-" + vcount).text()
+        $("#env-option-" + vcount).html("<input type='text' value='" + option + "' id='inner-option" + vcount + "' style='width:50px'>");
+        $("#env-td-" + vcount).html("<input type='text' value='" + text + "' id='inner-input" + vcount + "'>");
+        $("#inner-input" + vcount).focus();
+        $("#inner-input" + vcount).blur(function(event) {
+            var val = $("#inner-input" + vcount).val()
+            $("#env-td-" + vcount).html(val)
+            $("#inner-option" + vcount).focus();
+
+        });
+        $("#inner-option" + vcount).blur(function() {
+            var env_type = $("#env-td-" + vcount).text()
+            var val = $("#inner-option" + vcount).val()
+            $.post('{% url "ajax_update_env" %}', {
+                "id": vcount,
+                "env_option": env_type,
+                "env_type": val
+            }, function(data) {
+                $("#env-option-" + vcount).html(val);
+            });
+            
+
+            
         });
     });
-   
+});
+$('#env-table tr button:nth-child(2)').each(function(index, el) {
+    $('#env-table tr button:nth-child(2)').eq(index).click(function(event) {
+        var id = $('#env-table tr button:first-child').eq(index).attr('name');
+        alert("确认删除？" + id)
+        $.post('{% url "ajax_delete_env" %}', {
+            "id": id
+        }, function(data) {
+            /*optional stuff to do after success */
+            location.href = '{% url "set_vm" %}'
+        });
+    });
+
+});
+
+
+var oscount = $("#os-table tr").length - 1;
+$('#add-os').click(function(event) {
+    $("#add-os").attr('disabled', 'true');
+    oscount++;
+    html = "<tr><td class='text-center'>" + oscount + "</td><td class='text-center' id='os-td-" + oscount + "''><input type='text' placeholder='输入系统名称' id='os-input" + oscount + "' style='width:100px'></td><td class='text-center' id='os-ver-td-" + oscount + "'><input type='text' placeholder='输入版本' id='os-version-input" + oscount + "' style='width:60px'></td><td class='text-center' id='os-state-td-" + oscount + "'><input type='text' placeholder='输入备注' id='os-state-input" + oscount + "' style='width:100px'></td><td class='text-center' id='os-btn-td-" + oscount + "'><button class='btn btn-xs btn-success' id='add-os-" + oscount + "'>确认添加</button></td></tr>"
+    $("#os-table").append(html);
+    $("#os-table input").focus();
+    $("#add-os-" + oscount).click(function(event) {
+        //ajax提交
+        $("#add-os").removeAttr('disabled');
+        $("#os-td-" + oscount).html($("#os-input" + oscount).val());
+        $("#os-ver-td-" + oscount).html($("#os-version-input" + oscount).val());
+        $("#os-state-td-" + oscount).html($("#os-state-input" + oscount).val())
+        $("#os-btn-td-" + oscount).html("<button class='btn btn-xs btn-success' id='env-mf-" + oscount + "-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
+    });
+});
 </script>
 {% endblock %}

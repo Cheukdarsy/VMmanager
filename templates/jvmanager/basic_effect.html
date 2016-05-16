@@ -26,6 +26,25 @@
 </style>
 <script>
 $(function() {
+    setInterval(function(e){
+    var str = ""
+    var num = $("#agree-table tr").length;
+    for (var i = 0; i < num; i++) {
+        var id = $("#agree-table tr").eq(i).children('td:nth-child(1)')
+        var $pro = $("#agree-table tr").eq(i).children('td:nth-child(6)')
+        if($.trim($pro.text())!=="待生成"&&$.trim($pro.text())!=="100%"){
+            str += id.text()+ ","
+        }  
+    }
+    if(str!=""){     
+    $.post('ajax_get_process', {"id": str.slice(0,-1)}, function(data) {
+       for (var i = 0; i < data.length; i++) {
+           $("#"+data[i].id+"process").text(data[i].progress)
+           $("#"+data[i].id+"gen_log").text(data[i].log)
+       }
+    });
+    }
+    },5000)
     var request_id, id;
     $(".modify-btn").click(function(event) {
         request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
@@ -97,6 +116,27 @@ $(function() {
                         alert("ajax 异常");
                     }
                 })
+/*                $(".template").empty().append("<option value=''>请选择</option>");
+                $.ajax({
+                    url: '{% url "ajax_select_template" %}',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "id": parseInt(id)
+                    },
+                    success: function(data) {
+                        var select = ""
+                        for (var i = 0; i < data.length; i++) {
+                            select += "<option value='" + data[i].template_id + "'>" + data[i].template_name + "</option>"
+                        }
+                        for (var vm_num = 0; vm_num <= total_num; vm_num++) {
+                            $("#" + id + vm_num + "template").append(select)
+                        }
+                    },
+                    error: function() {
+                        alert("ajax 异常");
+                    }
+                })*/
             } else {
                 alert("ajax出错")
             }
@@ -106,11 +146,11 @@ $(function() {
             "id": parseInt(id)
         }, function(data, textStatus) {
             if (textStatus == "success") {
+                var select = "";
+                for (var i = 0; i < data.length; i++) {
+                    select += "<option value='" + data[i].cluster_id + "'>" + data[i].cluster_name + "</option>"
+                }
                 for (var vm_num = 0; vm_num <= total_num; vm_num++) {
-                    var select = "";
-                    for (var i = 0; i < data.length; i++) {
-                        select += "<option value='" + data[i].cluster_id + "'>" + data[i].cluster_name + "</option>"
-                    }
                     $("#" + id + vm_num + "cluster").append(select)
                 }
             } else {
@@ -223,30 +263,30 @@ $(function() {
 
     });
     $(".conf-agree-btn").click(function(event) {
-    var assign_data_array = [];
-      for (var j = 1; j <= $("#"+id+"AgreeForm strong").length-1; j++) {
-          var dp = {
-              "ipaddress": $("#" + id + j + "ipaddress").text(),
-              "vmname": $("#" + id + j + "machinename").text(),
-              "cluster": $("#" + id + j + "cluster").val(),
-              "resourcepool": $("#" + id + j + "resourcepool").val(),
-              "storage": $("#" + id + j + "storage").val()
-          };
-          assign_data_array.push(dp)
+        var assign_data_array = [];
+        for (var j = 1; j <= $("#" + id + "AgreeForm strong").length - 1; j++) {
+            var dp = {
+                "ipaddress": $("#" + id + j + "ipaddress").text(),
+                "vmname": $("#" + id + j + "machinename").text(),
+                "cluster": $("#" + id + j + "cluster").val(),
+                "template": $("#" + id + j + "template").val(),
+                "resourcepool": $("#" + id + j + "resourcepool").val(),
+                "storage": $("#" + id + j + "storage").val()
+            };
+            assign_data_array.push(dp)
         }
         var confirm_form = {
             "approvel_id": id,
             "vm_num": $("#" + id + "AgreeForm em").eq(5).text(),
             "assign_data": JSON.stringify(assign_data_array)
         };
-    alert(JSON.stringify(confirm_form));
-    $.post('{% url "agree_apply" %}', confirm_form, function (data) {
-          alert("提交成功！"+data);
-          setTimeout(function(e){
-            location.href = '{% url "VM_list" %}'
-          },200);          
-      });
-});
+        $.post('{% url "agree_apply" %}', confirm_form, function(data) {
+            alert("提交成功！" + data);
+            setTimeout(function(e) {
+                location.href = '{% url "VM_list" %}'
+            }, 200);
+        });
+    });
 
     $(".gen-btn").click(function(event) {
         var str = ""
@@ -261,7 +301,7 @@ $(function() {
             type: 'post',
             dataType: 'json',
             data: {
-                "id": parseInt(id)
+                "id": str.slice(0,-1)
             },
             success: function(data) {
                 alert(data)

@@ -85,9 +85,9 @@
                                 </div>
                                 <div class="form-group col-sm-12" >
                                 <div class="form-group col-sm-6" style="float:left;margin-left:-25px;">
-                                    <label class="col-sm-8 control-label">集群(主机):&nbsp;</label>
+                                    <label class="col-sm-8 control-label　">集群(主机):&nbsp;</label>
                                     <div class="col-sm-4">
-                                        <select name="cluster" class="cluster" id="{{key.id}}{{i}}cluster" style="margin-top:5px;margin-left:-25px">
+                                        <select name="cluster" class="cluster chosen-select" id="{{key.id}}{{i}}cluster" style="margin-left:-25px">
                                         </select>
                                         <strong id="{{i}}uni" style="display:none">{{i}}</strong>
                                     </div>
@@ -95,7 +95,7 @@
                                  <div class="form-group col-sm-6" style="margin-left:25px">
                                     <label class="col-sm-6 control-label">模板:&nbsp;</label>
                                     <div class="col-sm-6">
-                                        <select name="template" class="template" id="{{key.id}}{{i}}template" style="margin-top:5px;margin-left:-25px">
+                                        <select name="template" class="template　chosen-select" id="{{key.id}}{{i}}template" style="margin-top:5px;margin-left:-25px">
                                         <option value="">pDF241027</option>
                                         </select>
                                     </div>
@@ -105,7 +105,7 @@
                                     <div class="form-group col-sm-6">
                                         <label class="col-sm-6 control-label">资源池:&nbsp;</label>
                                         <div class="col-sm-6" style="margin-top:5px;margin-left:-25px;">
-                                            <select name="cluster" id="{{key.id}}{{i}}resourcepool">
+                                            <select name="cluster" class="chosen-select" id="{{key.id}}{{i}}resourcepool">
                                            <option value=''>请选择主机</option>
                                             </select>
                                         </div>
@@ -113,7 +113,7 @@
                                     <div class="form-group col-sm-6">
                                         <label class="col-sm-6 control-label">存储:&nbsp;</label>
                                         <div class="col-sm-6" style="margin-top:5px;margin-left:-25px;">
-                                            <select name="cluster" id="{{key.id}}{{i}}storage">
+                                            <select name="cluster" class="chosen-select" id="{{key.id}}{{i}}storage">
                                             <option value=''>请选择主机</option>
                                             </select>
                                         </div>

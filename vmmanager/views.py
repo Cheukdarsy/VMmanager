@@ -576,3 +576,48 @@ def ajax_add_template(request):
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
+
+def ajax_add_env(request):
+    if request.method == 'POST':
+        
+        env_option = request.POST['env_option']
+        env_type = request.POST['env_type']  
+        logger.debug(request.POST)  
+        try:
+            sheetfield = SheetField(sheet_name="global",field_name="env_type",option=env_option,option_display=env_type)
+            sheetfield.save()
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success": "ok"})
+
+def ajax_update_env(request):
+    if request.method == 'POST':
+        logger.debug(request.POST)  
+        id = request.POST['id']
+        env_option = request.POST['env_option']
+        env_type = request.POST['env_type']
+
+        try:
+            SheetField.objects.filter(id=id).update(option=env_type,option_display=env_option)
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success": "ok"})
+
+
+def ajax_delete_env(request):
+    if request.method == "POST":
+        id = request.POST['id']
+        logger.debug(id)
+        try:
+            del_env = SheetField.objects.filter(id=id)
+            del_env.delete()
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success":"delete successfull"})
+
+
+def datamanager(request):
+    return my_render('datamanager.html', locals(), request)
