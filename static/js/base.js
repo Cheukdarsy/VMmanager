@@ -158,7 +158,8 @@ $("#slider").slider({
             range:"min",
             min:0,
             max:100,
-            value:60,
+            value:0,
+            step:10,
             slide:function(event,ui){
                 $("#data_volume").val(ui.value);
             }

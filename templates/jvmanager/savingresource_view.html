@@ -59,7 +59,7 @@
                         <td class="text-center">
                            <div >
                             <button class="btn btn-primary btn-xs modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
-                            {% include 'jvmanager/modify_modal.html' %} 
+                            {% include 'jvmanager/saving_modify_modal.html' %} 
                              <button class="btn btn-success btn-xs saving-submit-btn" type="submit">提交</button>	
                         </td>
                     </tr>
@@ -98,16 +98,18 @@ $(function(){
 var request_id,id;
 $(".modify-btn").click(function(event) {
      request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
-     $.post('{% url "show_apply_machinedetail" %}', { "id": request_id}, function(data) {
+     $.post('{% url "show_apply_machinedetail" %}', {"id": request_id}, function(data) {
        var detail_list = eval($.parseJSON(data));
        //数据获取
        $(".dropdownMenu1").text(detail_list[0].fields.env_type).append('&nbsp;<span class="caret"></span>');
        $("#"+request_id+"modal input[value='"+detail_list[0].fields.fun_type+"']").prop("checked",true).parent("label").addClass('active').siblings('label').removeClass('active');
        $(".dropdownMenu2").text(detail_list[0].fields.os_type).append('&nbsp;<span class="caret"></span>');
        $("#"+request_id+"modal ."+detail_list[0].fields.cpu+"C").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');
-       $("#"+request_id+"modal ."+detail_list[0].fields.memory+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
-       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.data_disk);
-       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.request_num);
+       $("#"+request_id+"modal ."+detail_list[0].fields.memory_gb+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
+       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.datadisk_gb);
+       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.request_vm_num);
+       $("#"+request_id+"modal input[name='app_name']").val(detail_list[0].fields.app_name);
+       $("#"+request_id+"modal input[name='apply_reason']").val(detail_list[0].fields.apply_reason);
      });
      var saving_data_disk = $("#"+request_id+"data_volume").val();
      var saving_request_num = $("#"+request_id+"request_num").val();
@@ -134,26 +136,10 @@ $(".modify-btn").click(function(event) {
 $(".saving-submit-btn").click(function(event) {
      id = $(this).parents(".detail-table").children('td:first-child').attr("id");
 });
-$(".modify-save-btn").click(function(event) {
-      var saving_fun_type = $("#"+request_id+"modal input[name='fun_type']:checked").val();
-      var saving_env_type = $("#"+request_id+"modal input[name='env_type']").val();
-      var saving_cpu_num = $("#"+request_id+"modal input[name='cpu']:checked").val();
-      var saving_memory_num = $("#"+request_id+"modal input[name='memory']:checked").val();
-    　　var saving_os_type = $("#"+request_id+"modal input[name='os_type']").val();
-      var saving_data_disk = $("#"+request_id+"modal input[name='data_volume']").val();
-      var saving_request_num = $("#"+request_id+"modal input[name='request_num']").val();
-      var saving_form = {
-        "request_id":request_id,
-        "saving_fun_type":saving_fun_type,
-        "saving_env_type":saving_env_type,
-        "saving_cpu_num":saving_cpu_num,
-        "saving_memory_num":saving_memory_num,
-        "saving_os_type":saving_os_type,
-        "saving_data_disk":saving_data_disk,
-        "saving_request_num":saving_request_num,
-      }
-      $.post('{% url "modify_machine_detail" %}', saving_form, function(data) {
-        alert("提交成功！");
+$(".modify-save-btn").click(function(event) {    
+      var modify_form = $("#"+request_id+"modalform").serializeArray()
+      $.post('{% url "modify_saving_detail" %}', modify_form, function(data) {
+        alert("保存成功")
           setTimeout(function(e){
             location.href = '{% url "saving_resource_view" %}'
           },200);
@@ -176,7 +162,7 @@ $(".saving-submit-btn").click(function(event) {
 function selectMenu(factor,name){
             factor.next().find("a").click(function(){
             factor.text($(this).text()).append('&nbsp;<span class="caret"></span>');
-            name.val($(this).text());
+            name.val($(this).attr("name"));
         })}
         
 selectMenu($(".dropdownMenu1"),$(".env_type"));

@@ -210,20 +210,23 @@
                                     <div class="panel-body">
                                         <table class="table table-striped table-hover table-bordered" id="env-table" >
                                             <tr>
-                                                <th class="text-center">序号</th>
+                                                <th class="text-center">标识符</th>
                                                 <th class="text-center" style='width:300px'>环境类型</th>
                                                 <th class="text-center">操作</th>
 
                                             </tr>
-                                            <tr>
-                                                <td class="text-center">1</td>
-                                                <td class="text-center" id="env-td-1">测试环境</td>
+                                            {% for env in envs%}
+                                                <tr id="tr{{env.id}}">
+                                                <td class="text-center" id="env-option-{{env.id}}">{{env.option}}</td>
+                                                <td class="text-center" id="env-td-{{env.id}}">{{env.option_display}}</td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-xs btn-success">修改</button>
-                                                    <button class="btn btn-xs btn-danger">删除</button>
+                                                    <button class="btn btn-xs btn-success" name="{{env.id}}">修改</button>
+                                                    <button class="btn btn-xs btn-danger" name="{{env.id}}">删除</button>
                                                 </td>
                                                 <td class="text-center"></td>
                                             </tr>
+                                            {% endfor %}
+                                            
                                         </table>
                                     </div>
                                 </div>
@@ -239,16 +242,17 @@
                                     <div class="panel-body">
                                         <table class="table table-striped table-hover table-cendensed" id="os-table" >
                                             <tr>
-                                                <th class="text-center" style='width:70px'>序号</th>
-                                                <th class="text-center" style='width:150px'>操作系统类型</th>
-                                                <th class="text-center" style='width:100px'>系统版本</th>
+                                                <th class="text-center" style='width:70px'>标识符</th>
+                                                <th class="text-center" style='width:150px'>类型描述</th>
+                                                <th class="text-center" style='width:100px'>版本标识符</th>
                                                 <th class="text-center" style='width:150px'>备注</th>
                                                 <th class="text-center">操作</th>
 
                                             </tr>
-                                            <tr>
-                                                <td class="text-center">1</td>
-                                                <td class="text-center">WINDOWS 2008</td>
+                                            {% for o in os %}
+                                                <tr>
+                                                <td class="text-center">{{o.option}}</td>
+                                                <td class="text-center">{{o.option_display}}</td>
                                                 <td class="text-center">R2</td>
                                                 <td class="text-center">仅用于测试环境</td>
                                                 <td class="text-center">
@@ -257,6 +261,8 @@
                                                 </td>
                                                 <td class="text-center"></td>
                                             </tr>
+                                            {% endfor %}
+                                            
                                         </table>
                                     </div>
                                 </div>
@@ -325,13 +331,14 @@
     $(document).on('click', '#add-env', function(event) {
         $("#add-env").attr('disabled', 'true');
         ipcount++;
-        html = "<tr><td class='text-center'>"+ipcount+"</td><td class='text-center' id='env-td-"+ipcount+"'><input type='text' placeholder='输入环境名称' id='inner-input"+ipcount+"'></td><td class='text-center' id='env-btn-td-"+ipcount+"'><button class='btn btn-xs btn-success' id='add-env-"+ipcount+"'>确认添加</button></td></tr>";
+        html = "<tr><td class='text-center' id='env-option-"+ipcount+"'><input type='text' placeholder='标识符' id='inner-option"+ipcount+"' style='width:50px'></td><td class='text-center' id='env-td-"+ipcount+"'><input type='text' placeholder='输入环境名称' id='inner-input"+ipcount+"'></td><td class='text-center' id='env-btn-td-"+ipcount+"'><button class='btn btn-xs btn-success' id='add-env-"+ipcount+"'>确认添加</button></td></tr>";
         $("#env-table").append(html);
         $("#inner-input"+ipcount).focus();
         $("#add-env-"+ipcount).click(function(event) {
              if($("#inner-input"+ipcount).val()){
                 //ajax提交
                 $("#add-env").removeAttr('disabled');
+                 $("#env-option-"+ipcount).html($("#inner-option"+ipcount).val())
                 $("#env-td-"+ipcount).html($("#inner-input"+ipcount).val())
                 $("#env-btn-td-"+ipcount).html("<button class='btn btn-xs btn-success' id='env-mf-"+ipcount+"-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
         $('#env-mf-'+ipcount+'-btn').click(function(event) {
@@ -350,16 +357,42 @@
         });
 
     });
-    $('#env-table tr button').eq(0).each(function(index, el) {
-        vcount = index+1;
-        $(this).click(function(event) {     
+    /*var btn_len = $('#env-table tr button:first-child').length
+    for (var i = 0; i < btn_len; i++) {
+        $('#env-table tr button:first-child').eq(i).click(function(event) {
+         var  vcount = $(this).attr('name')
         var text = $("#env-td-"+vcount).text()
+        var option = $("#env-option-"+vcount).text()
+        $("#env-option-"+vcount).html("<input type='text' value='"+option+"' id='inner-option"+vcount+"' style='width:50px'>");
+        $("#env-td-"+vcount).html("<input type='text' value='"+text+"' id='inner-input"+vcount+"'>");
+        $("#inner-input"+vcount).focus();
+        $("#inner-option"+vcount).blur(function(event) {
+             var val = $("#inner-input"+vcount).val()
+             $("#env-td-"+vcount).html(val)
+             var val = $("#inner-option"+vcount).val()
+             $("#env-option-"+vcount).html(val)
+        });
+        
+        });
+    }*/
+    $('#env-table tr button:first-child').each(function(index, el) {
+        $('#env-table tr button:first-child').eq(index).click(function(event) {
+         var  vcount = $(this).attr('name')
+        var text = $("#env-td-"+vcount).text()
+        var option = $("#env-option-"+vcount).text()
+        $("#env-option-"+vcount).html("<input type='text' value='"+option+"' id='inner-option"+vcount+"' style='width:50px'>");
         $("#env-td-"+vcount).html("<input type='text' value='"+text+"' id='inner-input"+vcount+"'>");
         $("#inner-input"+vcount).focus();
         $("#inner-input"+vcount).blur(function(event) {
              var val = $("#inner-input"+vcount).val()
              $("#env-td-"+vcount).html(val)
+             $("#inner-option"+vcount).focus();
+             
         });
+        $("#inner-option"+vcount).blur(function(){
+                var val = $("#inner-option"+vcount).val()
+             $("#env-option-"+vcount).html(val)
+             });
         });
     });
 

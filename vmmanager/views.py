@@ -20,19 +20,54 @@ def VM_list(request):
     return my_render('jvmanager/test_manage.html', locals(), request)
 
 
-@require_role('admin')
+@require_role('user')
 def show_apply_machinedetail(request):
-    """ajax获取机器详细信息"""
+    """ajax获取申请机器详细信息"""
     if request.method == "POST":
         id = int(request.POST.get('id', ''))
-        applydetail = Approvel.objects.filter(id=id)
+        applydetail = Application.objects.filter(id=id)
         applydetail_dict = simplejson.dumps(applydetail, cls=QuerySetEncoder)
+
         return JsonResponse(applydetail_dict)
     else:
         error_dict = {'error': 'ajax not good'}
         return JsonResponse(error_dict)
 
+@require_role('admin')
+def show_approv_machinedetail(request):
+    """ajax获取审核机器详细信息"""
+    if request.method == "POST":
+        id = int(request.POST.get('id', ''))
+        approvdetail = Approvel.objects.filter(id=id)
+        approvdetail_dict = simplejson.dumps(approvdetail, cls=QuerySetEncoder)
+        return JsonResponse(approvdetail_dict)
+    else:
+        error_dict = {'error': 'ajax not good'}
+        return JsonResponse(error_dict)
 
+@require_role('user')
+def modify_saving_detail(request):
+    if request.method == "POST":
+        id = request.POST.get("request_id",'')
+        env_type = request.POST.get('env_type', '')
+        fun_type = request.POST.get('fun_type', '')
+        cpu = int(request.POST.get('cpu', ''))
+        memory_gb = int(request.POST.get('memory', ''))
+        os_type = request.POST.get('os_type', '')
+        datadisk_gb = int(request.POST.get('data_volume', ''))
+        request_vm_num = int(request.POST.get('request_num', ''))
+        apply_reason = request.POST.get('apply_reason', '')
+        app_name = request.POST.get('app_name', '')
+        try:
+            application = Application.objects.filter(pk=id)
+            application.update(env_type=env_type,fun_type=fun_type,cpu=cpu,memory_gb=memory_gb,os_type=os_type,datadisk_gb=datadisk_gb,request_vm_num=request_vm_num,app_name=app_name,apply_reason=apply_reason)
+        except Exception, e:
+            raise e
+        else:
+            success_dict = {'success': 'update'}
+            return JsonResponse(success_dict)
+
+@require_role('admin')
 def modify_machine_detail(request, *call_args):
     """
     修改用户单个机器详细信息
@@ -49,7 +84,7 @@ def modify_machine_detail(request, *call_args):
         saving_apply_status = 'AI'
         saving_datetime = datetime.now()
         try:
-            Approvel.objects.filter(application_id=request_id).update(appro_fun_type=saving_fun_type,
+            Approvel.objects.filter(id=request_id).update(appro_fun_type=saving_fun_type,
                                                                       appro_os_type=saving_os_type,
                                                                       appro_cpu=saving_cpu_num,
                                                                       appro_env_type=saving_env_type,
@@ -239,6 +274,8 @@ def submit_saving_resource(request):
 
 @require_role('admin')
 def set_vm(request):
+    envs = SheetField.objects.filter(field_name="env_type")
+    os = SheetField.objects.filter(field_name="os_type")
     return my_render('jvmanager/set_vm.html', locals(), request)
 
 

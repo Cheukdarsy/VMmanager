@@ -21,3 +21,20 @@
 2016-05-04 18:32:58,973 - api.py - DEBUG - 请求次数: 11
 2016-05-04 18:33:04,370 - api.py - DEBUG - 请求次数: 11
 2016-05-04 18:33:12,125 - api.py - DEBUG - 请求次数: 11
+2016-05-16 08:19:59,691 - views.py - DEBUG - start.....
+2016-05-16 08:21:04,147 - views.py - DEBUG - start.....
+2016-05-16 08:21:33,773 - views.py - DEBUG - start.....
+2016-05-16 08:22:06,608 - views.py - DEBUG - start.....
+2016-05-16 08:22:06,610 - views.py - DEBUG - TEST
+2016-05-16 08:22:44,236 - views.py - DEBUG - start.....
+2016-05-16 08:22:44,238 - views.py - DEBUG - TEST
+2016-05-16 08:23:23,152 - views.py - DEBUG - start.....
+2016-05-16 08:23:23,152 - views.py - DEBUG - [<Application: TEST>]
+2016-05-16 08:44:09,705 - views.py - DEBUG - <QueryDict: {u'modify_form[1][value]': [u'normal'], u'modify_form[5][name]': [u'data_volume'], u'modify_form[0][name]': [u'env_type'], u'modify_form[4][name]': [u'os_type'], u'modify_form[6][value]': [u'1'], u'modify_form[4][value]': [u''], u'modify_form[1][name]': [u'fun_type'], u'modify_form[3][name]': [u'memory'], u'request_id': [u'11'], u'modify_form[2][value]': [u'2'], u'modify_form[2][name]': [u'cpu'], u'modify_form[0][value]': [u'TEST'], u'modify_form[3][value]': [u'4'], u'modify_form[5][value]': [u'20'], u'modify_form[6][name]': [u'request_num']}>
+2016-05-16 08:51:56,285 - views.py - DEBUG - <QueryDict: {u'modify_form[1][value]': [u'normal'], u'modify_form[5][name]': [u'data_volume'], u'modify_form[0][name]': [u'env_type'], u'modify_form[4][name]': [u'os_type'], u'modify_form[6][value]': [u'1'], u'modify_form[4][value]': [u''], u'modify_form[1][name]': [u'fun_type'], u'modify_form[3][name]': [u'memory'], u'request_id': [u'11'], u'modify_form[2][value]': [u'2'], u'modify_form[2][name]': [u'cpu'], u'modify_form[0][value]': [u'TEST'], u'modify_form[3][value]': [u'4'], u'modify_form[5][value]': [u'20'], u'modify_form[6][name]': [u'request_num']}>
+2016-05-16 08:54:46,761 - views.py - DEBUG - <QueryDict: {u'fun_type': [u'normal'], u'request_num': [u'1'], u'env_type': [u'TEST'], u'memory': [u'4'], u'os_type': [u''], u'cpu': [u'2'], u'data_volume': [u'20']}>
+2016-05-16 08:56:24,536 - views.py - DEBUG - 
+2016-05-16 08:57:14,785 - views.py - DEBUG - 2
+2016-05-16 08:59:43,532 - views.py - DEBUG - 2
+2016-05-16 09:00:18,230 - views.py - DEBUG - 2
+2016-05-16 09:18:52,255 - views.py - DEBUG - "[{\"pk\": 11, \"model\": \"vmmanager.application\", \"fields\": {\"apply_status\": \"HD\", \"memory_gb\": 4, \"apply_reason\": \"43243\", \"app_name\": \"3243\", \"fun_type\": \"normal\", \"request_vm_num\": 4, \"env_type\": \"TEST\", \"datadisk_gb\": 20, \"apply_date\": \"2016-05-15T22:41:26\", \"os_type\": \"WINDOWS 2003 R2\", \"cpu\": 2, \"user\": 5}}]"

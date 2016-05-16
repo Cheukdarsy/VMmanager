@@ -1,136 +1,134 @@
-                          {% load mytags %}
-                           <div class="modal fade" id="{{ key.id }}AGModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                             <div class="modal-dialog" role="document">
-                               <div class="modal-content">
-                                 <div class="modal-header">
-                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                     <span aria-hidden="true">&times;</span>
-                                   </button>
-                                   <h4 class="modal-title" id="myModalLabel">资源复核</h4>
-                                 </div>
-                                 <div class="modal-body">
-                                   <!-- 用户表单 -->                           
-                                   <div class="ibox-content">
-                                     <form class="form-horizontal" id="{{ key.id }}AgreeForm">
-                                       <div class="panel panel-default">
-                                         <div class="panel-heading">基本配置：</div>
-                                         <div class="panel-body">
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label" >环境类型:&nbsp;</label>
-
-                                             <div class="col-sm-6" style="margin-top:5px">
-                                             <em id="em">{{ key.appro_env_type }}</em>
-                                             </div>
-                                           </div>
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">主机类型:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px"> <em>{{ key.appro_fun_type }}</em>                                             
-                                             </div>
-                                           </div>
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">CPU:&nbsp;</label>
-                                             <div class ="col-sm-6" style="margin-top:5px">
-                                             <em>{{ key.appro_cpu }}</em>&nbsp;C
-                                             </div>
-                                           </div>
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">内存:&nbsp;</label>
-                                             <div class ="col-sm-6" style="margin-top:5px">
-                                             <em>{{ key.appro_memory_gb }}</em>&nbsp;G
-                                             </div>
-                                           </div>
-                                           
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">系统盘:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px">
-                                             <strong>50G</strong>
-                                             </div>
-                                           </div>
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">数据盘:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px">
-                                             <em>{{ key.appro_datadisk_gb }}</em>&nbsp;G
-                                             </div>
-                                           </div>
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">数量:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px">
-                                             <em>{{ key.appro_vm_num }}</em>&nbsp;台
-                                             </div>
-                                           </div>
-                                           <div class="form-group col-sm-6" >
-                                             <label class="col-sm-6 control-label" >操作系统:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px;">
-                                             <em style="width:120px">{{ key.appro_os_type }}</em>
-                                             </div>
-                                           </div>
-                                         </div>
-                                         <div class="panel-heading" id="disct_plan">分配计划:</div>
-                                         {% for i in key.appro_vm_num|times %}
-                                          <div class="panel-body" id="{{key.id}}{{i}}" style="border:1px solid;border-color:#DDD">
-                                           
-                                          <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">IP地址:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
-                                               <p style="width:200px">
-                                                 <label id="{{ key.id }}{{i}}ipaddress" class="change-ip" name="{{i}}">118.241.29.254</label>
-                                                 <button class="change-ip btn btn-success btn-xs">换</button>
-                                               </p>
-                                             </div>
-                                           </div>
-                                           
-                                           <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">机器名:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
-                                               <p style="width:200px">
-                                                 <label id="{{ key.id }}{{i}}machinename">pdHF234325454</label>
-                                               </p>
-                                             </div>
-                                           </div>
-
-                                           <div class="form-group col-sm-12" style="float:left">
-                                             <label class="col-sm-3 control-label">集群(主机):&nbsp;</label>
-                                             <div class="col-sm-9">
-                                               <select name="cluster" class="form-control cluster" id="{{key.id}}{{i}}cluster">
-                                               </select>
-                                               <strong id="{{i}}uni">{{i}}</strong>
-                                             </div>
-                                           </div>
-                                           <div class="form-group col-sm-12" id="{{key.id}}{{i}}block">
-                                             <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label">资源池:&nbsp;</label>
-                                             <div class="col-sm-6"  style="margin-top:5px">
-                                               <select name="cluster" id="{{key.id}}{{i}}resourcepool">
-                                               </select>
-                                             </div>
-                                           </div>
-
-                                          <div class="form-group col-sm-6">
-                                             <label class="col-sm-6 control-label" >存储:&nbsp;</label>
-                                             <div class="col-sm-6" style="margin-top:5px">
-                                               <select name="cluster" id="{{key.id}}{{i}}storage">
-                                               </select>
-                                             </div>
-                                           </div>
-                                         </div> 
-                                           </div>
-                                           
-                                           
-                                           
-                                           
-                                         {% endfor %}
-                                         
-                                       </div>
-                                     </form>
-                                   </div>
-
-                                 </div>
-                                 <div class="modal-footer">
-                                   <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                   <button type="button" class="btn btn-primary conf-agree-btn">提交</button>
-                                 </div>
-                               </div>
-                             </div>
-
-                           </div>
-
+ {% load mytags %}
+<div class="modal fade" id="{{ key.id }}AGModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">资源复核</h4>
+            </div>
+            <div class="modal-body">
+                <!-- 用户表单 -->
+                <div class="ibox-content">
+                    <form class="form-horizontal" id="{{ key.id }}AgreeForm" role="form">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">基本配置：</div>
+                            <div class="panel-body">
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">环境类型:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px">
+                                        <em id="em">{{ key.appro_env_type }}</em>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">主机类型:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px"> <em>{{ key.appro_fun_type }}</em>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">CPU:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px">
+                                        <em>{{ key.appro_cpu }}</em>&nbsp;C
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">内存:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px">
+                                        <em>{{ key.appro_memory_gb }}</em>&nbsp;G
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">系统盘:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px">
+                                        <strong>50G</strong>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">数据盘:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px">
+                                        <em>{{ key.appro_datadisk_gb }}</em>&nbsp;G
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">数量:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px">
+                                        <em>{{ key.appro_vm_num }}</em>&nbsp;台
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">操作系统:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px;">
+                                        <em style="width:120px">{{ key.appro_os_type }}</em>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-heading" id="{{key.id}}disct_plan">分配计划:</div>
+                            {% for i in key.appro_vm_num|times %}
+                            <div class="panel-body" id="{{key.id}}{{i}}" style="border:1px solid;border-color:#DDD">
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">IP地址:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
+                                        <p style="width:200px">
+                                            <label id="{{ key.id }}{{i}}ipaddress" class="change-ip" name="{{i}}">118.241.29.254</label>
+                                            <button class="change-ip btn btn-success btn-xs">换</button>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label class="col-sm-6 control-label">机器名:&nbsp;</label>
+                                    <div class="col-sm-6" style="margin-top:5px;padding-left:1px">
+                                        <p style="width:200px">
+                                            <label id="{{ key.id }}{{i}}machinename">pdHF234325454</label>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-12" >
+                                <div class="form-group col-sm-6" style="float:left;margin-left:-25px;">
+                                    <label class="col-sm-8 control-label">集群(主机):&nbsp;</label>
+                                    <div class="col-sm-4">
+                                        <select name="cluster" class="cluster" id="{{key.id}}{{i}}cluster" style="margin-top:5px;margin-left:-25px">
+                                        </select>
+                                        <strong id="{{i}}uni" style="display:none">{{i}}</strong>
+                                    </div>
+                                </div>
+                                 <div class="form-group col-sm-6" style="margin-left:25px">
+                                    <label class="col-sm-6 control-label">模板:&nbsp;</label>
+                                    <div class="col-sm-6">
+                                        <select name="template" class="template" id="{{key.id}}{{i}}template" style="margin-top:5px;margin-left:-25px">
+                                        <option value="">pDF241027</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-group col-sm-12" id="{{key.id}}{{i}}block">
+                                    <div class="form-group col-sm-6">
+                                        <label class="col-sm-6 control-label">资源池:&nbsp;</label>
+                                        <div class="col-sm-6" style="margin-top:5px;margin-left:-25px;">
+                                            <select name="cluster" id="{{key.id}}{{i}}resourcepool">
+                                           <option value=''>请选择主机</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label class="col-sm-6 control-label">存储:&nbsp;</label>
+                                        <div class="col-sm-6" style="margin-top:5px;margin-left:-25px;">
+                                            <select name="cluster" id="{{key.id}}{{i}}storage">
+                                            <option value=''>请选择主机</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary conf-agree-btn">提交</button>
+            </div>
+        </div>
+    </div>
+</div>

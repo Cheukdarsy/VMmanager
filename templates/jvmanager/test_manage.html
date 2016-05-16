@@ -1,458 +1,142 @@
-{% extends 'base.html' %}
-{% load mytags %}
-
-
-{% block content %}
-    {% include 'nav_cat_bar.html' %}
+{% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
 <div class="wrapper wrapper-content animated fadeInRight">
-  <div class="row">
-
-    <div class="col-sm-10">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title">
-          <h5>审批页面</h5>
-          <div class="ibox-tools">
-            <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
-            </a>
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
-            </a>
-            <a class="close-link">
-              <i class="fa fa-times"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="ibox-content">
-          <div class="panel blank-panel">
-            <div class="panel-heading">
-              <div class="panel-options">
-                <ul class="nav nav-tabs">
-                  <li id="tab1" class="active">
-                    <a data-toggle="tab" href="#tab-default" aria-expanded="true">已提交申请</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="panel-body">
-              <div class="tab-content">
-                <div id="tab-default" class="tab-pane active">
-                  <table class="table table-striped table-bordered table-hover" >
-                    <thead>
-                      <tr>
-
-                        <th class="text-center">申请单号</th>
-                        <th class="text-center">申请人</th>
-                        <th class="text-center">申请信息</th>
-                        <th class="text-center">类型</th>
-                        <th class="text-center">数量</th>
-                        <th class="text-center">原因</th>
-                        <th class="text-center">处理</th>
-
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% for key in applys %}
-                      <tr class="detail-table"  id="{{ key.application_id }}tr">
-                      <td class="text-center" id="{{ key.id }}" style="display:none">{{ key.id }}</td>
-                        <td class="text-center">{{ key.application_id }}</td>
-                        <td class="text-center">{{ key.application.user.username}}</td>
-                        <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
-                        <td class="text-center">{{ key.appro_env_type}}/{% ifequal key.appro_fun_type "normal"  %}
-                          普通型
-                        {% endifequal %} {% ifequal key.appro_fun_type "was" %}
-                          WAS型
-                        {% endifequal %} {% ifequal key.appro_fun_type "database" %}
-                          数据库型
-                        {% endifequal %}</td>
-                        <td class="text-center">{{ key.appro_vm_num}}台</td>
-                        <td class="text-center">{{ key.application.apply_reason}}</td>
-                        <td class="text-center">
-                          <div >
-                          <button class="btn btn-primary btn-xs modify-btn" id="{{ key.application_id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
-                        {% include 'jvmanager/modify_modal.html' %}  
-                            <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.application_id }}approved" data-toggle="modal" data-target="#{{ key.id}}AGModal">同意</button>
-                        {% include 'jvmanager/agree_modal.html' %}                  
-                            <button class="btn btn-danger btn-xs delete-btn" type="submit" id="delete">删除</button>
-                          </div>
-                        </td>
-                      </tr>
-                      {% endfor %}
-
-                    </tbody>
-                  </table>
-                   <div class="row">
-                        <div class="col-sm-6">
-                            <div class="dataTables_info" id="editable_info" role="status" aria-live="polite">
-                                Showing {{ applys.start_index }} to {{ applys.end_index }} of {{ p.count }} entries
-                            </div>
-                        </div>
-                        {% include 'paginator.html' %}
+    <div class="row">
+        <div class="col-sm-10">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>审批页面</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
                     </div>
                 </div>
-
-              </div>
-
-            </div>
-          </div>
-        </div>
-        <div class="ibox-content">
-          <div class="panel blank-panel">
-            <div class="panel-heading">
-              <div class="panel-options">
-                <ul class="nav nav-tabs">
-                  <li id="tab1" class="active">
-                    <a data-toggle="tab" href="#tab-default" aria-expanded="true">已审批申请</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="panel-body">
-              <tab-content>
-                <div id="tab-default" class="tab-pane active">
-                  <table class="table table-striped table-bordered table-hover" >
-                    <thead>
-                      <tr>
-                        <th class="text-center">申请单号</th>
-                        <th class="text-center">系统名称</th>
-                        <th class="text-center">IP</th>
-                        <th class="text-center">集群/资源池</th>
-                        <th class="text-center">存储</th>
-                        <th class="text-center">生成进度</th>
-                        <th class="text-center">生成日志</th>
-                        <th class="text-center"><input type="checkbox" name="selectall" id="selectall" checked=""></th>
-                      </tr>
-                    </thead>
-                    <tbody id="agree-table">
-                      {% for list in vmorder %}
-                      <tr id="{{list.id}}tr">
-                        <td class="text-center">{{list.id}}</td>
-                        <td class="text-center">{{list.approvel.appro_os_type}}</td>
-                        <td class="text-center">{{list.loc_ip.ipaddress}}</td>
-                        <td class="text-center">{{list.loc_cluster.name}}</td>
-                        <td class="text-center">{{list.loc_storage.name}}</td>
-                        <td class="text-center">{% if list.gen_status == "AP" %}
-                              待生成
-                        {% else %}
-                          　　显示进度
-                        {% endif %} </td>
-                        <td class="text-center">success</td>
-                        <td class="text-center">
-                          <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}"></td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
+                <div class="ibox-content">
+                    <div class="panel blank-panel">
+                        <div class="panel-heading">
+                            <div class="panel-options">
+                                <ul class="nav nav-tabs">
+                                    <li id="tab1" class="active">
+                                        <a data-toggle="tab" href="#tab-default" aria-expanded="true">已提交申请</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div id="tab-default" class="tab-pane active">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">申请单号</th>
+                                                <th class="text-center">申请人</th>
+                                                <th class="text-center">申请信息</th>
+                                                <th class="text-center">类型</th>
+                                                <th class="text-center">数量</th>
+                                                <th class="text-center">原因</th>
+                                                <th class="text-center">处理</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for key in applys %}
+                                            <tr class="detail-table" id="{{ key.application_id }}tr">
+                                                <td class="text-center" id="{{ key.pk }}" style="display:none">{{ key.pk }}</td>
+                                                <td class="text-center">{{ key.application_id }}</td>
+                                                <td class="text-center">{{ key.application.user.username}}</td>
+                                                <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
+                                                <td class="text-center">{{ key.appro_env_type}}/{% ifequal key.appro_fun_type "normal" %} 普通型 {% endifequal %} {% ifequal key.appro_fun_type "was" %} WAS型 {% endifequal %} {% ifequal key.appro_fun_type "database" %} 数据库型 {% endifequal %}</td>
+                                                <td class="text-center">{{ key.appro_vm_num}}台</td>
+                                                <td class="text-center">{{ key.application.apply_reason}}</td>
+                                                <td class="text-center">
+                                                    <div>
+                                                        <button class="btn btn-primary btn-xs modify-btn" id="{{ key.application_id }}modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
+                                                        {% include 'jvmanager/modify_modal.html' %}
+                                                        <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.application_id }}approved" data-toggle="modal" data-target="#{{ key.id}}AGModal">同意</button>
+                                                        {% include 'jvmanager/agree_modal.html' %}
+                                                        <button class="btn btn-danger btn-xs delete-btn" type="submit" id="delete">删除</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="dataTables_info" id="editable_info" role="status" aria-live="polite">
+                                                Showing {{ applys.start_index }} to {{ applys.end_index }} of {{ p.count }} entries
+                                            </div>
+                                        </div>
+                                        {% include 'paginator.html' %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="margin:0 auto;width:100px;">
-                  <button class="btn btn-primary btn-lg gen-btn">生成资源</button>
+                <div class="ibox-content">
+                    <div class="panel blank-panel">
+                        <div class="panel-heading">
+                            <div class="panel-options">
+                                <ul class="nav nav-tabs">
+                                    <li id="tab1" class="active">
+                                        <a data-toggle="tab" href="#tab-default" aria-expanded="true">已审批申请</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <tab-content>
+                                <div id="tab-default" class="tab-pane active">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">申请单号</th>
+                                                <th class="text-center">系统名称</th>
+                                                <th class="text-center">IP</th>
+                                                <th class="text-center">集群/资源池</th>
+                                                <th class="text-center">存储</th>
+                                                <th class="text-center">生成进度</th>
+                                                <th class="text-center">生成日志</th>
+                                                <th class="text-center">
+                                                    <input type="checkbox" name="selectall" id="selectall" checked="">
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="agree-table">
+                                            {% for list in vmorder %}
+                                            <tr id="{{list.id}}tr">
+                                                <td class="text-center">{{list.id}}</td>
+                                                <td class="text-center">{{list.approvel.appro_os_type}}</td>
+                                                <td class="text-center">{{list.loc_ip.ipaddress}}</td>
+                                                <td class="text-center">{{list.loc_cluster.name}}</td>
+                                                <td class="text-center">{{list.loc_storage.name}}</td>
+                                                <td class="text-center">{% if list.gen_status == "AP" %} 待生成 {% else %}{{list.gen_progress}}%{% endif %} </td>
+                                                <td class="text-center">success</td>
+                                                <td class="text-center">
+                                                    <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}" {% ifequal list.gen_status 'success' %}
+                                                      disabled 
+                                                    {% endifequal %}>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="margin:0 auto;width:100px;">
+                                    <button class="btn btn-primary btn-lg gen-btn">生成资源</button>
+                                </div>
+                            </tab-content>
+                        </div>
+                    </div>
                 </div>
-
-              </tab-content>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-{% endblock %}
-{% block self_footer_js %}
-<style type="text/css">
-  .modifyslider{
-    float: left;
-    clear: left;
-    width: 200px;
-    margin: 10px;
-  }
-  .modifyslider .ui-slider-range { background: #2496DE; }
-  .modifyslider .ui-slider-handle { border-color: #729fcf; }
-  .num_type{width:40px; padding-left: 10px;}
-  .text_type{width: 80px;padding-left: 10px;}
-</style>
-<script>
-$(function(){
-var request_id,id;
-$(".modify-btn").click(function(event) {
-     request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
-
-     $.post('{% url "show_apply_machinedetail" %}', { "id": request_id}, function(data) {
-       var detail_list = eval($.parseJSON(data));
-       //数据获取
-       $(".dropdownMenu1").text(detail_list[0].fields.appro_env_type).append('&nbsp;<span class="caret"></span>');
-       $("#"+request_id+"modal input[value='"+detail_list[0].fields.appro_fun_type+"']").prop("checked",true).parent("label").addClass('active').siblings('label').removeClass('active');
-       $(".dropdownMenu2").text(detail_list[0].fields.appro_os_type).append('&nbsp;<span class="caret"></span>');
-       $("#"+request_id+"modal ."+detail_list[0].fields.appro_cpu+"C").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');
-       $("#"+request_id+"modal ."+detail_list[0].fields.appro_memory_gb+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
-       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.appro_datadisk_gb);
-       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.appro_vm_num);
-     });
-     var saving_data_disk = $("#"+request_id+"data_volume").val();
-     var saving_request_num = $("#"+request_id+"request_num").val();
-
-     $("#"+request_id+"modifyslider").slider({
-            range:"min",
-            min:0,
-            max:100,
-            value:parseInt(saving_data_disk),
-            slide:function(event,ui){
-                $("#"+request_id+"data_volume").val(ui.value);
-            }
-        });
-      $("#"+request_id+"modifyslider_num").slider({
-            value:parseInt(saving_request_num),
-            min:0,
-            max:6,
-            step:1,
-            slide:function(event,ui){
-               $("#"+request_id+"request_num").val(ui.value);
-            }
-        }); 
-});
-
-$(".agree-btn").click(function(event) {
-     id = $(this).parents(".detail-table").children('td:first-child').attr("id");
-     $.ajax({
-       url: '{% url "ajax_get_agree_form" %}',
-       type: 'post',
-       dataType: 'json',
-       data: {"id":parseInt(id) },
-       success:function(data){
-          var detail_list = eval($.parseJSON(data));
-          var show_list = [detail_list[0].fields.appro_env_type,detail_list[0].fields.appro_fun_type,detail_list[0].fields.appro_cpu,detail_list[0].fields.appro_memory_gb,detail_list[0].fields.appro_datadisk_gb,detail_list[0].fields.appro_vm_num,detail_list[0].fields.appro_os_type];
-          for (var i = 0; i < show_list.length; i++) {
-            $("#"+id+"AgreeForm em").eq(i).text(show_list[i])
-          }
-       },
-       error:function() {
-         alert("ajax 异常")
-       }
-     })
-     $.ajax({
-     url: '{% url "ajax_select_IP" %}',
-    type: 'post',
-    dataType: 'json',
-    data: {"id": parseInt(id)},
-    success:function(data){ 
-       for (var vm_num = 0; i < data.length; i++) {
-          v_id = vm_num+1
-          $("#"+id+v_id+"ipaddress").text(data[vm_num].ipaddress)
-            }     
- 
-    },
-    error:function(){
-      alert("ajax 异常");
-    }
-  })
-     
-});
-$(".delete-btn").click(function(event) {
-     id = $(this).parents(".detail-table").children('td:first-child').attr("id");
-     application_id = $(this).parents(".detail-table").children('td').eq(1).attr('id');
-     var reason = prompt("确认删除？填写原因，将会退回给申请人哦")
-     if(reason){
-       reason = $.trim(reason);
-       var dict = {
-        "id":id,
-        "application_id":application_id,
-        "reason":reason,
-       }
-       $.post('{% url "delete_apply" %}', dict, function(data) {
-         alert("删除成功");
-        setTimeout(function(e){
-            $("#"+id+"tr").remove()
-          },200);
-       });
-     }
-});
-$(".modify-save-btn").click(function(event) {
-      var saving_fun_type = $("#"+request_id+"modal input[name='fun_type']:checked").val();
-      var saving_env_type = $("#"+request_id+"modal input[name='env_type']").val();
-      var saving_cpu_num = $("#"+request_id+"modal input[name='cpu']:checked").val();
-      var saving_memory_num = $("#"+request_id+"modal input[name='memory']:checked").val();
-    　　var saving_os_type = $("#"+request_id+"modal input[name='os_type']").val();
-      var saving_data_disk = $("#"+request_id+"modal input[name='data_volume']").val();
-      var saving_request_num = $("#"+request_id+"modal input[name='request_num']").val();
-      var saving_form = {
-        "request_id":request_id,
-        "saving_fun_type":saving_fun_type,
-        "saving_env_type":saving_env_type,
-        "saving_cpu_num":saving_cpu_num,
-        "saving_memory_num":saving_memory_num,
-        "saving_os_type":saving_os_type,
-        "saving_data_disk":saving_data_disk,
-        "saving_request_num":saving_request_num,
-      }
-      $.post('{% url "modify_machine_detail" %}', saving_form, function(data) {
-          alert("保存成功！");
-          setTimeout(function(e){
-            location.href = '{% url "VM_list" %}'
-          },200);
-      });
-
-});
-
-$(".change-ip").click(function(event) {
-  vm_num=$(this).attr('name');
-  $.ajax({
-     url: '{% url "ajax_select_IP" %}',
-    type: 'post',
-    dataType: 'json',
-    data: {"id": parseInt(id)},
-    success:function(data){      
-        $("#"+id+vm_num+"ipaddress").text(data[Math.random(1,data.length)].ipaddress)
-    },
-    error:function(){
-      alert("ajax 异常");
-    }
-  })
-  
-});
-
-$(".cluster").focus(function(event) {
-  vm_num=$(this).siblings('strong').text()
-  $("#"+id+vm_num+"cluster").empty().append("<option value='value'></option>");
-  $.ajax({
-     url: '{% url "ajax_get_cluster" %}',
-    type: 'post',
-    dataType: 'json',
-    data: {"id": parseInt(id)},
-    success:function(data){
-      for (var i = 0; i < data.length; i++) {
-        $("#"+id+vm_num+"cluster").append("<option value='"+data[i].cluster_id+"'>"+data[i].cluster_name+"</option>")
-      }
-    },
-    error:function(){
-      alert("ajax 异常");
-    }
-  })
-});
-$(".cluster").change(function(event) {
-  /*$("#"+id+$(this).get(0).selectedIndex+"block").css("display","block");*/
-  vm_num=$(this).siblings('strong').text()
-  /*vm_num = $("#"+id+"uni").text()*/
-  $("#"+id+vm_num+"resourcepool").empty();
-  $("#"+id+vm_num+"storage").empty();
-  $.ajax({
-    url: '{% url "ajax_get_resource" %}',
-    type: 'post',
-    dataType: 'json',
-    data: {"id": parseInt($(this).val())},
-    success:function(data){
-      $("#"+id+vm_num+"resourcepool").empty();
-      for (var i = 0; i < data.length; i++) {
-        $("#"+id+vm_num+"resourcepool").append("<option value='"+data[i].resp_id+"'>"+data[i].resp_name+"</option>")
-      }
-    },
-    error:function(){
-      alert("ajax 异常");
-    }
-  });
-  $.ajax({
-    url: '{% url "ajax_get_storage" %}',
-    type: 'post',
-    dataType: 'json',
-    data: {"id": parseInt($(this).val())},
-    success:function(data){
-      $("#"+id+vm_num+"storage").empty();
-      for (var i = 0; i < data.length; i++) {
-        $("#"+id+vm_num+"storage").append("<option value='"+data[i].datastore_id+"'>"+data[i].datastore_name+"</option>")
-      }
-    },
-    error:function(){
-      alert("ajax 异常");
-    }
-  })
-  
-});
-$(".conf-agree-btn").click(function(event) {
-      var basic_data_array = []
-      var assign_data_array = []
-      var temp_array = []
-      for (var i = 0; i < $("#"+id+"AgreeForm em").length; i++) {
-        basic_data_array.push($("#"+id+"AgreeForm em").eq(i).text())
-      }
-      for (var j = 1; j <= $("#"+id+"AgreeForm strong").length-1; j++) {
-          temp_array.push($("#"+id+j+"ipaddress").text())
-          temp_array.push($("#"+id+j+"machinename").text())
-          temp_array.push($("#"+id+j+"cluster").val())
-          temp_array.push($("#"+id+j+"resourcepool").val())
-          temp_array.push($("#"+id+j+"storage").val())
-          
-        }
-        var confirm_form = {
-          "request_id":id,
-          "basic_data":basic_data_array,
-          "assign_data":temp_array,
-        }
-        alert(JSON.stringify(confirm_form))
-      $.post('{% url "agree_apply" %}', confirm_form, function(data) {
-          alert("提交成功！"+data);
-          setTimeout(function(e){
-            location.href = '{% url "VM_list" %}'
-          },200);          
-      });
-      console.log("get data successfully!")
-});
-
-$(".gen-btn").click(function(event) {
-  var str=""
-  $("#agree-table input[name='checkbox']:checkbox").each(function() {
-      if($(this).prop("checked")){
-        str += $(this).val()+","
-      }
-  });
-  //ajax传输数据
-  $.ajax({
-    url: '{% url "generate_machine" %}',
-    type: 'post',
-    dataType: 'json',
-    data: {"id": parseInt(id)},
-    success:function(data){
-      alert(data)
-      $(".gen-btn").text('正在生成资源');
-  var count = 0;
-  setInterval(function(){
-    $(".gen-btn").append('<span>.</span>');
-    count+=1;
-    if(count == 4){
-       $(".gen-btn span").remove();
-      count = 0;
-    }
-  },200)
-    },
-    error:function(){
-      alert("ajax 异常");
-    }
-  });
-});
-function selectMenu(factor,name){
-            factor.next().find("a").click(function(){
-            factor.text($(this).text()).append('&nbsp;<span class="caret"></span>');
-            name.val($(this).text());
-        })}
-        
-selectMenu($(".dropdownMenu1"),$(".env_type"));
-selectMenu($(".dropdownMenu2"),$(".os_type"));
-$("#selectall").click(function () {
-    if($("#selectall").prop("checked")){
-        $("#agree-table :checkbox").prop("checked",true);
-    }else{
-        $("#agree-table :checkbox").prop("checked",false);
-    }
-});
-function select_binding(type,cpu,memory){
-         type.click(function(event) {
-         /* Act on the event */
-             $("."+cpu+"C").parent("label").addClass('active').siblings('label').removeClass('active');
-             $("."+cpu+"C").val(cpu)
-             $("."+memory+"G").parent("label").addClass('active').siblings('label').removeClass('active');
-             $("."+memory+"G").val(memory)
-     });
-}
-select_binding($(".normal-type"),2,4);
-select_binding($(".was-type"),4,8);
-select_binding($(".database-type"),4,16);
-});
-</script>
+{% endblock %} {% block self_footer_js %}
+{% include 'jvmanager/basic_effect.html' %}
 {% endblock %}

@@ -23,4 +23,6 @@ urlpatterns = patterns('',
                        url(r'^ajax_get_storage/$',ajax_get_storage,name='ajax_get_storage'),
                        url(r'^ajax_select_IP/$',ajax_select_IP,name='ajax_select_IP'),
                        url(r'^generate_machine/$',generate_machine,name='generate_machine'),
+                       url(r'^modify_saving_detail/$',modify_saving_detail,name='modify_saving_detail'),
+                       url(r'^show_approv_machinedetail/$',show_approv_machinedetail,name='show_approv_machinedetail'),
                        )
