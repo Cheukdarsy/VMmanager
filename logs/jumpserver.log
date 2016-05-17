@@ -78,3 +78,6 @@
 2016-05-16 19:34:15,262 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\uff11\uff12'], u'env_option': [u'\u5927\u8d5b\u5927\u8d5b\u7684\u5927\u58f0\u5730\u8bf4'], u'id': [u'25']}>
 2016-05-16 19:40:48,763 - views.py - DEBUG - <QueryDict: {u'env_type': [u'DEVP'], u'env_option': [u'\u5f00\u53d1\u73af\u5883'], u'id': [u'24']}>
 2016-05-16 19:40:50,554 - views.py - DEBUG - <QueryDict: {u'env_type': [u'\uff11\uff12'], u'env_option': [u'\u5927\u8d5b\u5927\u8d5b\u7684\u5927\u58f0\u5730\u8bf4'], u'id': [u'25']}>
+2016-05-17 15:32:45,020 - views.py - DEBUG - start
+2016-05-17 15:32:50,022 - views.py - DEBUG - start
+2016-05-17 15:34:40,410 - views.py - DEBUG - start

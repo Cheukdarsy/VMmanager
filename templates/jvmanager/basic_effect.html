@@ -36,8 +36,8 @@ $(function() {
             str += id.text()+ ","
         }  
     }
-    if(str!=""){     
-    $.post('ajax_get_process', {"id": str.slice(0,-1)}, function(data) {
+    if(str!=""){ 
+    $.post('{% url "ajax_get_process" %}', {"id": str.slice(0,-1)}, function(data) {
        for (var i = 0; i < data.length; i++) {
            $("#"+data[i].id+"process").text(data[i].progress)
            $("#"+data[i].id+"gen_log").text(data[i].log)
