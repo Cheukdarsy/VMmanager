@@ -36,7 +36,6 @@ def _refresh_vim_objs(model, content, *args, **kwargs):
     @param content: the service content of VCenter.
     @param related: weather to update the relationship between assets
     """
-
     if model not in _typeMap.keys():
         return False
     vc = VCenter.objects.get(uuid=content.about.instanceUuid)
@@ -47,7 +46,6 @@ def _refresh_vim_objs(model, content, *args, **kwargs):
             container = content.rootFolder
     else:
         container = content.rootFolder
-
     # discover or update model
     vimView = content.viewManager.CreateContainerView(container, [model], True)
     updList = []
@@ -65,11 +63,15 @@ def _refresh_vim_objs(model, content, *args, **kwargs):
     return True
 
 
-def get_obj(content, container=None, vimtype=list(), name='', moid=''):
+def get_obj(content=None, container=None, vimtype=list(), name='', moid='', vmobject=None):
     """
     Return an object by name, if name is None the
     first found object is returned
     """
+    if vmobject:
+        content = vmobject.vcenter.connect()
+        moid = vmobject.getMoid()
+        vimtype = [_map_vimtype(type(vmobject))]
     if container == None:
         container = content.rootFolder
     objView = content.viewManager.CreateContainerView(container, vimtype, True)
@@ -105,7 +107,7 @@ def refresh_some_vms(vmobject, related=False):
     if vmtype in [ComputeResource, ResourcePool, Datastore, HostSystem]:
         vimtype = _map_vimtype(vmtype)
         content = vmobject.vcenter.connect()
-        container = get_obj(content, vimtype=[vimtype], moid=vmobject.getMoid())
+        container = get_obj(content=content, vimtype=[vimtype], moid=vmobject.getMoid())
         return _refresh_vim_objs(vim.VirtualMachine, content, container=container, related=related)
     else:
         return False
@@ -167,7 +169,7 @@ def refresh_ipusage(content):
     # update VM IP Address
     vmlist = VirtualMachine.objects.filter(vcenter=vc)
     for vm in vmlist:
-        vimobj = get_obj(content, container, [vim.VirtualMachine], moid=str(vm.moid))
+        vimobj = get_obj(content=content, container=container, vimtype=[vim.VirtualMachine], moid=str(vm.moid))
         vm.update_ipusage(vimobj)
 
 
@@ -216,11 +218,11 @@ def _vim_vm_poweron(vim_vm, host=None):
 
 def poweron_vm(vm, host=None):
     content = vm.vcenter.connect()
-    vim_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=vm.getMoid())
+    vim_vm = get_obj(content=content, vimtype=[vim.VirtualMachine], moid=vm.getMoid())
 
     vim_host = None
     if host:
-        vim_host = get_obj(content, vimtype=[vim.HostSystem], moid=host.getMoid())
+        vim_host = get_obj(content=content, vimtype=[vim.HostSystem], moid=host.getMoid())
     return _vim_vm_poweron(vim_vm, vim_host)
 
 
@@ -275,7 +277,6 @@ def _get_customize(content, spec_name, is_windows, ipusage=None):
     return custspec
 
 
-
 def _vim_set_customize(vim_vm, *args, **kwargs):
     try:
         guestos = vim_vm.guest.guestFamily
@@ -294,7 +295,7 @@ def _vim_vm_clone(content, vim_src_vm, vm_name, vim_datastore, vim_resp, ipusage
         guestos = vim_src_vm.summary.config.guestId
     except:
         print("Cannot get guest os type")
-        return -1
+        return None, "Cannot get guest os type"
     if 'win' in str(guestos).lower():
         is_windows = True
         logger.debug("Clone a Windows vm")
@@ -337,7 +338,7 @@ def clone_vm(content, src_vm, vm_name, ipusage, datastore, cluster=None, resourc
         errmsg = "Src_vm not belong to the connected vcenter"
         return task, errmsg
     # Get vim_vm_obj
-    vim_src_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=str(src_vm.moid))
+    vim_src_vm = get_obj(content=content, vimtype=[vim.VirtualMachine], moid=str(src_vm.moid))
     # Get vim_datastore_obj
     if not datastore:
         datastore = src_vm.datastores[0]
@@ -345,13 +346,13 @@ def clone_vm(content, src_vm, vm_name, ipusage, datastore, cluster=None, resourc
     if freespace < src_vm.storage_mb * 2:
         errmsg = "Datastore not enough space!"
         return task, errmsg
-    vim_datastore = get_obj(content, vimtype=[vim.Datastore], moid=str(datastore.moid))
+    vim_datastore = get_obj(content=content, vimtype=[vim.Datastore], moid=str(datastore.moid))
     # Get vim_resp_obj
     if resourcepool:
         if not isinstance(resourcepool, ResourcePool):
             errmsg = "resourcepool not a ResourcePool instance"
             return task, errmsg
-        vim_resourcepool = get_obj(content, vimtype=[vim.ResourcePool], moid=str(resourcepool.moid))
+        vim_resourcepool = get_obj(content=content, vimtype=[vim.ResourcePool], moid=str(resourcepool.moid))
     elif cluster:
         if not isinstance(resourcepool, ResourcePool):
             errmsg = "cluster not a ComputeResource instance"
@@ -361,7 +362,7 @@ def clone_vm(content, src_vm, vm_name, ipusage, datastore, cluster=None, resourc
         except:
             errmsg = "Cannot allocate resource pool"
             return task, errmsg
-        vim_resourcepool = get_obj(content, vimtype=[vim.ResourcePool], moid=str(resourcepool.moid))
+        vim_resourcepool = get_obj(content=content, vimtype=[vim.ResourcePool], moid=str(resourcepool.moid))
     else:
         errmsg = "Neither Cluster nor ResourcePool is given as a parameter"
         return task, errmsg
@@ -427,7 +428,7 @@ def reconfig_vm(content, vm, tg_annotation='', tg_cpu_num=-1, tg_cpu_cores=-1, t
         errmsg = "Src_vm not belong to the connected vcenter"
         return task, errmsg
     # Get vim_vm_obj
-    vim_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=str(vm.moid))
+    vim_vm = get_obj(content=content, vimtype=[vim.VirtualMachine], moid=str(vm.moid))
     return vim_vm_reconfig(vim_vm, tg_annotation, tg_cpu_num, tg_cpu_cores, tg_mem_mb, tg_datadisk_gb)
 
 
