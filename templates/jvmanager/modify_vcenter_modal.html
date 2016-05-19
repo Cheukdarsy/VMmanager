@@ -1,4 +1,5 @@
-<div class="modal fade" id="modify-vm-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+{% load mytags %} 
+<div class="modal fade" id="vc-{{vc.id}}-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,38 +10,44 @@
             </div>
             <div class="modal-body" style="padding-bottom:10px">
                 <div class="ibox-content form-horizontal">
-                    <form method="post" action="" id="vc-modify-form">
+                    <form method="post" action="" id="vc-modify{{vc.id}}-form">
                         {% csrf_token %}
                         <div class="panel panel-default">
                             <div class="panel-body">
+                            <input type="hidden" value="{{vc.id}}" name="id">
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">IP地址:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="text" name="vcip" id="vcip"></div>
+                                        <input type="text" name="vcip" id="vcip" value="{{vc.ip}}"></div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">端口:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="text" name="vcport" id="vcport" placeholder="443" value="443"></div>
+                                        <input type="text" name="vcport" id="vcport" placeholder="443" value="{{vc.port}}"></div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
-                                    <div class="col-sm-9 dropdown">
-                                        <input type="checkbox" name="dev-env">开发环境
-                                        <input type="checkbox" name="test-env">测试环境
-                                        <input type="checkbox" name="product-env">生产环境
-                                        <input type="checkbox" name="backup-env">灾备环境
-                                    </div>
+                                   <div class="col-sm-9 dropdown">
+                                      <input type="checkbox" name="DEVP"  {% if 'DEVP' in vc.env_type %}
+                                          checked 
+                                      {% endif %}>开发环境
+                                      <input type="checkbox" name="TEST" {% if 'TEST' in vc.env_type %}
+                                          checked
+                                      {% endif %}>测试环境
+                                      <input type="checkbox" name="DRCV" {% if 'DCRV' in vc.env_type %}
+                                          checked 
+                                      {% endif %}>灾备环境
+                                  </div> 
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">用户名:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="text" name="vcname" id="vcname"></div>
+                                        <input type="text" name="vcname" id="vcname" value="{{vc.user}}"></div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">密码:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="password"  name="vcpw" id="vcpw"></div>
+                                        <input type="password"  name="vcpw" id="vcpw" value="{{vc.password}}"></div>
                                 </div>
 
                             </div>
@@ -50,7 +57,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary" id="vc-add-btn">提交</button>
+                    <button type="button" class="btn btn-primary vc-modify-btn" id="vc-{{vc.id}}-btn" name="{{vc.id}}">提交</button>
                 </div>
             </form>
         </div>

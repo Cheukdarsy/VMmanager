@@ -111,13 +111,13 @@
                                             <tr id="{{list.id}}tr">
                                                 <td class="text-center">{{list.id}}</td>
                                                 <td class="text-center">{{list.approvel.appro_os_type}}</td>
-                                                <td class="text-center">{{list.loc_ip.ipaddress}}</td>
+                                                <td class="text-center"></td>
                                                 <td class="text-center">{{list.loc_cluster.name}}</td>
                                                 <td class="text-center">{{list.loc_storage.name}}</td>
                                                 <td class="text-center" id="{{list.id}}process">{% if list.gen_status == "AP" %} 待生成 {% else %}{{list.gen_progress}}%{% endif %} </td>
                                                 <td class="text-center" id="{{list}}gen_log">{{list.gen_log}}</td>
                                                 <td class="text-center">
-                                                    <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}" {% ifequal list.gen_status 'success' %}
+                                                    <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}" {% ifequal list.gen_progress 100 %}
                                                       disabled 
                                                     {% endifequal %}>
                                                 </td>

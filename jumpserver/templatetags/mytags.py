@@ -308,3 +308,8 @@ def user_perm_asset_num(user_id):
 @register.filter(name="times")
 def times(number):
     return range(1,number+1)
+
+
+@register.filter(name="unicode")
+def unicode(str):
+    return unicode(str,'utf-8')

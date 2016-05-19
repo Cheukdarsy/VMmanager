@@ -279,6 +279,7 @@ def submit_saving_resource(request):
 
 @require_role('admin')
 def set_vm(request):
+    vcenter = VCenter.objects.all()
     envs = SheetField.objects.filter(field_name="env_type")
     os = SheetField.objects.filter(field_name="os_type")
     return my_render('jvmanager/set_vm.html', locals(), request)
@@ -577,6 +578,76 @@ def ajax_add_template(request):
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
 
+"""vc参数"""
+def ajax_add_vc(request):
+    if request.method == 'POST':
+        ip = request.POST['vcip']
+        port = request.POST['vcport']
+        vcname = request.POST['vcname']
+        vcpw = request.POST['vcpw-conf']
+        env = {}
+        env_type = SheetField.objects.filter(field_name="env_type")
+        for x in env_type:
+            if x.option in request.POST:
+                env[x.option] = True
+
+        try:
+            vcenter = VCenter(ip=ip,port=port,env_type=env,user=vcname,password=vcpw)
+            vcenter.save()
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success": "ok"})
+
+def ajax_modify_vc(request):
+    if request.method == "POST":
+        logger.debug(request.POST)
+        id = request.POST['id']
+        ip = request.POST['vcip']
+        port = request.POST['vcport']
+        vcname = request.POST['vcname']
+        vcpw = request.POST['vcpw']
+        env = {}
+        env_type = SheetField.objects.filter(field_name="env_type")
+        for x in env_type:
+            if x.option in request.POST:
+                env[x.option] = True
+        try:
+            VCenter.objects.filter(id=id).update(ip=ip,port=port,env_type=env,user=vcname,password=vcpw)
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success": "ok"})
+
+def ajax_delete_vc(request):
+    if request.method == "POST":
+        id = request.POST['id']
+        try:
+            del_vc = VCenter.objects.filter(id=id)
+            del_vc.delete()
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success": "delete successfully"})
+
+"""网络参数"""
+def ajax_get_initial_ip(request):
+    if request.method == "POST":
+        net_list = []
+        try:
+            for net in Network.objects.all():
+                net_list.append({
+                    "id":net.id,
+                    "net_name":net.name,
+                    "net":net.net
+                    })
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse(net_list)
+
+
+"""环境参数"""
 def ajax_add_env(request):
     if request.method == 'POST':
         
@@ -608,7 +679,7 @@ def ajax_update_env(request):
 
 def ajax_delete_env(request):
     if request.method == "POST":
-        id = request.POST['id']
+        id = int(request.POST['id'])
         logger.debug(id)
         try:
             del_env = SheetField.objects.filter(id=id)

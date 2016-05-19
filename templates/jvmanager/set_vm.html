@@ -39,7 +39,7 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             vCenter配置
-                                            <button id='vcenter-setting' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
+                                            <button id='add-vcenter' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
                                                 添加VC
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -53,19 +53,21 @@
                                                     <th class="text-center">端口</th>
                                                     <th class="text-center">操作</th>
                                                 </tr>
-                                                <tr>
-                                                    <td class="text-center">das</td>
-                                                    <td class="text-center">118.240.13.25</td>
-                                                    <td class="text-center">12345</td>
-                                                    <td class="text-center">23</td>
+                                                {% for vc in vcenter %}
+                                                <tr id="vc-table">
+                                                    <td class="text-center">{{vc.ip}}</td>
+                                                    <td class="text-center">{{vc.user}}</td>
+                                                    <td class="text-center">{{vc.password}}</td>
+                                                    <td class="text-center">{{vc.port}}</td>
                                                     <td class="text-center">
-                                                        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modify-vm-modal">修改</button>
+                                                        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#vc-{{vc.id}}-modal">修改</button>
                                                         {% include 'jvmanager/modify_vcenter_modal.html' %}
                                                         <button class="btn btn-xs btn-primary">同步</button>
-                                                        <button class="btn btn-xs btn-danger">删除</button>
+                                                        <button class="btn btn-xs btn-danger vc-del-btn">删除</button>
                                                     </td>
-                                                    <td class="text-center"></td>
+                                                    <td class="text-center vc-id" style="display:none">{{vc.id}}</td>
                                                 </tr>
+                                                {% endfor %}
                                             </table>
                                             {% include 'jvmanager/add_vcenter_modal.html' %}
                                         </div>
@@ -76,7 +78,7 @@
                                             <button id='ip-add-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#manage-IP-modal" style="float:right">
                                                 管理IP
                                             </button>
-                                            <div class="modal fade" id="add-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+                                            <div class="modal fade" id="initial-ippool-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -87,7 +89,7 @@
                                                         </div>
                                                         <div class="modal-body" style="padding-bottom:10px">
                                                             <div class="ibox-content form-horizontal">
-                                                                <form method="post" action="" id="vc-setting-form">
+                                                                <form method="post" action="" id="ippool-initial-form">
                                                                     {% csrf_token %}
                                                                     <div class="panel panel-default">
                                                                         <div class="panel-body">
@@ -95,15 +97,14 @@
                                                                                 <label class="col-sm-3 control-label">网络:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
                                                                                     <select name="network" id="network">
-                                                                                        <option value="123.1.1.1">123.1.1.1</option>
-                                                                                        <option value="123.1.1.1">123.1.2.2</option>
+                                                                                        
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">网关:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <input type="text" name="netgate" id="netgate"　value="123.1.1.240" placeholder="123.1.1.240">
+                                                                                    <input type="text" name="netgate" id="netgate" 　value="" placeholder="请选择网络">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
@@ -118,13 +119,13 @@
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary modify-save-btn">初始化</button>
-                                  </div>
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                            <button type="button" class="btn btn-primary" id="initialip-start-btn">初始化</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button id='ip-add-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#add-IP-modal" style="float:right margin-left:10px">初始化网络</button>
+                                            <button id='ippool-initial-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#initial-ippool-modal" style="float:right margin-left:10px">初始化网络</button>
                                             <div class="modal fade" id="manage-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -144,15 +145,14 @@
                                                                                 <label class="col-sm-3 control-label">网络:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
                                                                                     <select name="network" id="network">
-                                                                                        <option value="123.1.1.1">123.1.1.1</option>
-                                                                                        <option value="123.1.1.1">123.1.1.2</option>
+                                                                                        
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">IP:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <input type="text" name="netgate" id="netgate" 　value="123.1.1.240">
+                                                                                    <input type="text" name="netgate" id="netgate" 　value="">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
@@ -275,63 +275,119 @@
 </style>
 <script>
 $('#vc-setting-form').validator({
-    timely: 2,
-    theme: "yellow_right_effect",
-    rules: {
-        check_name: [/^\w{2,20}$/, '大小写字母数字和下划线,2-20位'],
-        check_port: [/^\d{1,5}$/, '端口号不正确'],
-        check_ip: [/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, 'IP格式不正确']
-    },
+        timely: 2,
+        theme: "yellow_right_effect",
+        rules: {
+            check_name: [/^\w{2,20}$/, '大小写字母数字和下划线,2-20位'],
+            check_port: [/^\d{1,5}$/, '端口号不正确'],
+            check_ip: [/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, 'IP格式不正确']
+        },
 
-    fields: {
-        "vcip": {
-            rule: "required;check_ip",
-            tip: "输入VC的IP",
-            ok: "",
-            msg: {
-                required: "IP必填"
+        fields: {
+            "vcip": {
+                rule: "required;check_ip",
+                tip: "输入VC的IP",
+                ok: "",
+                msg: {
+                    required: "IP必填"
+                }
+            },
+            "vcport": {
+                rule: "required;check_port",
+                tip: "输入端口，默认443",
+                ok: "",
+                msg: {
+                    required: "端口必填"
+                }
+            },
+            "vcname": {
+                rule: "required;check_name",
+                tip: "输入用户名",
+                ok: "",
+                msg: {
+                    required: "用户名不能为空"
+                }
+            },
+            "vcpw": {
+                rule: "required",
+                tip: "输入密码",
+                ok: "",
+                msg: {
+                    required: "密码必填"
+                }
+            },
+            "vcpw-conf": {
+                rule: "required;match[vcpw]",
+                tip: "",
+                ok: "",
+                msg: {
+                    required: "密码确认",
+                    match: "密码不一致"
+                }
             }
         },
-        "vcport": {
-            rule: "required;check_port",
-            tip: "输入端口，默认443",
-            ok: "",
-            msg: {
-                required: "端口必填"
-            }
-        },
-        "vcname": {
-            rule: "required;check_name",
-            tip: "输入用户名",
-            ok: "",
-            msg: {
-                required: "用户名不能为空"
-            }
-        },
-        "vcpw": {
-            rule: "required",
-            tip: "输入密码",
-            ok: "",
-            msg: {
-                required: "密码必填"
-            }
-        },
-        "vcpw-conf": {
-            rule: "required;match[vcpw]",
-            tip: "",
-            ok: "",
-            msg: {
-                required: "密码确认",
-                match: "密码不一致"
-            }
+        valid: function(form) {
+            $vcform = $("#vc-setting-form").serializeArray()
+            alert(JSON.stringify($vcform))
+            $.post('{% url "ajax_add_vc" %}', $vcform, function(data, textStatus) {
+                /*optional stuff to do after success */
+                if (textStatus == "success") {
+                    location.href = '{% url "set_vm" %}'
+                }
+            });
         }
-    },
-    valid: function(form) {
-        alert("提交成功");
-        form.submit()
-            //ajax;
+    })
+    //修改VC
+$(".vc-modify-btn").click(function(event) {
+    $vcid = $(this).attr('name');
+    $modify_form = $("#vc-modify" + $vcid + "-form").serializeArray()
+    $.post('{% url "ajax_modify_vc" %}', $modify_form, function(data, textStatus) {
+        if (textStatus == "success") {
+            alert("修改成功")
+            setTimeout(function(e) {
+                location.href = '{% url "set_vm" %}'
+            }, 200);
+        }
+    });
+});
+
+$(".vc-del-btn").click(function(event) {
+    var $vc_id = $(this).parent("td").siblings('.vc-id').text()
+    if (confirm("确定删除VC?")) {　　
+        $.post('{% url "ajax_delete_vc" %}', {
+            "id": $vc_id
+        }, function(data, textStatus) {
+            if (textStatus == "success") {
+                location.href = '{% url "set_vm" %}'
+            }
+        });
     }
-})
+});
+
+//网络参数
+$("#ippool-initial-btn").click(function(event) {
+    $.post('{% url "ajax_get_initial_ip" %}', {}, function(data, textStatus) {
+        /*optional stuff to do after success */
+        if(textStatus=="success"){
+            ip_option = ""
+        for (var count = 0; count < data.length; count++) {
+            ip_option += "<option value='"+data[count].net+"' name='"+data[count].id+"'>"+data[count].net_name+"</option>"
+        }
+        $("#network").append(ip_option)
+        }
+        
+    });
+});
+$("#network").change(function(event) {
+    $("#netgate").val($(this).val());
+    $("#netgate").attr('placeholder', $(this).val());
+});
+$("#initialip-start-btn").click(function(event) {
+    $ippool_initial_form = $("#ippool-initial-form").serializeArray()
+    alert(JSON.stringify($ippool_initial_form))
+ 
+});
+//环境参数
 var ipcount = $("#env-table tr").length - 1;
 
 $(document).on('click', '#add-env', function(event) {
@@ -397,9 +453,9 @@ $('#env-table tr button:first-child').each(function(index, el) {
             }, function(data) {
                 $("#env-option-" + vcount).html(val);
             });
-            
 
-            
+
+
         });
     });
 });
