@@ -1,7 +1,15 @@
+# coding: utf-8
+
 from celery import task
 from pyVmomi import vim
 
 from .vc_api import *
+
+
+@task
+def resync_vm(virtualmachine):
+    vimobj = get_obj(vmobject=virtualmachine)
+    virtualmachine.update_by_vim(vimobj=vimobj, related=True)
 
 
 @task
@@ -65,12 +73,6 @@ def vmtask_trace(vcid, vmtaskid, vmorder=None, begin_per=0, weight=100, parse_re
 
 @task
 def vmtask_poweron_vm(vmorder, virtualmachine):
-    # host = None
-    # if virtualmachine.resourcepool:
-    #     clus = virtualmachine.resourcepool.owner
-    #     if isinstance(clus,ComputeResource):
-    #         for host in clus.hostsystem_set.all():
-    #             pass
     result, msg = poweron_vm(virtualmachine)
     if result:
         vmorder.gen_status = 'SUCCESS'
@@ -80,6 +82,7 @@ def vmtask_poweron_vm(vmorder, virtualmachine):
         vmorder.gen_status = 'FAILED'
         vmorder.add_log("Power On the VM : Failed.\nMsg: " + msg)
     vmorder.save()
+    resync_vm.apply_async([virtualmachine], countdown=60)
 
 
 @task
@@ -88,15 +91,18 @@ def vmtask_reconfig_vm(vmorder, from_result=None, virtualmachine=None, begin_per
     if from_result and isinstance(from_result, VirtualMachine):
         virtualmachine = from_result
     if isinstance(virtualmachine, VirtualMachine):
+        vim_vm = get_obj(vmobject=virtualmachine)
         vcid = virtualmachine.vcenter_id
-        content = virtualmachine.vcenter.connect()
-        vim_vm = get_obj(content, vimtype=[vim.VirtualMachine], moid=str(virtualmachine.moid))
+        # content = virtualmachine.vcenter.connect()
+        # vim_vm = get_obj(content=content, vimtype=[vim.VirtualMachine], moid=str(virtualmachine.moid))
     else:
         print("No vm to reconfig")
         return
     application = vmorder.approvel.application
-    annotation_username = application.user.get_full_name()
-    annotation = str(annotation_username) + str(' - ') + str(application.apply_reason)
+    annotation_title = u'-该资源由自动化运维平台生成.\r\n'
+    annotation_username = u'-申请人:    ' + application.user.name + u'\r\n'
+    annotation_usage = u'-原因/用途: ' + application.apply_reason + u'\r\n'
+    annotation = (annotation_title + annotation_username + annotation_usage).encode('utf-8')
     templ = vmorder.src_template.virtualmachine
     order_cpu = vmorder.approvel.appro_cpu
     templ_cpu = templ.cpu_cores * templ.cpu_num
@@ -146,6 +152,11 @@ def vmtask_clone_vm(vmorder, begin_per=0, weight=100, parse_result=False, nextta
     clone_taskid, errmsg = clone_vm(content, vmorder.src_template.virtualmachine, vmorder.loc_hostname, vmorder.loc_ip,
                                     vmorder.loc_storage,
                                     vmorder.loc_cluster, vmorder.loc_resp)
+    if None == clone_taskid:
+        vmorder.gen_status = 'FAILED'
+        vmorder.gen_log = 'Clone VM:' + errmsg
+        vmorder.save(update_fields=['gen_status', 'gen_log'])
+        return
     vmorder.gen_status = 'RUNNING'
     vmorder.save(update_fields=['gen_status'])
     vmtask_trace.delay(vcid, clone_taskid, vmorder, begin_per=0, weight=60, parse_result=True,

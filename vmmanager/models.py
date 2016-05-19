@@ -48,7 +48,7 @@ class SheetField(models.Model):
             return new_opt
 
     def __str__(self):
-        return ""
+        return self.option_display.encode('utf-8')
 
 
 _sis = {}
@@ -689,43 +689,46 @@ class VirtualMachine(VMObject):
         try:
             for vimip in vm_guest.net:
                 ipaddress_li = vimip.ipAddress
-                ipaddress = None
                 for address in ipaddress_li:
-                    if str(address).count('.') == 3:
-                        ipaddress = address
-                        break
-                if not ipaddress:
-                    ipaddress = '0.0.0.0'
-                qset = IPUsage.objects.filter(network__name=vimip.network.strip(), ipaddress=ipaddress)
-                if not qset.exists():
-                    print("IPAddress: " + str(ipaddress) + "-- not initialed")
-                    continue
-                ip = qset[0]
-                if ip in old_ip:
-                    old_ip.remove(ip)
-                else:
-                    ip.used_occupy = False
-                    ip.vm = self
-                    ip.save(update_fields=['used_occupy', 'vm'])
+                    if str(address).count('.') != 3:
+                        ipaddress_li.remove(address)
+                for ipaddress in ipaddress_li:
+                    qset = IPUsage.objects.filter(network__name=vimip.network.strip(), ipaddress=ipaddress)
+                    if not qset.exists():
+                        print("IPAddress: " + str(ipaddress) + "-- not initialed")
+                        continue
+                    ip = qset[0]
+                    if ip in old_ip:
+                        old_ip.remove(ip)
+                    else:
+                        ip.used_occupy = False
+                        ip.vm = self
+                        ip.save(update_fields=['used_occupy', 'vm'])
             for oip in old_ip:
                 oip.vm = None
                 oip.save(update_fields=['vm'])
         except Exception, e:
             raise e
 
-    def update_by_vim(self, vimobj, vc, related=False):
+    def update_by_vim(self, vimobj, related=False):
+        stamp = datetime.now()
+        vc = self.vcenter
         self.name = vimobj.name
         vm_config = vimobj.config
+        vm_sum = vimobj.summary
         self.istemplate = vm_config.template
         self.annotation = vm_config.annotation
-        self.cpu_num = vm_config.hardware.numCPU
-        self.cpu_cores = vm_config.hardware.numCoresPerSocket
-        self.memory_mb = vm_config.hardware.memoryMB
-        self.storage_mb = vimobj.summary.storage.committed / 1024 ** 2
+        vm_hardware = vm_config.hardware
+        self.cpu_num = vm_hardware.numCPU
+        self.cpu_cores = vm_hardware.numCoresPerSocket
+        self.memory_mb = vm_hardware.memoryMB
+        self.storage_mb = vm_sum.storage.committed / 1024 ** 2
         # vm_guest = vimobj.guest
-        vm_sumcfg = vimobj.summary.config
+        vm_sumcfg = vm_sum.config
         self.guestos_shortname = vm_sumcfg.guestId
         self.guestos_fullname = vm_sumcfg.guestFullName
+        print("Stage 1 during: " + str(datetime.now() - stamp))
+        stamp = datetime.now()
         if related:
             # update hostsystem
             host = vimobj.runtime.host
@@ -742,6 +745,8 @@ class VirtualMachine(VMObject):
                 except Exception, e:
                     raise e
         self.save()
+        print("Stage 2 during: " + str(datetime.now() - stamp))
+        stamp = datetime.now()
         if not related:
             return True
         # update networks
@@ -770,8 +775,11 @@ class VirtualMachine(VMObject):
                 self.datastores.remove(*old_ds)
         except:
             pass
+        print("Stage 3 during: " + str(datetime.now() - stamp))
+        stamp = datetime.now()
         # update ipusage_set
         self.update_ipusage(vimobj)
+        print("Stage 4 during: " + str(datetime.now() - stamp))
 
     @classmethod
     def create_or_update_by_vim(cls, vimobj, vc, related=False):
@@ -786,7 +794,7 @@ class VirtualMachine(VMObject):
         else:
             created = True
             new_obj = cls(moid=moid, vcenter=vc)
-        new_obj.update_by_vim(vimobj, vc, related)
+        new_obj.update_by_vim(vimobj, related=related)
         return new_obj, created
 
 
@@ -816,6 +824,23 @@ class Template(models.Model):
         for qry in ovset.values('option'):
             result_set = result_set | env_match_set.filter(virtualmachine__guestos_shortname=qry['option'])
         return result_set.distinct()
+
+
+class CustomSpec(models.Model):
+    vcenter = models.ForeignKey('VCenter')
+    os_type = models.CharField(max_length=50)
+    name = models.CharField(max_length=80)
+    os_version = models.CharField(max_length=50, null=True)
+
+    def getSpec(self, ipaddress=None):
+        content = self.vcenter.connect()
+        custspec = content.customizationSpecManager.Get(str(self.name)).spec
+        if ipaddress:
+            ipsetting = custspec.nicSettingMap[0].adapter
+            fixip = vim.vm.customization.FixedIp()
+            fixip.ipAddress = ipaddress
+            ipsetting.ip = fixip
+        return custspec
 
 
 class Application(models.Model):
