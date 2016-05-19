@@ -205,7 +205,6 @@ def apply_machine(request):
         data_disk = int(request.POST.get('data_disk', ''))
         request_num = int(request.POST.get('request_num', ''))
         apply_reason = request.POST.get('apply_reason', '')
-        app_name = request.POST.get('app_name', '')
         submitt = request.POST.get('submit', '')
         if submitt == 'submit':
             apply_status = "SM"
@@ -213,7 +212,7 @@ def apply_machine(request):
                 application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory,
                                                os_type=os_type,
                                                datadisk_gb=data_disk, request_vm_num=request_num,
-                                               apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
+                                               apply_status=apply_status, apply_reason=apply_reason,
                                                apply_date=datetime.now(), user=user)
                 db_add_approvel(application=application, appro_env_type=env_type, appro_fun_type=fun_type,
                                 appro_cpu=cpu, appro_memory_gb=memory, appro_os_type=os_type,
@@ -230,7 +229,7 @@ def apply_machine(request):
                 application = db_add_userapply(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory,
                                                os_type=os_type,
                                                datadisk_gb=data_disk, request_vm_num=request_num,
-                                               apply_status=apply_status, app_name=app_name, apply_reason=apply_reason,
+                                               apply_status=apply_status, apply_reason=apply_reason,
                                                apply_date=datetime.now(), user=user)
             except Exception, e:
                 raise e
@@ -280,6 +279,8 @@ def submit_saving_resource(request):
 @require_role('admin')
 def set_vm(request):
     vcenter = VCenter.objects.all()
+    ipusage = IPUsage.objects.all().order_by("-id")
+    templates = Template.objects.all()
     envs = SheetField.objects.filter(field_name="env_type")
     os = SheetField.objects.filter(field_name="os_type")
     return my_render('jvmanager/set_vm.html', locals(), request)
@@ -441,9 +442,9 @@ def ajax_initial_network(request):
     """
     if request.method == 'POST':
         net_id = int(request.POST['net_id'])
-        net_addr = request.POST['net_addr']
+        net_addr = request.POST['network']
         net_mask = int(request.POST['net_mask'])
-        gw_addr = request.POST['gw_addr']
+        gw_addr = request.POST['netgate']
         try:
             network = Network.objects.get(pk=net_id)
             network.update_manual(nw=net_addr, mask=net_mask)
@@ -646,6 +647,27 @@ def ajax_get_initial_ip(request):
         else:
             return JsonResponse(net_list)
 
+def ajax_add_ip(request):
+    if request.method == "POST":
+        network_name = request.POST['r-network']
+        ipaddress = request.POST['ipaddress']
+        ipusage = int(request.POST['netusage'])
+        gw_addr = request.POST['gw_addr']
+        judge = False
+        if ipusage == 1:
+            judge = True
+        else:
+            judge = False
+
+        network = Network.objects.filter(name=network_name)
+        logger.debug(request.POST)
+        try:
+            ipuse = IPUsage.create(network=network,ipaddress=ipaddress)
+            logger.debug("hello")
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success": "ok"})
 
 """环境参数"""
 def ajax_add_env(request):

@@ -147,3 +147,18 @@
 2016-05-19 18:02:11,581 - views.py - DEBUG - [{'net': u'118.241.13.0', 'id': 1L, 'net_name': u'VLAN0113-118.241.13.0'}, {'net': u'118.241.29.0', 'id': 2L, 'net_name': u'VLAN0129-118.241.29.0'}, {'net': u'118.241.45.0', 'id': 3L, 'net_name': u'VLAN0145-118.241.45.0'}, {'net': u'118.241.67.0', 'id': 4L, 'net_name': u'VLAN0167-118.241.67.0'}, {'net': u'118.241.241.0', 'id': 5L, 'net_name': u'VLAN0241-118.241.241.0'}]
 2016-05-19 18:03:45,543 - views.py - DEBUG - start
 2016-05-19 18:03:45,557 - views.py - DEBUG - [{'net': u'118.241.13.0', 'id': 1L, 'net_name': u'VLAN0113-118.241.13.0'}, {'net': u'118.241.29.0', 'id': 2L, 'net_name': u'VLAN0129-118.241.29.0'}, {'net': u'118.241.45.0', 'id': 3L, 'net_name': u'VLAN0145-118.241.45.0'}, {'net': u'118.241.67.0', 'id': 4L, 'net_name': u'VLAN0167-118.241.67.0'}, {'net': u'118.241.241.0', 'id': 5L, 'net_name': u'VLAN0241-118.241.241.0'}]
+2016-05-19 21:09:38,533 - views.py - DEBUG - start
+2016-05-19 21:15:23,700 - views.py - DEBUG - 1
+2016-05-19 21:17:19,374 - views.py - DEBUG - True
+2016-05-19 21:18:04,587 - views.py - DEBUG - True
+2016-05-19 21:25:16,517 - views.py - DEBUG - False
+2016-05-19 21:28:10,923 - views.py - DEBUG - False
+2016-05-19 21:47:52,213 - views.py - DEBUG - False
+2016-05-19 21:48:26,170 - views.py - DEBUG - False
+2016-05-19 21:56:10,728 - views.py - DEBUG - False
+2016-05-19 21:57:40,633 - views.py - DEBUG - False
+2016-05-19 21:58:19,472 - views.py - DEBUG - <QueryDict: {u'r-network': [u'118.241.29.0'], u'gw_addr': [u'118.241.29.254'], u'ipaddress': [u'118.241.29.10'], u'netusage': [u'0']}>
+2016-05-19 21:59:25,105 - views.py - DEBUG - <QueryDict: {u'r-network': [u'118.241.29.0'], u'gw_addr': [u'118.241.29.254'], u'ipaddress': [u'118.241.29.11'], u'netusage': [u'0']}>
+2016-05-19 22:03:04,207 - views.py - DEBUG - <QueryDict: {u'r-network': [u'118.241.29.0'], u'gw_addr': [u'118.241.29.254'], u'ipaddress': [u'118.241.29.12'], u'netusage': [u'0']}>
+2016-05-19 22:03:50,849 - views.py - DEBUG - <QueryDict: {u'r-network': [u'118.241.29.0'], u'gw_addr': [u'118.241.29.254'], u'ipaddress': [u'118.241.29.13'], u'netusage': [u'0']}>
+2016-05-19 22:04:31,267 - views.py - DEBUG - <QueryDict: {u'r-network': [u'118.241.29.0'], u'gw_addr': [u'118.241.29.254'], u'ipaddress': [u'118.241.29.25'], u'netusage': [u'0']}>

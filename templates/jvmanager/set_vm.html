@@ -75,9 +75,8 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             IP池配置
-                                            <button id='ip-add-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#manage-IP-modal" style="float:right">
-                                                管理IP
-                                            </button>
+                                            
+                                            <button id='ippool-initial-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#initial-ippool-modal" style="float:right margin-left:10px">初始化网络</button>
                                             <div class="modal fade" id="initial-ippool-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -93,6 +92,7 @@
                                                                     {% csrf_token %}
                                                                     <div class="panel panel-default">
                                                                         <div class="panel-body">
+                                                                        <input type="hidden" name="net_id" value="" id="net_id">
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">网络:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
@@ -110,7 +110,7 @@
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">子网掩码:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <input type="text" name="netcode" id="netcode" 　value="255.255.255.0" placeholder="255.255.255.0">
+                                                                                    <input type="text" name="net_mask" id="net_mask" 　value="255.255.255.0" placeholder="255.255.255.0" >
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -125,7 +125,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button id='ippool-initial-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#initial-ippool-modal" style="float:right margin-left:10px">初始化网络</button>
+                                            <button id='ip-manage-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#manage-IP-modal" style="float:right">
+                                                管理IP
+                                            </button>
                                             <div class="modal fade" id="manage-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -137,14 +139,15 @@
                                                         </div>
                                                         <div class="modal-body" style="padding-bottom:10px">
                                                             <div class="ibox-content form-horizontal">
-                                                                <form method="post" action="" id="vc-setting-form">
+                                                                <form method="post" action="" id="ip-add-form">
                                                                     {% csrf_token %}
                                                                     <div class="panel panel-default">
                                                                         <div class="panel-body">
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <input type="hidden" name="gw_addr" id="gw_addr" value="">
                                                                                 <label class="col-sm-3 control-label">网络:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <select name="network" id="network">
+                                                                                    <select name="r-network" id="r-network">
                                                                                         
                                                                                     </select>
                                                                                 </div>
@@ -152,15 +155,15 @@
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">IP:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <input type="text" name="netgate" id="netgate" 　value="">
+                                                                                    <input type="text" name="ipaddress" id="ipaddress" 　value="">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">用途:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <select name="network" id="network">
-                                                                                        <option value="123.1.1.1">网关</option>
-                                                                                        <option value="123.1.1.1">普通地址</option>
+                                                                                    <select name="netusage" id="netusage">
+                                                                                        <option value="1">网关</option>
+                                                                                        <option value="0">普通地址</option>
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
@@ -168,6 +171,10 @@
                                                                     </div>
                                                                 </form>
                                                             </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                            <button type="button" class="btn btn-primary" id="add-ip-btn">添加</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -181,18 +188,109 @@
                                                     <th class="text-center">用途</th>
                                                     <th class="text-center">操作</th>
                                                 </tr>
-                                                <tr>
-                                                    <td class="text-center">118.240.13.0/24</td>
-                                                    <td class="text-center">118.240.13.25</td>
-                                                    <td class="text-center">网关</td>
+                                                {% for ip in ipusage %}
+                                                    <tr>
+                                                    <td class="text-center">{{ip.network.net}}/{{ip.network.netmask}}</td>
+                                                    <td class="text-center">{{ip.ipaddress}}</td>
+                                                    <td class="text-center">{% ifequal ip.used_manage 1 %} 
+                                                        网关
+                                                    {% endifequal %} {% ifequal ip.used_manage 0 %} 
+                                                        普通地址
+                                                    {% endifequal %}</td>
                                                     <td class="text-center">
                                                         <button class="btn btn-xs btn-success">修改用途</button>
                                                     </td>
                                                     <td class="text-center"></td>
                                                 </tr>
+                                                {% endfor %}
+                                                
                                             </table>
                                         </div>
                                     </div>
+                                     <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            模板配置
+                                            <button id='add-template' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-template-modal" style="float:right">
+                                                添加
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                             <div class="modal fade" id="add-template-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel">匹配模板</h4>
+                                                        </div>
+                                                        <div class="modal-body" style="padding-bottom:10px">
+                                                            <div class="ibox-content form-horizontal">
+                                                                <form method="post" action="" id="add-template-form">
+                                                                    {% csrf_token %}
+                                                                    <div class="panel panel-default">
+                                                                        <div class="panel-body">
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                            <input type="hidden" name="gw_addr" id="gw_addr" value="">
+                                                                                <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <select name="tem-os-type" id="tem-os-type">
+                                                                                        
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">模板:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                   <select name="template" id="template">
+                                                                                        
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
+                                                                                <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
+                                                                                <div class="dropdown col-sm-9">
+                                                                                    <input type="checkbox" name="DEVP" >开发环境
+                                                                                    <input type="checkbox" name="TEST">测试环境
+                                                                                    <input type="checkbox" name="DRCV">灾备环境
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                            <button type="button" class="btn btn-primary" id="add-ip-btn">添加</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <table class="table table-striped table-hover table-cendensed" id="vcenter-table">
+                                                <tr>
+                                                    <th class="text-center">操作系统</th>
+                                                    <th class="text-center">环境类型</th>
+                                                    <th class="text-center">模板</th>
+                                                    <th class="text-center">操作</th>
+                                                </tr>
+                                                {% for tem in templates %}
+                                                <tr id="template-table">
+                                                    <td class="text-center">{{tem.virtualmachine.guestos_fullname}}</td>
+                                                    <td class="text-center">{{tem.env_type}}</td>
+                                                    <td class="text-center">{{tem.virtualmachine.name}}</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-xs btn-danger template-del-btn">删除</button>
+                                                    </td>
+                                                    <td class="text-center tem-id" style="display:none"></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+
+
                                 </div>
                                 <div id="tab-parameter" class="tab-pane col-sm-10">
                                     <div class="panel panel-default">
@@ -379,14 +477,56 @@ $("#ippool-initial-btn").click(function(event) {
     });
 });
 $("#network").change(function(event) {
-    $("#netgate").val($(this).val());
-    $("#netgate").attr('placeholder', $(this).val());
+    $("#net_id").val($(this).find("option:selected").attr('name'))
+    var netgate = $(this).val().substring(0,$(this).val().lastIndexOf('.0'))+".254"
+    
+    $("#netgate").val(netgate);
+    $("#netgate").attr('placeholder', netgate);
 });
 $("#initialip-start-btn").click(function(event) {
+    $("#net_mask").val("255.255.255.0")
     $ippool_initial_form = $("#ippool-initial-form").serializeArray()
     alert(JSON.stringify($ippool_initial_form))
+    $.post(''{% url "ajax_initial_network" %}'', $ippool_initial_form, function(data, textStatus) {
+        if(textStatus=="success"){
+            alert("初始化成功")
+            setTimeout(function(){
+                location.href = '{% url "set_vm" %}'
+            },200)
+        }
+    });
  
 });
+
+$("#ip-manage-btn").click(function(event) {
+       $.post('{% url "ajax_get_initial_ip" %}', {}, function(data, textStatus) {
+        /*optional stuff to do after success */
+        if(textStatus=="success"){
+            ip_option = ""
+        for (var count = 0; count < data.length; count++) {
+            ip_option += "<option value='"+data[count].net+"' name='"+data[count].id+"'>"+data[count].net_name+"</option>"
+        }
+        $("#r-network").append(ip_option)
+        }
+        
+    });
+});
+$("#r-network").change(function(event) {
+    var netgate = $(this).val().substring(0,$(this).val().lastIndexOf('.0'))+".254"
+    $("#ipaddress").val(netgate).focus();
+    $("#netgate").attr('placeholder', netgate);
+    $("#gw_addr").val(netgate)
+});
+$("#add-ip-btn").click(function(event) {
+    $ip_add_form = $("#ip-add-form").serializeArray()
+    alert(JSON.stringify($ip_add_form))
+    $.post('{% url "ajax_add_ip" %}', $ip_add_form, function(data, textStatus) {
+        if(textStatus=="success"){
+            location.href = '{% url "set_vm" %}'
+        }
+    });
+});
+
 //环境参数
 var ipcount = $("#env-table tr").length - 1;
 
