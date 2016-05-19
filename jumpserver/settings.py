@@ -74,6 +74,7 @@ INSTALLED_APPS = (
     'jperm',
     'jlog',
     'vmmanager',
+    'datamanager',
     'djcelery',
     'kombu.transport.django',
 )
