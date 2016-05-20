@@ -281,8 +281,8 @@ def set_vm(request):
     vcenter = VCenter.objects.all()
     ipusage = IPUsage.objects.all().order_by("-id")
     templates = Template.objects.all()
-    envs = SheetField.objects.filter(field_name="env_type")
-    os = SheetField.objects.filter(field_name="os_type")
+    envs = SheetField.get_options("env_type")
+    os = SheetField.get_options("os_type")
     return my_render('jvmanager/set_vm.html', locals(), request)
 
 
@@ -582,19 +582,19 @@ def ajax_add_template(request):
 """vc参数"""
 def ajax_add_vc(request):
     if request.method == 'POST':
+        logger.debug(request.POST)
         ip = request.POST['vcip']
         port = request.POST['vcport']
         vcname = request.POST['vcname']
         vcpw = request.POST['vcpw-conf']
-        env = {}
-        env_type = SheetField.objects.filter(field_name="env_type")
-        for x in env_type:
-            if x.option in request.POST:
-                env[x.option] = True
+        envs = SheetField.get_options("env_type")
+        env_type = [env.option for env in envs if env.option in request.POST]
+        logger.debug(env_type)
 
         try:
-            vcenter = VCenter(ip=ip,port=port,env_type=env,user=vcname,password=vcpw)
-            vcenter.save()
+            pass
+            # vcenter = VCenter(ip=ip,port=port,env_type=env,user=vcname,password=vcpw)
+            # vcenter.save()
         except Exception, e:
             raise e
         else:
