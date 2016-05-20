@@ -66,19 +66,22 @@
                                         {% endifequal %} </td>
                         <td class="text-center">{{ key.cpu}}</td>
                         <td class="text-center">{{ key.memory_gb}}</td>
-                        <td class="text-center">{{ key.request_vm_num}}</td>
-                        <td class="text-center">
+                        <td class="text-center">{{ key.request_vm_num}}</td> 
                         {% ifequal key.apply_status "SM"  %}
                               {% for appro in approvel %}
                                 {% ifequal key.id appro.application.id  %} 
-                                  已生成</td><td class="text-center"><button type="button" class="btn btn-xs btn-info" data-toggle="popover" data-placement="top" title="IP及机器用户密码" data-content="{% for vm in vmorder %}
+                                  <td class="text-center">已生成</td><td class="text-center"><button type="button" class="btn btn-xs btn-info" data-toggle="popover" data-placement="top" title="IP及机器用户密码" data-content="{% for vm in vmorder %}
                             {% ifequal key.id vm.approvel.application_id %}{{vm.loc_ip.ipaddress}}用户信息:(admin/无密码){% endifequal %}
                           {% endfor %}">详细</button></td>
                                 {% endifequal %}
                               {% endfor %}
-                              待审核&nbsp;</td><td class="text-center"></td>
+                              {% for w_appro in w_approvel %}
+                                {% ifequal key.id  w_appro.application.id%}       
+                                     <td class="text-center">待审核&nbsp;</td><td class="text-center"></td>
+                                {% endifequal %}
+                              {% endfor %}
                         {% endifequal %} {% ifequal key.apply_status "RB"  %}
-                          被退回&nbsp;</td><td class="text-center">{{key.apply_reason}}</td>
+                          <td class="text-center">被退回&nbsp;</td><td class="text-center">{{key.apply_reason}}</td>
                         {% endifequal %} 
                         
                     </tr>

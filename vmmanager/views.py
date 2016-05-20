@@ -247,6 +247,7 @@ def resource_view(request):
     user=get_object(User,username=username)
     application = Application.objects.exclude(apply_status="HD").filter(user=user)
     approvel = Approvel.objects.filter(application=application).filter(appro_status='AP')
+    w_approvel = Approvel.objects.filter(application=application).filter(appro_status='AI')
     vmorder = VMOrder.objects.filter(approvel=approvel)
     logger.debug(vmorder)
     applylist = application.order_by('-id')
