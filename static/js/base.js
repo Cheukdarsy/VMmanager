@@ -167,6 +167,7 @@ $("#slider").slider({
         $("#data_volume").val($("#slider").slider("value"));
  $("#slider1").slider({
             value:1,
+            range:"min",
             min:1,
             max:6,
             step:1,

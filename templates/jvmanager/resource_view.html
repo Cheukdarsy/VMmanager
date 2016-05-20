@@ -45,7 +45,13 @@
                      {% for key in applys %}
                       <tr>
                         <td class="text-center">{{ key.id}}</td>
-                        <td class="text-center">{{ key.env_type}}</td>
+                        <td class="text-center">{% ifequal  key.env_type  "DRCV"%} 
+                                            灾备环境
+                                        {% endifequal %} {% ifequal key.env_type "TEST"  %} 
+                                            测试环境
+                                        {% endifequal %} {% ifequal key.env_type "DEVP"  %}
+                                            开发环境
+                                        {% endifequal %}</td>
                         <td class="text-center">{% ifequal key.fun_type "normal"  %}
                           普通型
                         {% endifequal %} {% ifequal key.fun_type "was" %}
@@ -53,18 +59,27 @@
                         {% endifequal %} {% ifequal key.fun_type "database" %}
                           数据库型
                         {% endifequal %}</td>
-                        <td class="text-center">{{ key.os_type}}</td>
+                        <td class="text-center">{% ifequal  key.os_type  "WIN"%} 
+                                            WINDOWS
+                                        {% endifequal %} {% ifequal key.os_type "LUX"  %} 
+                                            LINUX
+                                        {% endifequal %} </td>
                         <td class="text-center">{{ key.cpu}}</td>
                         <td class="text-center">{{ key.memory_gb}}</td>
                         <td class="text-center">{{ key.request_vm_num}}</td>
-                        <td class="text-center">{% ifequal key.apply_status "SM"  %}
-                          待审核</td><td class="text-center"></td>
+                        <td class="text-center">
+                        {% ifequal key.apply_status "SM"  %}
+                              {% for appro in approvel %}
+                                {% ifequal key.id appro.application.id  %} 
+                                  已生成</td><td class="text-center"><button type="button" class="btn btn-xs btn-info" data-toggle="popover" data-placement="top" title="IP及机器用户密码" data-content="{% for vm in vmorder %}
+                            {% ifequal key.id vm.approvel.application_id %}{{vm.loc_storage.name}}用户信息:(admin/无密码){% endifequal %}
+                          {% endfor %}">详细</button></td>
+                                {% endifequal %}
+                              {% endfor %}
+                              待审核&nbsp;</td><td class="text-center"></td>
                         {% endifequal %} {% ifequal key.apply_status "RB"  %}
                           被退回&nbsp;</td><td class="text-center">{{key.apply_reason}}</td>
-                        {% endifequal %} {% ifequal key.apply_status "SC" %}
-                          已生成</td><td class="text-center"><button type="button" class="btn btn-xs btn-danger" data-toggle="popover" title="IP及机器用户密码" data-content="1.IP:192.356.2.12 用户信息:(admin/123)">详细</button></td>
-                        {% endifequal %}
-
+                        {% endifequal %} 
                         
                     </tr>
                      {% endfor %} 

@@ -53,9 +53,26 @@ $(function() {
         }, function(data) {
             var detail_list = eval($.parseJSON(data));
             //数据获取
-            $(".dropdownMenu1").text(detail_list[0].fields.appro_env_type).append('&nbsp;<span class="caret"></span>');
+            var env = detail_list[0].fields.appro_env_type;
+            var os = detail_list[0].fields.appro_os_type;
+            var env_text = "",os_text = "";
+            if("DEVP"===env){
+                env_text = "开发环境"
+            } else if("TEST"===env) {
+                env_text = "测试环境"
+            } else if("DRCV"===env) {
+                env_text = "灾备环境"
+            } else{ env_text = null }
+            $(".dropdownMenu1").text(env_text).append('&nbsp;<span class="caret"></span>');
             $("#" + request_id + "modal input[value='" + detail_list[0].fields.appro_fun_type + "']").prop("checked", true).parent("label").addClass('active').siblings('label').removeClass('active');
-            $(".dropdownMenu2").text(detail_list[0].fields.appro_os_type).append('&nbsp;<span class="caret"></span>');
+            if("WIN"===os){
+                os_text = "WINDOWS"
+            } else if("LUX"===os) {
+                os_text = "LINUX"
+            } else {
+                os_text = null
+            }
+            $(".dropdownMenu2").text(os_text).append('&nbsp;<span class="caret"></span>');
             $("#" + request_id + "modal ." + detail_list[0].fields.appro_cpu + "C").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
             $("#" + request_id + "modal ." + detail_list[0].fields.appro_memory_gb + "G").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
             $("#" + request_id + "modal input[name='data_volume']").val(detail_list[0].fields.appro_datadisk_gb);

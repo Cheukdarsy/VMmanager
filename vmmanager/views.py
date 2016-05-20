@@ -245,7 +245,11 @@ def resource_view(request):
     """
     username = request.user.username
     user=get_object(User,username=username)
-    applylist = Application.objects.exclude(apply_status="HD").filter(user=user).order_by('-id')
+    application = Application.objects.exclude(apply_status="HD").filter(user=user)
+    approvel = Approvel.objects.filter(application=application).filter(appro_status='AP')
+    vmorder = VMOrder.objects.filter(approvel=approvel)
+    logger.debug(vmorder)
+    applylist = application.order_by('-id')
     applylist, p, applys, page_range, current_page, show_first, show_end = pages(
         applylist, request)
     return my_render('jvmanager/resource_view.html', locals(), request)
@@ -279,10 +283,10 @@ def submit_saving_resource(request):
 @require_role('admin')
 def set_vm(request):
     vcenter = VCenter.objects.all()
-    ipusage = IPUsage.objects.all().order_by("-id")
+    ipusage = IPUsage.objects.filter(used_manage="1").order_by("-id")
     templates = Template.objects.all()
     envs = SheetField.objects.filter(field_name="env_type")
-    os = SheetField.objects.filter(field_name="os_type")
+    os = SheetField.objects.all()
     return my_render('jvmanager/set_vm.html', locals(), request)
 
 
@@ -511,7 +515,7 @@ def ajax_select_template(request):
         return JsonResponse(error_dict)
 
 
-def get_templates():
+def get_templates(request):
     """
     获取所有模板信息
     返回每个条目的字段对照
@@ -532,10 +536,11 @@ def get_templates():
                 'vmname': templ.virtualmachine.name,
                 'vm_anno': templ.virtualmachine.annotation
             })
+            logger.debug("get temp")
     except Exception, e:
         raise e
     else:
-        return json.dumps(result_list)
+        return JsonResponse(result_list)
 
 
 def ajax_add_template(request):
@@ -578,6 +583,17 @@ def ajax_add_template(request):
     else:
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
+
+def ajax_delete_template(request):
+    if request.method == "POST":
+        id = int(request.POST['id'])
+        try:
+            template = Template.objects.filter(pk=id)
+            template.delete()
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success": "delete successfully"})
 
 """vc参数"""
 def ajax_add_vc(request):
@@ -711,6 +727,52 @@ def ajax_delete_env(request):
         else:
             return JsonResponse({"success":"delete successfull"})
 
+def get_sheetfield(request):
+    result_list = []
+    try:
+        sheetfield = SheetField.objects.all()
+        for sheet in sheetfield:
+            result_list.append({sheet.field_name:sheet.option})
+    except Exception, e:
+        raise e
+    else:
+        return JsonResponse(result_list)
+        
+
+def get_os_version(request):
+    result = []
+    try:
+        version = VirtualMachine.objects.all().values('guestos_shortname').distinct()
+        for ver in version:
+            result.append(ver)
+    except Exception, e:
+        raise e
+    else:
+        return JsonResponse(result)
+
+def add_os_version(request):
+    if request.method == "POST":
+        logger.debug(request.POST)
+        sheet_name = request.POST['sheet_name']
+        option = request.POST['option']
+        option_display = request.POST['option_display']
+        try:
+            sheet = SheetField.objects.create(sheet_name="os_type_" + sheet_name, field_name="os_version", option=option, option_display=option_display)
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success":"delete successfull"})
+
+def del_os_version(request):
+    if request.method == "POST":
+        id = request.POST['id']
+        try:
+            ver = SheetField.objects.filter(pk=id)
+            ver.delete()
+        except Exception, e:
+            raise e
+        else:
+            return JsonResponse({"success":"delete successfull"})
 
 def datamanager(request):
     return my_render('datamanager.html', locals(), request)
