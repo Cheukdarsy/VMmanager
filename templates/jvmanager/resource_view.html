@@ -72,7 +72,7 @@
                               {% for appro in approvel %}
                                 {% ifequal key.id appro.application.id  %} 
                                   已生成</td><td class="text-center"><button type="button" class="btn btn-xs btn-info" data-toggle="popover" data-placement="top" title="IP及机器用户密码" data-content="{% for vm in vmorder %}
-                            {% ifequal key.id vm.approvel.application_id %}{{vm.loc_storage.name}}用户信息:(admin/无密码){% endifequal %}
+                            {% ifequal key.id vm.approvel.application_id %}{{vm.loc_ip.ipaddress}}用户信息:(admin/无密码){% endifequal %}
                           {% endfor %}">详细</button></td>
                                 {% endifequal %}
                               {% endfor %}
