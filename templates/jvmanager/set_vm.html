@@ -1,375 +1,450 @@
 {% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
-<div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
-        <div class="col-sm-10">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>VM设置</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
-                        </a>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="ibox-content">
-                    <div class="panel blank-panel">
-                        <div class="panel-heading">
-                            <div class="panel-options">
-                                <ul class="nav nav-tabs">
-                                    <!-- <li id="tab1" class="active">
-                                    <a data-toggle="tab" href="#tab-default" aria-expanded="true">默认设置</a>
-                                </li>
-                                -->
-                                    <li id="tab1" class="active">
-                                        <a data-toggle="tab" href="#tab-vmware" aria-expanded="true">VMware环境配置</a>
-                                    </li>
-                                    <li id="tab２">
-                                        <a data-toggle="tab" href="#tab-parameter" aria-expanded="true">申请参数配置</a>
-                                    </li>
-                                </ul>
-                            </div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-10">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>VM设置</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
                         </div>
-                        <div class="panel-body">
-                            <div class="tab-content">
-                                <div id="tab-vmware" class="tab-pane active col-sm-10">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            vCenter配置
-                                            <button id='add-vcenter' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-vm-modal" style="float:right">
-                                                添加VC
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        <div class="panel-body">
-                                            <table class="table table-striped table-hover table-cendensed" id="vcenter-table">
-                                                <tr>
-                                                    <th class="text-center">IP</th>
-                                                    <th class="text-center">用户</th>
-                                                    <th class="text-center">密码</th>
-                                                    <th class="text-center">端口</th>
-                                                    <th class="text-center">操作</th>
-                                                </tr>
-                                                {% for vc in vcenter %}
-                                                <tr id="vc-table">
-                                                    <td class="text-center">{{vc.ip}}</td>
-                                                    <td class="text-center">{{vc.user}}</td>
-                                                    <td class="text-center">{{vc.password}}</td>
-                                                    <td class="text-center">{{vc.port}}</td>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#vc-{{vc.id}}-modal">修改</button>
-                                                        {% include 'jvmanager/modify_vcenter_modal.html' %}
-                                                        <button class="btn btn-xs btn-primary">同步</button>
-                                                        <button class="btn btn-xs btn-danger vc-del-btn">删除</button>
-                                                    </td>
-                                                    <td class="text-center vc-id" style="display:none">{{vc.id}}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </table>
-                                            {% include 'jvmanager/add_vcenter_modal.html' %}
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            IP池配置
-                                            
-                                            <button id='ippool-initial-btn' class="btn btn-xs btn-success" data-toggle="modal" data-target="#initial-ippool-modal" style="float:right margin-left:10px">初始化网络</button>
-                                            <div class="modal fade" id="initial-ippool-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                            <h4 class="modal-title" id="myModalLabel">初始化网络</h4>
-                                                        </div>
-                                                        <div class="modal-body" style="padding-bottom:10px">
-                                                            <div class="ibox-content form-horizontal">
-                                                                <form method="post" action="" id="ippool-initial-form">
-                                                                    {% csrf_token %}
-                                                                    <div class="panel panel-default">
-                                                                        <div class="panel-body">
-                                                                        <input type="hidden" name="net_id" value="" id="net_id">
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">网络:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <select name="network" id="network">
-                                                                                        
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">网关:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <input type="text" name="netgate" id="netgate" 　value="" placeholder="请选择网络">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">子网掩码:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <input type="text" name="net_mask" id="net_mask" 　value="255.255.255.0" placeholder="255.255.255.0" >
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                            <button type="button" class="btn btn-primary" id="initialip-start-btn">初始化</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button id='ip-manage-btn' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#manage-IP-modal" style="float:right">
-                                                管理IP
-                                            </button>
-                                            <div class="modal fade" id="manage-IP-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                            <h4 class="modal-title" id="myModalLabel">管理IP</h4>
-                                                        </div>
-                                                        <div class="modal-body" style="padding-bottom:10px">
-                                                            <div class="ibox-content form-horizontal">
-                                                                <form method="post" action="" id="ip-add-form">
-                                                                    {% csrf_token %}
-                                                                    <div class="panel panel-default">
-                                                                        <div class="panel-body">
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                            <input type="hidden" name="gw_addr" id="gw_addr" value="">
-                                                                                <label class="col-sm-3 control-label">网络:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <select name="r-network" id="r-network">
-                                                                                        
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">IP:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <input type="text" name="ipaddress" id="ipaddress" 　value="">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">用途:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <select name="netusage" id="netusage">
-                                                                                        <option value="1">网关</option>
-                                                                                        <option value="0">普通地址</option>
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                            <button type="button" class="btn btn-primary" id="add-ip-btn">添加</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                            <table class="table table-striped table-hover table-cendensed" id="ip-table">
-                                                <tr>
-                                                    <th class="text-center">网络</th>
-                                                    <th class="text-center">IP地址</th>
-                                                    <th class="text-center">用途</th>
-                                                    <th class="text-center">操作</th>
-                                                </tr>
-                                                {% for ip in ipusage %}
-                                                    <tr>
-                                                    <td class="text-center">{{ip.network.net}}/{{ip.network.netmask}}</td>
-                                                    <td class="text-center">{{ip.ipaddress}}</td>
-                                                    <td class="text-center">{% ifequal ip.used_manage 1 %} 
-                                                        网关
-                                                    {% endifequal %} {% ifequal ip.used_manage 0 %} 
-                                                        普通地址
-                                                    {% endifequal %}</td>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-xs btn-success">修改用途</button>
-                                                    </td>
-                                                    <td class="text-center"></td>
-                                                </tr>
-                                                {% endfor %}
-                                                
-                                            </table>
-                                        </div>
-                                    </div>
-                                     <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            模板配置
-                                            <button id='add-temp' class="btn btn-xs btn-primary" data-toggle="modal"
-                                                    data-target="#add-template-modal" style="float:right">
-                                                添加
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                             <div class="modal fade" id="add-template-modal" tabindex="-1" role='dialog' aria-labelledby="myModalLabel">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                            <h4 class="modal-title" id="myModalLabel">匹配模板</h4>
-                                                        </div>
-                                                        <div class="modal-body" style="padding-bottom:10px">
-                                                            <div class="ibox-content form-horizontal">
-                                                                <form method="post" action="" id="add-template-form">
-                                                                    {% csrf_token %}
-                                                                    <div class="panel panel-default">
-                                                                        <div class="panel-body">
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <select name="os_type"
-                                                                                            id="tem-os-type">
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">模板:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <select name="vmid" id="template">
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="form-group" style="margin-right:-60px;margin-left:40px;">
-                                                                                <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
-                                                                                <div class="dropdown col-sm-9">
-                                                                                    <input type="radio" name="env_type"
-                                                                                           value="DEVP">开发环境
-                                                                                    <input type="radio" name="env_type"
-                                                                                           value="TEST">测试环境
-                                                                                    <input type="radio" name="env_type"
-                                                                                           value="DRCV">灾备环境
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                            <button type="button" class="btn btn-primary"
-                                                                    id="add-template-btn">添加
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                            <table class="table table-striped table-hover table-cendensed" id="vcenter-table">
-                                                <tr>
-                                                    <th class="text-center">操作系统</th>
-                                                    <th class="text-center">环境类型</th>
-                                                    <th class="text-center">模板</th>
-                                                    <th class="text-center">操作</th>
-                                                </tr>
-                                                {% for tem in templates %}
-                                                <tr id="template-table">
-                                                    <td class="text-center">{{ tem.os_type }}</td>
-                                                    <td class="text-center">{{tem.env_type}}</td>
-                                                    <td class="text-center">{{tem.virtualmachine.name}}</td>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-xs btn-danger template-del-btn"
-                                                                name="{{ tem.id }}">删除
-                                                        </button>
-                                                    </td>
-                                                    <td class="text-center tem-id" style="display:none"></td>
-                                                </tr>
-                                                {% endfor %}
-                                            </table>
-                                        </div>
-                                    </div>
-
-
+                    </div>
+                    <div class="ibox-content">
+                        <div class="panel blank-panel">
+                            <div class="panel-heading">
+                                <div class="panel-options">
+                                    <ul class="nav nav-tabs">
+                                        <!-- <li id="tab1" class="active">
+                                        <a data-toggle="tab" href="#tab-default" aria-expanded="true">默认设置</a>
+                                    </li>
+                                    -->
+                                        <li id="tab1" class="active">
+                                            <a data-toggle="tab" href="#tab-vmware" aria-expanded="true">VMware环境配置</a>
+                                        </li>
+                                        <li id="tab２">
+                                            <a data-toggle="tab" href="#tab-parameter" aria-expanded="true">申请参数配置</a>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div id="tab-parameter" class="tab-pane col-sm-10">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            环境类型
-                                            <button id='add-env' class="btn btn-xs btn-primary" style="float:right">
-                                                添加环境类型
-                                                <i class="fa fa-plus"></i>
-                                            </button>
+                            </div>
+                            <div class="panel-body">
+                                <div class="tab-content">
+                                    <div id="tab-vmware" class="tab-pane active col-sm-10">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                vCenter配置
+                                                <button id='add-vcenter' class="btn btn-xs btn-primary"
+                                                        data-toggle="modal" data-target="#add-vm-modal"
+                                                        style="float:right">
+                                                    添加VC
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="panel-body">
+                                                <table class="table table-striped table-hover table-cendensed"
+                                                       id="vcenter-table">
+                                                    <tr>
+                                                        <th class="text-center">IP</th>
+                                                        <th class="text-center">端口</th>
+                                                        <th class="text-center">用户</th>
+                                                        <th class="text-center">操作</th>
+                                                    </tr>
+                                                    {% for vc in vcenter %}
+                                                        <tr id="vc-table">
+                                                            <td class="text-center vc-ip">{{ vc.ip }}</td>
+                                                            <td class="text-center">{{ vc.port }}</td>
+                                                            <td class="text-center">{{ vc.user }}</td>
+                                                            <td class="text-center">
+                                                                <button class="btn btn-xs btn-success"
+                                                                        data-toggle="modal"
+                                                                        data-target="#vc-{{ vc.id }}-modal">修改
+                                                                </button>
+                                                                {% include 'jvmanager/modify_vcenter_modal.html' %}
+                                                                <button class="btn btn-xs btn-danger vc-del-btn">删除
+                                                                </button>
+                                                                <button class="btn btn-xs btn-primary vc-sync-btn">
+                                                                    同步 [上次: {{ vc.last_sync_from_now }}]
+                                                                </button>
+                                                                <br>
+                                                                <input type="checkbox" class="sync_asset">资源
+                                                                <input type="checkbox" class="sync_vm">虚拟机
+                                                                <input type="checkbox" class="sync_related">关联(耗时较长)
+                                                            </td>
+                                                            <td class="text-center vc-id"
+                                                                style="display:none">{{ vc.id }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </table>
+                                                {% include 'jvmanager/add_vcenter_modal.html' %}
+                                            </div>
                                         </div>
-                                        <div class="panel-body">
-                                            <table class="table table-striped table-hover table-bordered" id="env-table">
-                                                <tr>
-                                                    <th class="text-center">标识符</th>
-                                                    <th class="text-center" style='width:300px'>环境类型</th>
-                                                    <th class="text-center">操作</th>
-                                                </tr>
-                                                {% for env in envs%}
-                                                <tr id="tr{{env.id}}">
-                                                    <td class="text-center" id="env-option-{{env.id}}">{{env.option}}</td>
-                                                    <td class="text-center" id="env-td-{{env.id}}">{{env.option_display}}</td>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-xs btn-success" name="{{env.id}}">修改</button>
-                                                        <button class="btn btn-xs btn-danger" name="{{env.id}}">删除</button>
-                                                    </td>
-                                                    <td class="text-center"></td>
-                                                </tr>
-                                                {% endfor %}
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            操作系统类型
-                                            <button id='add-os' class="btn btn-xs btn-primary" style="float:right">
-                                                添加系统
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        <div class="panel-body">
-                                            <table class="table table-striped table-hover table-cendensed" id="os-table">
-                                                <tr>
-                                                    <th class="text-center" style='width:70px'>类型</th>
-                                                    <th class="text-center" style='width:150px'>类型描述</th>
-                                                    <th class="text-center" style='width:100px'>版本</th>
-                                                    <th class="text-center" style='width:150px'>版本描述符</th>
-                                                    <th class="text-center">操作</th>
-                                                </tr>
-                                                {% for o in os %}
-                                                    {% ifequal o.field_name "os_version" %}
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                IP池配置
+
+                                                <button id='ippool-initial-btn' class="btn btn-xs btn-success"
+                                                        data-toggle="modal" data-target="#initial-ippool-modal"
+                                                        style="float:right; margin-left:10px">初始化网络
+                                                </button>
+                                                <div class="modal fade" id="initial-ippool-modal" tabindex="-1"
+                                                     role='dialog' aria-labelledby="myModalLabel">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                        aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                <h4 class="modal-title" id="myModalLabel">初始化网络</h4>
+                                                            </div>
+                                                            <div class="modal-body" style="padding-bottom:10px">
+                                                                <div class="ibox-content form-horizontal">
+                                                                    <form method="post" action=""
+                                                                          id="ippool-initial-form">
+                                                                        {% csrf_token %}
+                                                                        <div class="panel panel-default">
+                                                                            <div class="panel-body">
+                                                                                <input type="hidden" name="net_id"
+                                                                                       value="" id="net_id">
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">网络:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <select name="network"
+                                                                                                id="network">
+
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">网关:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <input type="text"
+                                                                                               name="netgate"
+                                                                                               id="netgate" 　value=""
+                                                                                               placeholder="请选择网络">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">子网掩码:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <input type="text"
+                                                                                               name="net_mask"
+                                                                                               id="net_mask"
+                                                                                               　value="255.255.255.0"
+                                                                                               placeholder="255.255.255.0">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default"
+                                                                        data-dismiss="modal">关闭
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary"
+                                                                        id="initialip-start-btn">初始化
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button id='ip-manage-btn' class="btn btn-xs btn-primary"
+                                                        data-toggle="modal" data-target="#manage-IP-modal"
+                                                        style="float:right">
+                                                    管理IP
+                                                </button>
+                                                <div class="modal fade" id="manage-IP-modal" tabindex="-1" role='dialog'
+                                                     aria-labelledby="myModalLabel">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                        aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                <h4 class="modal-title" id="myModalLabel">管理IP</h4>
+                                                            </div>
+                                                            <div class="modal-body" style="padding-bottom:10px">
+                                                                <div class="ibox-content form-horizontal">
+                                                                    <form method="post" action="" id="ip-add-form">
+                                                                        {% csrf_token %}
+                                                                        <div class="panel panel-default">
+                                                                            <div class="panel-body">
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <input type="hidden" name="gw_addr"
+                                                                                           id="gw_addr" value="">
+                                                                                    <label class="col-sm-3 control-label">网络:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <select name="r-network"
+                                                                                                id="r-network">
+
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">IP:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <input type="text"
+                                                                                               name="ipaddress"
+                                                                                               id="ipaddress" 　value="">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">用途:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <select name="netusage"
+                                                                                                id="netusage">
+                                                                                            <option value="1">网关
+                                                                                            </option>
+                                                                                            <option value="0">普通地址
+                                                                                            </option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default"
+                                                                        data-dismiss="modal">关闭
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary"
+                                                                        id="add-ip-btn">添加
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-body">
+                                                <table class="table table-striped table-hover table-cendensed"
+                                                       id="ip-table">
+                                                    <tr>
+                                                        <th class="text-center">网络</th>
+                                                        <th class="text-center">IP地址</th>
+                                                        <th class="text-center">用途</th>
+                                                        <th class="text-center">操作</th>
+                                                    </tr>
+                                                    {% for ip in ipusage %}
                                                         <tr>
-                                                            <td class="text-center">{% if "WIN" in o.sheet_name %}
-                                                                WIN
-                                                            {% else %}
-                                                                LUX
-                                                            {% endif %}</td>
-                                                            <td class="text-center">{% if "WIN" in o.sheet_name %}
-                                                                Windows
-                                                            {% else %}
-                                                                Linux
-                                                            {% endif %}</td>
-                                                    <td class="text-center">{{o.option}}</td>
-                                                    <td class="text-center">{{o.option_display}}</td>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-xs btn-danger os-del-btn"
-                                                                name="{{ o.id }}">删除
-                                                        </button>
-                                                    </td>
-                                                    <td class="text-center"></td>
-                                                </tr>
-                                                    {% endifequal %}
-                                                {% endfor %}
-                                            </table>
+                                                            <td class="text-center">{{ ip.network.net }}/{{ ip.network.netmask }}</td>
+                                                            <td class="text-center">{{ ip.ipaddress }}</td>
+                                                            <td class="text-center">{% ifequal ip.used_manage 1 %}
+                                                                网关
+                                                            {% endifequal %} {% ifequal ip.used_manage 0 %}
+                                                                普通地址
+                                                            {% endifequal %}</td>
+                                                            <td class="text-center">
+                                                                <button class="btn btn-xs btn-success">修改用途</button>
+                                                            </td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                模板配置
+                                                <button id='add-temp' class="btn btn-xs btn-primary" data-toggle="modal"
+                                                        data-target="#add-template-modal" style="float:right">
+                                                    添加
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                                <div class="modal fade" id="add-template-modal" tabindex="-1"
+                                                     role='dialog' aria-labelledby="myModalLabel">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                        aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                <h4 class="modal-title" id="myModalLabel">匹配模板</h4>
+                                                            </div>
+                                                            <div class="modal-body" style="padding-bottom:10px">
+                                                                <div class="ibox-content form-horizontal">
+                                                                    <form method="post" action=""
+                                                                          id="add-template-form">
+                                                                        {% csrf_token %}
+                                                                        <div class="panel panel-default">
+                                                                            <div class="panel-body">
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <select name="os_type"
+                                                                                                id="tem-os-type">
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">模板:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <select name="vmid"
+                                                                                                id="template">
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group"
+                                                                                     style="margin-right:-60px;margin-left:40px;">
+                                                                                    <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
+                                                                                    <div class="dropdown col-sm-9">
+                                                                                        <input type="radio"
+                                                                                               name="env_type"
+                                                                                               value="DEVP">开发环境
+                                                                                        <input type="radio"
+                                                                                               name="env_type"
+                                                                                               value="TEST">测试环境
+                                                                                        <input type="radio"
+                                                                                               name="env_type"
+                                                                                               value="DRCV">灾备环境
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default"
+                                                                        data-dismiss="modal">关闭
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary"
+                                                                        id="add-template-btn">添加
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-body">
+                                                <table class="table table-striped table-hover table-cendensed"
+                                                       id="vcenter-table">
+                                                    <tr>
+                                                        <th class="text-center">操作系统</th>
+                                                        <th class="text-center">环境类型</th>
+                                                        <th class="text-center">模板</th>
+                                                        <th class="text-center">操作</th>
+                                                    </tr>
+                                                    {% for tem in templates %}
+                                                        <tr id="template-table">
+                                                            <td class="text-center">{{ tem.os_type }}</td>
+                                                            <td class="text-center">{{ tem.env_type }}</td>
+                                                            <td class="text-center">{{ tem.virtualmachine.name }}</td>
+                                                            <td class="text-center">
+                                                                <button class="btn btn-xs btn-danger template-del-btn"
+                                                                        name="{{ tem.id }}">删除
+                                                                </button>
+                                                            </td>
+                                                            <td class="text-center tem-id" style="display:none"></td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </table>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div id="tab-parameter" class="tab-pane col-sm-10">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                环境类型
+                                                <button id='add-env' class="btn btn-xs btn-primary" style="float:right">
+                                                    添加环境类型
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="panel-body">
+                                                <table class="table table-striped table-hover table-bordered"
+                                                       id="env-table">
+                                                    <tr>
+                                                        <th class="text-center">标识符</th>
+                                                        <th class="text-center" style='width:300px'>环境类型</th>
+                                                        <th class="text-center">操作</th>
+                                                    </tr>
+                                                    {% for env in envs %}
+                                                        <tr id="tr{{ env.id }}">
+                                                            <td class="text-center"
+                                                                id="env-option-{{ env.id }}">{{ env.option }}</td>
+                                                            <td class="text-center"
+                                                                id="env-td-{{ env.id }}">{{ env.option_display }}</td>
+                                                            <td class="text-center">
+                                                                <button class="btn btn-xs btn-success"
+                                                                        name="{{ env.id }}">修改
+                                                                </button>
+                                                                <button class="btn btn-xs btn-danger"
+                                                                        name="{{ env.id }}">删除
+                                                                </button>
+                                                            </td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                操作系统类型
+                                                <button id='add-os' class="btn btn-xs btn-primary" style="float:right">
+                                                    添加系统
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="panel-body">
+                                                <table class="table table-striped table-hover table-cendensed"
+                                                       id="os-table">
+                                                    <tr>
+                                                        <th class="text-center" style='width:70px'>类型</th>
+                                                        <th class="text-center" style='width:150px'>类型描述</th>
+                                                        <th class="text-center" style='width:100px'>版本</th>
+                                                        <th class="text-center" style='width:150px'>版本描述符</th>
+                                                        <th class="text-center">操作</th>
+                                                    </tr>
+                                                    {% for o in os %}
+                                                        {% ifequal o.field_name "os_version" %}
+                                                            <tr>
+                                                                <td class="text-center">{% if "WIN" in o.sheet_name %}
+                                                                    WIN
+                                                                {% else %}
+                                                                    LUX
+                                                                {% endif %}</td>
+                                                                <td class="text-center">{% if "WIN" in o.sheet_name %}
+                                                                    Windows
+                                                                {% else %}
+                                                                    Linux
+                                                                {% endif %}</td>
+                                                                <td class="text-center">{{ o.option }}</td>
+                                                                <td class="text-center">{{ o.option_display }}</td>
+                                                                <td class="text-center">
+                                                                    <button class="btn btn-xs btn-danger os-del-btn"
+                                                                            name="{{ o.id }}">删除
+                                                                    </button>
+                                                                </td>
+                                                                <td class="text-center"></td>
+                                                            </tr>
+                                                        {% endifequal %}
+                                                    {% endfor %}
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -380,361 +455,352 @@
             </div>
         </div>
     </div>
-</div>
 {% endblock %} {% block self_footer_js %}
-<style type="text/css">
-.selectpicker {
-    width: 120px;
-    height: 30px;
-}
-</style>
-<script>
-$('#vc-setting-form').validator({
-        timely: 2,
-        theme: "yellow_right_effect",
-        rules: {
-            check_name: [/^\w{2,20}$/, '大小写字母数字和下划线,2-20位'],
-            check_port: [/^\d{1,5}$/, '端口号不正确'],
-            check_ip: [/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, 'IP格式不正确']
-        },
-
-        fields: {
-            "vcip": {
-                rule: "required;check_ip",
-                tip: "输入VC的IP",
-                ok: "",
-                msg: {
-                    required: "IP必填"
-                }
+    <style type="text/css">
+        .selectpicker {
+            width: 120px;
+            height: 30px;
+        }
+    </style>
+    <script>
+        //vcenter表单验证提交(新增、修改)
+        $(".vc-setting-form").validator({
+            timely: 2,
+            theme: "yellow_right_effect",
+            rules: {
+                domainuser: [/^\w+@\w+\.\w+$/, 'VC管理员用户: user@domain'],
+                portnum: [/^\d{1,5}$/, '端口号不正确'],
+                ipaddress: [/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, 'IP格式不正确']
             },
-            "vcport": {
-                rule: "required;check_port",
-                tip: "输入端口，默认443",
-                ok: "",
-                msg: {
-                    required: "端口必填"
-                }
+            fields: {
+                "vcip": {rule: "required;ipaddress", ok: ""},
+                "vcport": {rule: "required;portnum", ok: ""},
+                "vcname": {rule: "required;domainuser", ok: ""},
+                "vcpw": {rule: "required", ok: ""},
+                "vcpw-conf": {rule: "required;match[vcpw]", ok: ""}
             },
-            "vcname": {
-                rule: "required;check_name",
-                tip: "输入用户名",
-                ok: "",
-                msg: {
-                    required: "用户名不能为空"
+            valid: function (form) {
+                var vcform = $(form).serializeArray();
+                var vcurl, succ_msg;
+                //添加VC
+                if ($(form).hasClass("vc-add")) {
+                    vcurl = '{% url "ajax_add_vc" %}';
+                    succ_msg = "添加成功"
                 }
-            },
-            "vcpw": {
-                rule: "required",
-                tip: "输入密码",
-                ok: "",
-                msg: {
-                    required: "密码必填"
+                //修改VC
+                else if ($(form).hasClass("vc-modify")) {
+                    vcurl = '{% url "ajax_modify_vc" %}';
+                    succ_msg = "修改成功"
                 }
-            },
-            "vcpw-conf": {
-                rule: "required;match[vcpw]",
-                tip: "",
-                ok: "",
-                msg: {
-                    required: "密码确认",
-                    match: "密码不一致"
-                }
+                $.post(vcurl, vcform, function (data, textStatus) {
+                    if (textStatus == "success") {
+                        data.status == 'success' ? alert(succ_msg) : alert(data.errmsg);
+                        setTimeout(function (e) {
+                            location.href = '{% url "set_vm" %}'
+                        }, 200);
+                    } else {
+                        alert("未知错误")
+                    }
+                }, 'json');
             }
-        },
-        valid: function(form) {
-            $vcform = $("#vc-setting-form").serializeArray()
-            alert(JSON.stringify($vcform))
-            $.post('{% url "ajax_add_vc" %}', $vcform, function(data, textStatus) {
+        });
+        $(".vc-sync-btn").click(function (event) {
+            var $vc_id = $(this).parent("td").siblings('.vc-id').text();
+            var $sync_asset = $(this).siblings('.sync_asset').prop("checked");
+            var $sync_vm = $(this).siblings('.sync_vm').prop("checked");
+            var $sync_related = $(this).siblings('.sync_related').prop("checked");
+            $.post('{% url "ajax_sync_vc" %}', {
+                "id": $vc_id,
+                "sync_asset": $sync_asset,
+                "sync_vm": $sync_vm,
+                "sync_related": $sync_related
+            }, function (data, textStatus) {
+                if (textStatus == "success") {
+                    data.status == 'success' ? alert("成功触发同步") : alert(data.errmsg);
+                    setTimeout(function (e) {
+                        location.href = '{% url "set_vm" %}'
+                    }, 200);
+                } else {
+                    alert("未知错误")
+                }
+            }, 'json');
+        });
+        $(".vc-del-btn").click(function (event) {
+            var $vc_id = $(this).parent("td").siblings('.vc-id').text();
+            var $vc_ip = $(this).parent("td").siblings('.vc-ip').text();
+            var cfm_msg = "将删除VCenter: " + $vc_ip + ",请确认.";
+            var succ_msg = "级联删除VCenter: " + $vc_ip + " 成功!.";
+            if (confirm(cfm_msg)) {
+                $.post('{% url "ajax_delete_vc" %}', {
+                    "id": $vc_id
+                }, function (data, textStatus) {
+                    if (textStatus == "success") {
+                        data.status == 'success' ? alert(succ_msg) : alert(data.errmsg);
+                        setTimeout(function (e) {
+                            location.href = '{% url "set_vm" %}'
+                        }, 200);
+                    } else {
+                        alert("未知错误")
+                    }
+                }, 'json');
+            }
+        });
+
+        //模板参数
+        $("#add-temp").click(function (event) {
+            $.post('{% url "get_templates" %}', {}, function (data, textStatus) {
+                if (textStatus == "success") {
+                    var template_option = ""
+                    for (var count = 0; count < data.length; count++) {
+                        template_option += "<option value='" + data[count].vmid + "'>" + data[count].vmname + "</option>"
+                    }
+                    $("#template").append(template_option)
+                }
+            });
+            $.post('{% url "get_sheetfield" %}', {}, function (data, textStatus) {
+                var os_option = ''
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].os_type) {
+                        os_option += "<option>" + data[i].os_type + "</option>"
+                    }
+                }
+                $("#tem-os-type").append(os_option)
+            });
+        });
+
+        $("#add-template-btn").click(function (event) {
+            $add_template_form = $("#add-template-form").serializeArray()
+            $.post('{% url "ajax_add_template" %}', $add_template_form, function (data, textStatus) {
+                if (textStatus == "success") {
+                    alert("添加成功")
+                    setTimeout(function () {
+                        location.href = '{% url "set_vm" %}'
+                    }, 200)
+                }
+            });
+        });
+
+        $(".template-del-btn").click(function (event) {
+            var tem_id = $(this).attr("name")
+            if (confirm("确定删除此模板?")) {
+                $.post('{% url "ajax_delete_template" %}', {'id': tem_id}, function (data, textStatus) {
+                    if (textStatus == "success") {
+                        location.href = '{% url "set_vm" %}'
+                    }
+                });
+            }
+
+        });
+
+        //网络参数
+        $("#ippool-initial-btn").click(function (event) {
+            $.post('{% url "ajax_get_initial_ip" %}', {}, function (data, textStatus) {
                 /*optional stuff to do after success */
+                if (textStatus == "success") {
+                    ip_option = ""
+                    for (var count = 0; count < data.length; count++) {
+                        ip_option += "<option value='" + data[count].net + "' name='" + data[count].id + "'>" + data[count].net_name + "</option>"
+                    }
+                    $("#network").append(ip_option)
+                }
+
+            });
+        });
+        $("#network").change(function (event) {
+            $("#net_id").val($(this).find("option:selected").attr('name'))
+            var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254"
+
+            $("#netgate").val(netgate);
+            $("#netgate").attr('placeholder', netgate);
+        });
+        $("#initialip-start-btn").click(function (event) {
+            $("#net_mask").val("255.255.255.0")
+            $ippool_initial_form = $("#ippool-initial-form").serializeArray()
+            alert(JSON.stringify($ippool_initial_form))
+            $.post('{% url "ajax_initial_network" %}', $ippool_initial_form, function (data, textStatus) {
+                if (textStatus == "success") {
+                    alert("初始化成功")
+                    setTimeout(function () {
+                        location.href = '{% url "set_vm" %}'
+                    }, 200)
+                }
+            });
+
+        });
+
+        $("#ip-manage-btn").click(function (event) {
+            $.post('{% url "ajax_get_initial_ip" %}', {}, function (data, textStatus) {
+                /*optional stuff to do after success */
+                if (textStatus == "success") {
+                    ip_option = ""
+                    for (var count = 0; count < data.length; count++) {
+                        ip_option += "<option value='" + data[count].net + "' name='" + data[count].id + "'>" + data[count].net_name + "</option>"
+                    }
+                    $("#r-network").append(ip_option)
+                }
+
+            });
+        });
+        $("#r-network").change(function (event) {
+            var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254"
+            $("#ipaddress").val(netgate).focus();
+            $("#netgate").attr('placeholder', netgate);
+            $("#gw_addr").val(netgate)
+        });
+        $("#add-ip-btn").click(function (event) {
+            $ip_add_form = $("#ip-add-form").serializeArray()
+            alert(JSON.stringify($ip_add_form))
+            $.post('{% url "ajax_add_ip" %}', $ip_add_form, function (data, textStatus) {
                 if (textStatus == "success") {
                     location.href = '{% url "set_vm" %}'
                 }
             });
-        }
-    })
-    //修改VC
-$(".vc-modify-btn").click(function(event) {
-    $vcid = $(this).attr('name');
-    $modify_form = $("#vc-modify" + $vcid + "-form").serializeArray()
-    $.post('{% url "ajax_modify_vc" %}', $modify_form, function(data, textStatus) {
-        if (textStatus == "success") {
-            alert("修改成功")
-            setTimeout(function(e) {
-                location.href = '{% url "set_vm" %}'
-            }, 200);
-        }
-    });
-});
-
-$(".vc-del-btn").click(function(event) {
-    var $vc_id = $(this).parent("td").siblings('.vc-id').text()
-    if (confirm("确定删除VC?")) {　　
-        $.post('{% url "ajax_delete_vc" %}', {
-            "id": $vc_id
-        }, function(data, textStatus) {
-            if (textStatus == "success") {
-                location.href = '{% url "set_vm" %}'
-            }
         });
-    }
-});
-
-//模板参数
-$("#add-temp").click(function (event) {
-    $.post('{% url "get_templates" %}', {}, function (data, textStatus) {
-        if (textStatus == "success") {
-            var template_option = ""
-            for (var count = 0; count < data.length; count++) {
-                template_option += "<option value='" + data[count].vmid + "'>" + data[count].vmname + "</option>"
-            }
-            $("#template").append(template_option)
-        }
-    });
-    $.post('{% url "get_sheetfield" %}', {}, function (data, textStatus) {
-        var os_option = ''
-        for (var i = 0; i < data.length; i++) {
-            if (data[i].os_type) {
-                os_option += "<option>" + data[i].os_type + "</option>"
-            }
-        }
-        $("#tem-os-type").append(os_option)
-    });
-});
-
-$("#add-template-btn").click(function (event) {
-    $add_template_form = $("#add-template-form").serializeArray()
-    $.post('{% url "ajax_add_template" %}', $add_template_form, function (data, textStatus) {
-        if (textStatus == "success") {
-            alert("添加成功")
-            setTimeout(function () {
-                location.href = '{% url "set_vm" %}'
-            }, 200)
-        }
-    });
-});
-
-$(".template-del-btn").click(function (event) {
-    var tem_id = $(this).attr("name")
-    if (confirm("确定删除此模板?")) {
-        $.post('{% url "ajax_delete_template" %}', {'id': tem_id}, function (data, textStatus) {
-            if (textStatus == "success") {
-                location.href = '{% url "set_vm" %}'
-            }
-        });
-    }
-
-});
-
-//网络参数
-$("#ippool-initial-btn").click(function(event) {
-    $.post('{% url "ajax_get_initial_ip" %}', {}, function(data, textStatus) {
-        /*optional stuff to do after success */
-        if(textStatus=="success"){
-            ip_option = ""
-        for (var count = 0; count < data.length; count++) {
-            ip_option += "<option value='"+data[count].net+"' name='"+data[count].id+"'>"+data[count].net_name+"</option>"
-        }
-        $("#network").append(ip_option)
-        }
-        
-    });
-});
-$("#network").change(function(event) {
-    $("#net_id").val($(this).find("option:selected").attr('name'))
-    var netgate = $(this).val().substring(0,$(this).val().lastIndexOf('.0'))+".254"
-    
-    $("#netgate").val(netgate);
-    $("#netgate").attr('placeholder', netgate);
-});
-$("#initialip-start-btn").click(function(event) {
-    $("#net_mask").val("255.255.255.0")
-    $ippool_initial_form = $("#ippool-initial-form").serializeArray()
-    alert(JSON.stringify($ippool_initial_form))
-    $.post(''{% url "ajax_initial_network" %}'', $ippool_initial_form, function(data, textStatus) {
-        if(textStatus=="success"){
-            alert("初始化成功")
-            setTimeout(function(){
-                location.href = '{% url "set_vm" %}'
-            },200)
-        }
-    });
- 
-});
-
-$("#ip-manage-btn").click(function(event) {
-       $.post('{% url "ajax_get_initial_ip" %}', {}, function(data, textStatus) {
-        /*optional stuff to do after success */
-        if(textStatus=="success"){
-            ip_option = ""
-        for (var count = 0; count < data.length; count++) {
-            ip_option += "<option value='"+data[count].net+"' name='"+data[count].id+"'>"+data[count].net_name+"</option>"
-        }
-        $("#r-network").append(ip_option)
-        }
-        
-    });
-});
-$("#r-network").change(function(event) {
-    var netgate = $(this).val().substring(0,$(this).val().lastIndexOf('.0'))+".254"
-    $("#ipaddress").val(netgate).focus();
-    $("#netgate").attr('placeholder', netgate);
-    $("#gw_addr").val(netgate)
-});
-$("#add-ip-btn").click(function(event) {
-    $ip_add_form = $("#ip-add-form").serializeArray()
-    alert(JSON.stringify($ip_add_form))
-    $.post('{% url "ajax_add_ip" %}', $ip_add_form, function(data, textStatus) {
-        if(textStatus=="success"){
-            location.href = '{% url "set_vm" %}'
-        }
-    });
-});
 
 
-//环境参数
-var ipcount = $("#env-table tr").length - 1;
+        //环境参数
+        var ipcount = $("#env-table tr").length - 1;
 
-$(document).on('click', '#add-env', function(event) {
-    $("#add-env").attr('disabled', 'true');
-    var id = $('#env-table tr button:first-child').attr('name');
-    ipcount++;
-    html = "<tr><td class='text-center' id='env-option-" + ipcount + "'><input type='text' placeholder='标识符' id='inner-option" + ipcount + "' style='width:50px'></td><td class='text-center' id='env-td-" + ipcount + "'><input type='text' placeholder='输入环境名称' id='inner-input" + ipcount + "'></td><td class='text-center' id='env-btn-td-" + ipcount + "'><button class='btn btn-xs btn-success' id='add-env-" + ipcount + "'>确认添加</button></td></tr>";
-    $("#env-table").append(html);
-    $("#inner-input" + ipcount).focus();
-    $("#add-env-" + ipcount).click(function(event) {
-        if ($("#inner-input" + ipcount).val() && $("#inner-option" + ipcount).val()) {
-            //ajax提交
-            var env_option = $("#inner-option" + ipcount).val();
-            var env_type = $("#inner-input" + ipcount).val()
-            var data = {
-                "env_option": env_option,
-                "env_type": env_type
-            }
-            $.post('{% url "ajax_add_env" %}', data, function(data) {
-                alert("添加成功")
+        $(document).on('click', '#add-env', function (event) {
+            $("#add-env").attr('disabled', 'true');
+            var id = $('#env-table tr button:first-child').attr('name');
+            ipcount++;
+            html = "<tr><td class='text-center' id='env-option-" + ipcount + "'><input type='text' placeholder='标识符' id='inner-option" + ipcount + "' style='width:50px'></td><td class='text-center' id='env-td-" + ipcount + "'><input type='text' placeholder='输入环境名称' id='inner-input" + ipcount + "'></td><td class='text-center' id='env-btn-td-" + ipcount + "'><button class='btn btn-xs btn-success' id='add-env-" + ipcount + "'>确认添加</button></td></tr>";
+            $("#env-table").append(html);
+            $("#inner-input" + ipcount).focus();
+            $("#add-env-" + ipcount).click(function (event) {
+                if ($("#inner-input" + ipcount).val() && $("#inner-option" + ipcount).val()) {
+                    //ajax提交
+                    var env_option = $("#inner-option" + ipcount).val();
+                    var env_type = $("#inner-input" + ipcount).val()
+                    var data = {
+                        "env_option": env_option,
+                        "env_type": env_type
+                    }
+                    $.post('{% url "ajax_add_env" %}', data, function (data) {
+                        alert("添加成功")
+                    });
+                    $("#add-env").removeAttr('disabled');
+                    $("#env-option-" + ipcount).html($("#inner-option" + ipcount).val())
+                    $("#env-td-" + ipcount).html($("#inner-input" + ipcount).val())
+                    $("#env-btn-td-" + ipcount).html("<button class='btn btn-xs btn-success' id='env-mf-" + ipcount + "-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
+                    $('#env-mf-' + ipcount + '-btn').click(function (event) {
+                        var count = $(this).parent().siblings().eq(0).attr('name');
+                        var text = $(this).parent().siblings().eq(1).text();
+                        $("#env-td-" + count).html("<input type='text' value='" + text + "' id='inner-input" + count + "'>");
+                        $("#inner-input" + count).focus();
+                        $("#inner-input" + count).blur(function (event) {
+                            var val = $("#inner-input" + count).val()
+                            $("#env-td-" + count).html(val)
+                        });
+                    });
+
+                }
             });
-            $("#add-env").removeAttr('disabled');
-            $("#env-option-" + ipcount).html($("#inner-option" + ipcount).val())
-            $("#env-td-" + ipcount).html($("#inner-input" + ipcount).val())
-            $("#env-btn-td-" + ipcount).html("<button class='btn btn-xs btn-success' id='env-mf-" + ipcount + "-btn' style='margin-right:5px'>修改</button><button class='btn btn-xs btn-danger'>删除</button>");
-            $('#env-mf-' + ipcount + '-btn').click(function(event) {
-                var count = $(this).parent().siblings().eq(0).attr('name');
-                var text = $(this).parent().siblings().eq(1).text();
-                $("#env-td-" + count).html("<input type='text' value='" + text + "' id='inner-input" + count + "'>");
-                $("#inner-input" + count).focus();
-                $("#inner-input" + count).blur(function(event) {
-                    var val = $("#inner-input" + count).val()
-                    $("#env-td-" + count).html(val)
+
+        });
+
+        $('#env-table tr button:first-child').each(function (index, el) {
+            $('#env-table tr button:first-child').eq(index).click(function (event) {
+                var vcount = $(this).attr('name')
+                var text = $("#env-td-" + vcount).text()
+                var option = $("#env-option-" + vcount).text()
+                $("#env-option-" + vcount).html("<input type='text' value='" + option + "' id='inner-option" + vcount + "' style='width:50px'>");
+                $("#env-td-" + vcount).html("<input type='text' value='" + text + "' id='inner-input" + vcount + "'>");
+                $("#inner-input" + vcount).focus();
+                $("#inner-input" + vcount).blur(function (event) {
+                    var val = $("#inner-input" + vcount).val()
+                    $("#env-td-" + vcount).html(val)
+                    $("#inner-option" + vcount).focus();
+
+                });
+                $("#inner-option" + vcount).blur(function () {
+                    var env_type = $("#env-td-" + vcount).text()
+                    var val = $("#inner-option" + vcount).val()
+                    $.post('{% url "ajax_update_env" %}', {
+                        "id": vcount,
+                        "env_option": env_type,
+                        "env_type": val
+                    }, function (data) {
+                        $("#env-option-" + vcount).html(val);
+                    });
+
+
+                });
+            });
+        });
+        $('#env-table tr button:nth-child(2)').each(function (index, el) {
+            $('#env-table tr button:nth-child(2)').eq(index).click(function (event) {
+                var id = $('#env-table tr button:first-child').eq(index).attr('name');
+                alert("确认删除？" + id)
+                $.post('{% url "ajax_delete_env" %}', {
+                    "id": id
+                }, function (data) {
+                    /*optional stuff to do after success */
+                    location.href = '{% url "set_vm" %}'
                 });
             });
 
-        }
-    });
-
-});
-
-$('#env-table tr button:first-child').each(function(index, el) {
-    $('#env-table tr button:first-child').eq(index).click(function(event) {
-        var vcount = $(this).attr('name')
-        var text = $("#env-td-" + vcount).text()
-        var option = $("#env-option-" + vcount).text()
-        $("#env-option-" + vcount).html("<input type='text' value='" + option + "' id='inner-option" + vcount + "' style='width:50px'>");
-        $("#env-td-" + vcount).html("<input type='text' value='" + text + "' id='inner-input" + vcount + "'>");
-        $("#inner-input" + vcount).focus();
-        $("#inner-input" + vcount).blur(function(event) {
-            var val = $("#inner-input" + vcount).val()
-            $("#env-td-" + vcount).html(val)
-            $("#inner-option" + vcount).focus();
-
         });
-        $("#inner-option" + vcount).blur(function() {
-            var env_type = $("#env-td-" + vcount).text()
-            var val = $("#inner-option" + vcount).val()
-            $.post('{% url "ajax_update_env" %}', {
-                "id": vcount,
-                "env_option": env_type,
-                "env_type": val
-            }, function(data) {
-                $("#env-option-" + vcount).html(val);
+
+
+        var oscount = $("#os-table tr").length - 1;
+        $('#add-os').click(function (event) {
+            $("#add-os").attr('disabled', 'true');
+            oscount++;
+            html = "<tr><td class='text-center' id='os-td-" + oscount + "'><select id='os-type" + oscount + "'><option>WIN</option><option>LUX</option></select></td><td class='text-center' id='os-" + oscount + "'>Windows</td><td class='text-center' id='os-ver-td-" + oscount + "'><select id='os-version-input" + oscount + "'></select></td><td class='text-center' id='os-state-td-" + oscount + "'><input type='text' placeholder='输入描述符' id='os-state-input" + oscount + "' style='width:100px'></td><td class='text-center' id='os-btn-td-" + oscount + "'><button class='btn btn-xs btn-success' id='add-os-" + oscount + "'>确认添加</button></td></tr>"
+            $("#os-table").append(html);
+            $("#os-table input").focus();
+            $("#os-type" + oscount).change(function (event) {
+                var os_type = $(this).val()
+                if (os_type === "WIN") {
+                    $("#os-" + oscount).html("Windows")
+                } else {
+                    $("#os-" + oscount).html("Linux")
+                }
             });
+            var os_version_option = ""
+            $.post('{% url "get_os_version" %}', {}, function (data, textStatus) {
+                if (textStatus == "success") {
+                    for (var i = 0; i < data.length; i++) {
+                        os_version_option += "<option value='" + data[i].guestos_shortname + "'>" + data[i].guestos_shortname + "</option>"
+                    }
+                    $("#os-version-input" + oscount).append(os_version_option)
+                }
+            });
+            $("#add-os-" + oscount).click(function (event) {
+                //ajax提交
+                $os_version_form = {
+                    "sheet_name": $("#os-type" + oscount).val(),
+                    "option": $("#os-version-input" + oscount).val(),
+                    "option_display": $("#os-state-input" + oscount).val()
+                }
+                alert(JSON.stringify($os_version_form))
+                $.post('{% url "add_os_version" %}', $os_version_form, function (data, textStatus) {
+                    /*optional stuff to do after success */
+                    if (textStatus == "success") {
 
+                        $("#add-os").removeAttr('disabled');
+                        $("#os-td-" + oscount).html($("#os-type" + oscount).val());
+                        $("#os-ver-td-" + oscount).html($("#os-version-input" + oscount).val());
+                        $("#os-state-td-" + oscount).html($("#os-state-input" + oscount).val())
+                        $("#os-btn-td-" + oscount).html("<button class='btn btn-xs btn-danger'>删除</button>");
+                    }
+                });
 
-
+            });
         });
-    });
-});
-$('#env-table tr button:nth-child(2)').each(function(index, el) {
-    $('#env-table tr button:nth-child(2)').eq(index).click(function(event) {
-        var id = $('#env-table tr button:first-child').eq(index).attr('name');
-        alert("确认删除？" + id)
-        $.post('{% url "ajax_delete_env" %}', {
-            "id": id
-        }, function(data) {
-            /*optional stuff to do after success */
-            location.href = '{% url "set_vm" %}'
-        });
-    });
+        $(".os-del-btn").click(function (event) {
+            var os_id = $(this).attr('name');
 
-});
-
-
-var oscount = $("#os-table tr").length - 1;
-$('#add-os').click(function(event) {
-    $("#add-os").attr('disabled', 'true');
-    oscount++;
-    html = "<tr><td class='text-center' id='os-td-" + oscount + "'><select id='os-type" + oscount + "'><option>WIN</option><option>LUX</option></select></td><td class='text-center' id='os-" + oscount + "'>Windows</td><td class='text-center' id='os-ver-td-" + oscount + "'><select id='os-version-input" + oscount + "'></select></td><td class='text-center' id='os-state-td-" + oscount + "'><input type='text' placeholder='输入描述符' id='os-state-input" + oscount + "' style='width:100px'></td><td class='text-center' id='os-btn-td-" + oscount + "'><button class='btn btn-xs btn-success' id='add-os-" + oscount + "'>确认添加</button></td></tr>"
-    $("#os-table").append(html);
-    $("#os-table input").focus();
-    $("#os-type" + oscount).change(function (event) {
-        var os_type = $(this).val()
-        if (os_type === "WIN") {
-            $("#os-" + oscount).html("Windows")
-        } else {
-            $("#os-" + oscount).html("Linux")
-        }
-    });
-    var os_version_option = ""
-    $.post('{% url "get_os_version" %}', {}, function (data, textStatus) {
-        if (textStatus == "success") {
-            for (var i = 0; i < data.length; i++) {
-                os_version_option += "<option value='" + data[i].guestos_shortname + "'>" + data[i].guestos_shortname + "</option>"
+            if (confirm("确认删除此类型？")) {
+                $.post('{% url "del_os_version" %}', {"id": os_id}, function (data, textStatus) {
+                    if (textStatus == "success") {
+                        location.href = '{% url "set_vm" %}'
+                    }
+                });
             }
-            $("#os-version-input" + oscount).append(os_version_option)
-        }
-    });
-    $("#add-os-" + oscount).click(function(event) {
-        //ajax提交
-        $os_version_form = {
-            "sheet_name": $("#os-type" + oscount).val(),
-            "option": $("#os-version-input" + oscount).val(),
-            "option_display": $("#os-state-input" + oscount).val()
-        }
-        alert(JSON.stringify($os_version_form))
-        $.post('{% url "add_os_version" %}', $os_version_form, function (data, textStatus) {
-            /*optional stuff to do after success */
-            if (textStatus == "success") {
 
-                $("#add-os").removeAttr('disabled');
-                $("#os-td-" + oscount).html($("#os-type" + oscount).val());
-        $("#os-ver-td-" + oscount).html($("#os-version-input" + oscount).val());
-        $("#os-state-td-" + oscount).html($("#os-state-input" + oscount).val())
-                $("#os-btn-td-" + oscount).html("<button class='btn btn-xs btn-danger'>删除</button>");
-            }
         });
-       
-    });
-});
-$(".os-del-btn").click(function (event) {
-    var os_id = $(this).attr('name');
-
-    if (confirm("确认删除此类型？")) {
-        $.post('{% url "del_os_version" %}', {"id": os_id}, function (data, textStatus) {
-            if (textStatus == "success") {
-                location.href = '{% url "set_vm" %}'
-            }
-        });
-    }
-    
-});
-</script>
+    </script>
 {% endblock %}

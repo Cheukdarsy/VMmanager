@@ -171,11 +171,12 @@ def vctask_create_cluster(vcid, cluster_name, dc_name=None):
 
 
 @task
-def sync_vc(vcenter, sync_vm=False):
+def sync_vc(vcenter, sync_asset=False, sync_vm=False, related=False):
     content = vcenter.connect()
     if content:
-        refresh_all_assets(content, True)
+        if sync_asset:
+            refresh_all_assets(content, related)
         if sync_vm:
-            refresh_all_vms(content, True)
+            refresh_all_vms(content, related)
         vcenter.last_sync = datetime.now()
         vcenter.save(update_fields=['last_sync'])

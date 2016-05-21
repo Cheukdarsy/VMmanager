@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 from .jvm_api import *
-from .tasks import vmtask_clone_vm
+from .tasks import vmtask_clone_vm, sync_vc
 from .vc_api import *
 
 
@@ -33,6 +33,7 @@ def show_apply_machinedetail(request):
         error_dict = {'error': 'ajax not good'}
         return JsonResponse(error_dict)
 
+
 @require_role('admin')
 def show_approv_machinedetail(request):
     """ajax获取审核机器详细信息"""
@@ -45,10 +46,11 @@ def show_approv_machinedetail(request):
         error_dict = {'error': 'ajax not good'}
         return JsonResponse(error_dict)
 
+
 @require_role('user')
 def modify_saving_detail(request):
     if request.method == "POST":
-        id = request.POST.get("request_id",'')
+        id = request.POST.get("request_id", '')
         env_type = request.POST.get('env_type', '')
         fun_type = request.POST.get('fun_type', '')
         cpu = int(request.POST.get('cpu', ''))
@@ -60,12 +62,15 @@ def modify_saving_detail(request):
         app_name = request.POST.get('app_name', '')
         try:
             application = Application.objects.filter(pk=id)
-            application.update(env_type=env_type,fun_type=fun_type,cpu=cpu,memory_gb=memory_gb,os_type=os_type,datadisk_gb=datadisk_gb,request_vm_num=request_vm_num,app_name=app_name,apply_reason=apply_reason)
+            application.update(env_type=env_type, fun_type=fun_type, cpu=cpu, memory_gb=memory_gb, os_type=os_type,
+                               datadisk_gb=datadisk_gb, request_vm_num=request_vm_num, app_name=app_name,
+                               apply_reason=apply_reason)
         except Exception, e:
             raise e
         else:
             success_dict = {'success': 'update'}
             return JsonResponse(success_dict)
+
 
 @require_role('admin')
 def modify_machine_detail(request, *call_args):
@@ -85,14 +90,14 @@ def modify_machine_detail(request, *call_args):
         saving_datetime = datetime.now()
         try:
             Approvel.objects.filter(id=request_id).update(appro_fun_type=saving_fun_type,
-                                                                      appro_os_type=saving_os_type,
-                                                                      appro_cpu=saving_cpu_num,
-                                                                      appro_env_type=saving_env_type,
-                                                                      appro_memory_gb=saving_memory_num,
-                                                                      appro_datadisk_gb=saving_data_disk,
-                                                                      appro_vm_num=saving_apply_num,
-                                                                      appro_date=saving_datetime,
-                                                                      appro_status=saving_apply_status)
+                                                          appro_os_type=saving_os_type,
+                                                          appro_cpu=saving_cpu_num,
+                                                          appro_env_type=saving_env_type,
+                                                          appro_memory_gb=saving_memory_num,
+                                                          appro_datadisk_gb=saving_data_disk,
+                                                          appro_vm_num=saving_apply_num,
+                                                          appro_date=saving_datetime,
+                                                          appro_status=saving_apply_status)
         except Exception, e:
             raise e
         else:
@@ -244,7 +249,7 @@ def resource_view(request):
     用户资源概览
     """
     username = request.user.username
-    user=get_object(User,username=username)
+    user = get_object(User, username=username)
     application = Application.objects.exclude(apply_status="HD").filter(user=user)
     approvel = Approvel.objects.filter(application=application).filter(appro_status='AP')
     w_approvel = Approvel.objects.filter(application=application).filter(appro_status='AI')
@@ -286,7 +291,7 @@ def set_vm(request):
     vcenter = VCenter.objects.all()
     ipusage = IPUsage.objects.filter(used_manage="1").order_by("-id")
     templates = Template.objects.all()
-    envs = SheetField.objects.filter(field_name="env_type")
+    envs = SheetField.get_options("env_type")
     os = SheetField.objects.all()
     return my_render('jvmanager/set_vm.html', locals(), request)
 
@@ -597,73 +602,125 @@ def ajax_delete_template(request):
         else:
             return JsonResponse({"success": "delete successfully"})
 
-"""vc参数"""
+
+# VCenter配置
 def ajax_add_vc(request):
     if request.method == 'POST':
-        logger.debug(request.POST)
         ip = request.POST['vcip']
-        port = request.POST['vcport']
-        vcname = request.POST['vcname']
-        vcpw = request.POST['vcpw-conf']
-        envs = SheetField.get_options("env_type")
-        env_type = [env.option for env in envs if env.option in request.POST]
-        logger.debug(env_type)
-
+        port = int(request.POST['vcport'])
+        user = request.POST['vcname']
+        pwd = request.POST['vcpw-conf']
+        env_type = [env.option for env in SheetField.get_options("env_type") if env.option in request.POST.keys()]
         try:
-            pass
-            # vcenter = VCenter(ip=ip,port=port,env_type=env,user=vcname,password=vcpw)
-            # vcenter.save()
+            VCenter.discover(ip=ip, port=port, env_type=env_type, user=user, pwd=pwd)
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return JsonResponse({"success": "ok"})
+            return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
+
 
 def ajax_modify_vc(request):
     if request.method == "POST":
-        logger.debug(request.POST)
         id = request.POST['id']
-        ip = request.POST['vcip']
-        port = request.POST['vcport']
-        vcname = request.POST['vcname']
-        vcpw = request.POST['vcpw']
-        env = {}
-        env_type = SheetField.objects.filter(field_name="env_type")
-        for x in env_type:
-            if x.option in request.POST:
-                env[x.option] = True
         try:
-            VCenter.objects.filter(id=id).update(ip=ip,port=port,env_type=env,user=vcname,password=vcpw)
+            vc = VCenter.objects.get(pk=id)
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return JsonResponse({"success": "ok"})
+            new_ip = request.POST['vcip']
+            ip = None if new_ip == vc.ip else new_ip
+            new_port = int(request.POST['vcport'])
+            port = None if new_port == vc.port else new_port
+            new_user = request.POST['vcname']
+            user = None if new_user == vc.user else new_user
+            new_pwd = request.POST['vcpw']
+            pwd = None if new_pwd == vc.password else new_pwd
+            envs = SheetField.get_options("env_type")
+            env_type = [env.option for env in envs if env.option in request.POST.keys()]
+            try:
+                vc.modify(ip=ip, port=port, env_type=env_type, user=user, pwd=pwd)
+            except Exception, e:
+                logger.error(e)
+                return JsonResponse({"status": "error", "errmsg": str(e)})
+            else:
+                return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
+
+
+__async_result_sync_vc = {}
+
+
+def ajax_sync_vc(request):
+    if request.method == "POST":
+        id = int(request.POST['id'])
+        sync_asset = (request.POST['sync_asset'] == 'true')
+        sync_vm = (request.POST['sync_vm'] == 'true')
+        sync_related = (request.POST['sync_related'] == 'true')
+        last_fail = False
+        last_fail_msg = "上次同步任务失败,原因未知"
+        global __async_result_sync_vc
+        if __async_result_sync_vc.has_key(id):
+            result = __async_result_sync_vc[id]
+            if result.ready():
+                if not result.successful():
+                    last_fail = True
+                    last_fail_msg = isinstance(result.result, Exception) and (
+                        "上次同步任务失败,原因: " + str(result.result)) or last_fail_msg
+            else:
+                return JsonResponse({"status": "error", "errmsg": "已有任务在队列中，请稍后关注同步结果..."})
+        try:
+            vc = VCenter.objects.get(pk=id)
+            __async_result_sync_vc[id] = sync_vc.delay(vc, sync_asset=sync_asset, sync_vm=sync_vm, related=sync_related)
+        except Exception, e:
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
+        else:
+            if last_fail:
+                return JsonResponse({"status": "warning", "errmsg": last_fail_msg})
+            else:
+                return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
+
 
 def ajax_delete_vc(request):
     if request.method == "POST":
         id = request.POST['id']
         try:
-            del_vc = VCenter.objects.filter(id=id)
-            del_vc.delete()
+            vc = VCenter.objects.get(pk=id)
+            vc.delete()
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return JsonResponse({"success": "delete successfully"})
+            return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
+
 
 """网络参数"""
+
+
 def ajax_get_initial_ip(request):
     if request.method == "POST":
         net_list = []
         try:
             for net in Network.objects.all():
                 net_list.append({
-                    "id":net.id,
-                    "net_name":net.name,
-                    "net":net.net
-                    })
+                    "id": net.id,
+                    "net_name": net.name,
+                    "net": net.net
+                })
         except Exception, e:
             raise e
         else:
             return JsonResponse(net_list)
+
 
 def ajax_add_ip(request):
     if request.method == "POST":
@@ -680,37 +737,42 @@ def ajax_add_ip(request):
         network = Network.objects.filter(name=network_name)
         logger.debug(request.POST)
         try:
-            ipuse = IPUsage.create(network=network,ipaddress=ipaddress)
+            ipuse = IPUsage.create(network=network, ipaddress=ipaddress)
             logger.debug("hello")
         except Exception, e:
             raise e
         else:
             return JsonResponse({"success": "ok"})
 
+
 """环境参数"""
+
+
 def ajax_add_env(request):
     if request.method == 'POST':
-        
+
         env_option = request.POST['env_option']
-        env_type = request.POST['env_type']  
-        logger.debug(request.POST)  
+        env_type = request.POST['env_type']
+        logger.debug(request.POST)
         try:
-            sheetfield = SheetField(sheet_name="global",field_name="env_type",option=env_option,option_display=env_type)
+            sheetfield = SheetField(sheet_name="global", field_name="env_type", option=env_option,
+                                    option_display=env_type)
             sheetfield.save()
         except Exception, e:
             raise e
         else:
             return JsonResponse({"success": "ok"})
 
+
 def ajax_update_env(request):
     if request.method == 'POST':
-        logger.debug(request.POST)  
+        logger.debug(request.POST)
         id = request.POST['id']
         env_option = request.POST['env_option']
         env_type = request.POST['env_type']
 
         try:
-            SheetField.objects.filter(id=id).update(option=env_type,option_display=env_option)
+            SheetField.objects.filter(id=id).update(option=env_type, option_display=env_option)
         except Exception, e:
             raise e
         else:
@@ -727,7 +789,7 @@ def ajax_delete_env(request):
         except Exception, e:
             raise e
         else:
-            return JsonResponse({"success":"delete successfull"})
+            return JsonResponse({"success": "delete successfull"})
 
 
 def get_sheetfield(request):
@@ -779,6 +841,7 @@ def del_os_version(request):
             raise e
         else:
             return JsonResponse({"success": "delete successfull"})
+
 
 def datamanager(request):
     return my_render('datamanager.html', locals(), request)
