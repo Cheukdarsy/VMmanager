@@ -210,7 +210,8 @@
                                      <div class="panel panel-default">
                                         <div class="panel-heading">
                                             模板配置
-                                            <button id='add-temp' class="btn btn-xs btn-primary" data-toggle="modal" data-target="#add-template-modal" style="float:right">
+                                            <button id='add-temp' class="btn btn-xs btn-primary" data-toggle="modal"
+                                                    data-target="#add-template-modal" style="float:right">
                                                 添加
                                                 <i class="fa fa-plus"></i>
                                             </button>
@@ -232,23 +233,27 @@
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <select name="os_type" id="tem-os-type">
+                                                                                    <select name="os_type"
+                                                                                            id="tem-os-type">
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">模板:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                   <select name="vmid" id="template">
+                                                                                    <select name="vmid" id="template">
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                                                                 <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
                                                                                 <div class="dropdown col-sm-9">
-                                                                                    <input type="radio" name="env_type" value="DEVP">开发环境
-                                                                                    <input type="radio" name="env_type" value="TEST">测试环境
-                                                                                    <input type="radio" name="env_type" value="DRCV">灾备环境
+                                                                                    <input type="radio" name="env_type"
+                                                                                           value="DEVP">开发环境
+                                                                                    <input type="radio" name="env_type"
+                                                                                           value="TEST">测试环境
+                                                                                    <input type="radio" name="env_type"
+                                                                                           value="DRCV">灾备环境
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -258,7 +263,9 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                            <button type="button" class="btn btn-primary" id="add-template-btn">添加</button>
+                                                            <button type="button" class="btn btn-primary"
+                                                                    id="add-template-btn">添加
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -274,11 +281,13 @@
                                                 </tr>
                                                 {% for tem in templates %}
                                                 <tr id="template-table">
-                                                    <td class="text-center">{{tem.os_type}}</td>
+                                                    <td class="text-center">{{ tem.os_type }}</td>
                                                     <td class="text-center">{{tem.env_type}}</td>
                                                     <td class="text-center">{{tem.virtualmachine.name}}</td>
                                                     <td class="text-center">
-                                                        <button class="btn btn-xs btn-danger template-del-btn" name="{{tem.id}}">删除</button>
+                                                        <button class="btn btn-xs btn-danger template-del-btn"
+                                                                name="{{ tem.id }}">删除
+                                                        </button>
                                                     </td>
                                                     <td class="text-center tem-id" style="display:none"></td>
                                                 </tr>
@@ -337,26 +346,28 @@
                                                     <th class="text-center">操作</th>
                                                 </tr>
                                                 {% for o in os %}
-                                                {% ifequal o.field_name "os_version" %} 
-                                                    <tr>
-                                                    <td class="text-center">{% if "WIN" in o.sheet_name%}
-                                                        WIN
-                                                    {% else %}
-                                                        LUX
-                                                    {% endif %}</td>
-                                                    <td class="text-center">{% if "WIN" in o.sheet_name%}
-                                                        Windows
-                                                    {% else %}
-                                                        Linux
-                                                    {% endif %}</td>
+                                                    {% ifequal o.field_name "os_version" %}
+                                                        <tr>
+                                                            <td class="text-center">{% if "WIN" in o.sheet_name %}
+                                                                WIN
+                                                            {% else %}
+                                                                LUX
+                                                            {% endif %}</td>
+                                                            <td class="text-center">{% if "WIN" in o.sheet_name %}
+                                                                Windows
+                                                            {% else %}
+                                                                Linux
+                                                            {% endif %}</td>
                                                     <td class="text-center">{{o.option}}</td>
                                                     <td class="text-center">{{o.option_display}}</td>
                                                     <td class="text-center">
-                                                        <button class="btn btn-xs btn-danger os-del-btn" name="{{o.id}}">删除</button>
+                                                        <button class="btn btn-xs btn-danger os-del-btn"
+                                                                name="{{ o.id }}">删除
+                                                        </button>
                                                     </td>
                                                     <td class="text-center"></td>
                                                 </tr>
-                                                {% endifequal %}
+                                                    {% endifequal %}
                                                 {% endfor %}
                                             </table>
                                         </div>
@@ -469,49 +480,49 @@ $(".vc-del-btn").click(function(event) {
 });
 
 //模板参数
-$("#add-temp").click(function(event) {
-    $.post('{% url "get_templates" %}',{}, function(data, textStatus) {
-       if(textStatus=="success"){
-        var template_option =""
-       for (var count = 0; count < data.length; count++) {
-        template_option += "<option value='"+data[count].vmid+"'>"+data[count].vmname+"</option>"
-       }
-       $("#template").append(template_option)
-       }
+$("#add-temp").click(function (event) {
+    $.post('{% url "get_templates" %}', {}, function (data, textStatus) {
+        if (textStatus == "success") {
+            var template_option = ""
+            for (var count = 0; count < data.length; count++) {
+                template_option += "<option value='" + data[count].vmid + "'>" + data[count].vmname + "</option>"
+            }
+            $("#template").append(template_option)
+        }
     });
-    $.post('{% url "get_sheetfield" %}', {}, function(data, textStatus) {
-        var os_option =''
+    $.post('{% url "get_sheetfield" %}', {}, function (data, textStatus) {
+        var os_option = ''
         for (var i = 0; i < data.length; i++) {
-            if(data[i].os_type){
-                os_option += "<option>"+data[i].os_type+"</option>"
+            if (data[i].os_type) {
+                os_option += "<option>" + data[i].os_type + "</option>"
             }
         }
         $("#tem-os-type").append(os_option)
     });
 });
 
-$("#add-template-btn").click(function(event) {
-   $add_template_form = $("#add-template-form").serializeArray()
-   $.post('{% url "ajax_add_template" %}', $add_template_form, function(data, textStatus) {
-       if(textStatus=="success"){
-        alert("添加成功")
-        setTimeout(function(){
-            location.href = '{% url "set_vm" %}'
-        },200)
-       }
-   });
-});
-
-$(".template-del-btn").click(function(event) {
-    var tem_id = $(this).attr("name")
-    if (confirm("确定删除此模板?")){
-        $.post('{% url "ajax_delete_template" %}', {'id': tem_id}, function(data, textStatus) {
-        if(textStatus=="success"){
-            location.href = '{% url "set_vm" %}'
+$("#add-template-btn").click(function (event) {
+    $add_template_form = $("#add-template-form").serializeArray()
+    $.post('{% url "ajax_add_template" %}', $add_template_form, function (data, textStatus) {
+        if (textStatus == "success") {
+            alert("添加成功")
+            setTimeout(function () {
+                location.href = '{% url "set_vm" %}'
+            }, 200)
         }
     });
+});
+
+$(".template-del-btn").click(function (event) {
+    var tem_id = $(this).attr("name")
+    if (confirm("确定删除此模板?")) {
+        $.post('{% url "ajax_delete_template" %}', {'id': tem_id}, function (data, textStatus) {
+            if (textStatus == "success") {
+                location.href = '{% url "set_vm" %}'
+            }
+        });
     }
-    
+
 });
 
 //网络参数
@@ -671,58 +682,58 @@ var oscount = $("#os-table tr").length - 1;
 $('#add-os').click(function(event) {
     $("#add-os").attr('disabled', 'true');
     oscount++;
-    html = "<tr><td class='text-center' id='os-td-"+oscount+"'><select id='os-type"+oscount+"'><option>WIN</option><option>LUX</option></select></td><td class='text-center' id='os-" + oscount + "'>Windows</td><td class='text-center' id='os-ver-td-" + oscount + "'><select id='os-version-input"+oscount+"'></select></td><td class='text-center' id='os-state-td-" + oscount + "'><input type='text' placeholder='输入描述符' id='os-state-input" + oscount + "' style='width:100px'></td><td class='text-center' id='os-btn-td-" + oscount + "'><button class='btn btn-xs btn-success' id='add-os-" + oscount + "'>确认添加</button></td></tr>"
+    html = "<tr><td class='text-center' id='os-td-" + oscount + "'><select id='os-type" + oscount + "'><option>WIN</option><option>LUX</option></select></td><td class='text-center' id='os-" + oscount + "'>Windows</td><td class='text-center' id='os-ver-td-" + oscount + "'><select id='os-version-input" + oscount + "'></select></td><td class='text-center' id='os-state-td-" + oscount + "'><input type='text' placeholder='输入描述符' id='os-state-input" + oscount + "' style='width:100px'></td><td class='text-center' id='os-btn-td-" + oscount + "'><button class='btn btn-xs btn-success' id='add-os-" + oscount + "'>确认添加</button></td></tr>"
     $("#os-table").append(html);
     $("#os-table input").focus();
-    $("#os-type" + oscount).change(function(event) {
+    $("#os-type" + oscount).change(function (event) {
         var os_type = $(this).val()
-        if(os_type==="WIN"){
+        if (os_type === "WIN") {
             $("#os-" + oscount).html("Windows")
-        }else{
+        } else {
             $("#os-" + oscount).html("Linux")
         }
     });
     var os_version_option = ""
-    $.post('{% url "get_os_version" %}', {}, function(data, textStatus) {
-        if(textStatus=="success"){
+    $.post('{% url "get_os_version" %}', {}, function (data, textStatus) {
+        if (textStatus == "success") {
             for (var i = 0; i < data.length; i++) {
-                os_version_option += "<option value='"+data[i].guestos_shortname+"'>"+data[i].guestos_shortname+"</option>"
+                os_version_option += "<option value='" + data[i].guestos_shortname + "'>" + data[i].guestos_shortname + "</option>"
             }
-            $("#os-version-input"+oscount).append(os_version_option)           
+            $("#os-version-input" + oscount).append(os_version_option)
         }
     });
     $("#add-os-" + oscount).click(function(event) {
         //ajax提交
         $os_version_form = {
-            "sheet_name":$("#os-type" + oscount).val(),
-            "option":$("#os-version-input" + oscount).val(),
-            "option_display":$("#os-state-input" + oscount).val()
+            "sheet_name": $("#os-type" + oscount).val(),
+            "option": $("#os-version-input" + oscount).val(),
+            "option_display": $("#os-state-input" + oscount).val()
         }
         alert(JSON.stringify($os_version_form))
-        $.post('{% url "add_os_version" %}', $os_version_form, function(data, textStatus) {
+        $.post('{% url "add_os_version" %}', $os_version_form, function (data, textStatus) {
             /*optional stuff to do after success */
-            if(textStatus=="success"){
+            if (textStatus == "success") {
 
-                 $("#add-os").removeAttr('disabled');
-        $("#os-td-" + oscount).html($("#os-type" + oscount).val());
+                $("#add-os").removeAttr('disabled');
+                $("#os-td-" + oscount).html($("#os-type" + oscount).val());
         $("#os-ver-td-" + oscount).html($("#os-version-input" + oscount).val());
         $("#os-state-td-" + oscount).html($("#os-state-input" + oscount).val())
-        $("#os-btn-td-" + oscount).html("<button class='btn btn-xs btn-danger'>删除</button>");
+                $("#os-btn-td-" + oscount).html("<button class='btn btn-xs btn-danger'>删除</button>");
             }
         });
        
     });
 });
-$(".os-del-btn").click(function(event) {
+$(".os-del-btn").click(function (event) {
     var os_id = $(this).attr('name');
-    
-        if(confirm("确认删除此类型？")){
-            $.post('{% url "del_os_version" %}', {"id": os_id}, function(data, textStatus) {
-                if(textStatus=="success"){
-                     location.href = '{% url "set_vm" %}'
-                }
-                });
+
+    if (confirm("确认删除此类型？")) {
+        $.post('{% url "del_os_version" %}', {"id": os_id}, function (data, textStatus) {
+            if (textStatus == "success") {
+                location.href = '{% url "set_vm" %}'
             }
+        });
+    }
     
 });
 </script>

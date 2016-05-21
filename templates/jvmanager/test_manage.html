@@ -48,7 +48,13 @@
                                                 <td class="text-center">{{ key.application_id }}</td>
                                                 <td class="text-center">{{ key.application.user.username}}</td>
                                                 <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
-                                                <td class="text-center">{% ifequal key.appro_env_type "DEVP" %} 开发环境 {% endifequal %} {% ifequal key.appro_env_type "TEST" %} 测试环境 {% endifequal %} {% ifequal key.appro_env_type "DRCV" %} 数据库型 {% endifequal %}/{% ifequal key.appro_fun_type "normal" %} 普通型 {% endifequal %} {% ifequal key.appro_fun_type "was" %} WAS型 {% endifequal %} {% ifequal key.appro_fun_type "database" %} 数据库型 {% endifequal %}</td>
+                                                <td class="text-center">{% ifequal key.appro_env_type "DEVP" %}
+                                                    开发环境 {% endifequal %} {% ifequal key.appro_env_type "TEST" %}
+                                                    测试环境 {% endifequal %} {% ifequal key.appro_env_type "DRCV" %}
+                                                    数据库型 {% endifequal %}/{% ifequal key.appro_fun_type "normal" %}
+                                                    普通型 {% endifequal %} {% ifequal key.appro_fun_type "was" %}
+                                                    WAS型 {% endifequal %} {% ifequal key.appro_fun_type "database" %}
+                                                    数据库型 {% endifequal %}</td>
                                                 <td class="text-center">{{ key.appro_vm_num}}台</td>
                                                 <td class="text-center">{{ key.application.apply_reason}}</td>
                                                 <td class="text-center">
@@ -111,7 +117,7 @@
                                             <tr id="{{list.id}}tr">
                                                 <td class="text-center">{{list.id}}</td>
                                                 <td class="text-center">{{list.approvel.appro_os_type}}</td>
-                                                <td class="text-center">{{list.loc_ip.ipaddress}}</td>
+                                                <td class="text-center">{{ list.loc_ip.ipaddress }}</td>
                                                 <td class="text-center">{{list.loc_cluster.name}}</td>
                                                 <td class="text-center">{{list.loc_storage.name}}</td>
                                                 <td class="text-center" id="{{list.id}}process">{% if list.gen_status == "AP" %} 待生成 {% else %}{{list.gen_progress}}%{% endif %} </td>

@@ -585,6 +585,7 @@ def ajax_add_template(request):
         error_dict = {"error": "ajax not good"}
         return JsonResponse(error_dict)
 
+
 def ajax_delete_template(request):
     if request.method == "POST":
         id = int(request.POST['id'])
@@ -728,12 +729,13 @@ def ajax_delete_env(request):
         else:
             return JsonResponse({"success":"delete successfull"})
 
+
 def get_sheetfield(request):
     result_list = []
     try:
         sheetfield = SheetField.objects.all()
         for sheet in sheetfield:
-            result_list.append({sheet.field_name:sheet.option})
+            result_list.append({sheet.field_name: sheet.option})
     except Exception, e:
         raise e
     else:
@@ -751,6 +753,7 @@ def get_os_version(request):
     else:
         return JsonResponse(result)
 
+
 def add_os_version(request):
     if request.method == "POST":
         logger.debug(request.POST)
@@ -758,11 +761,13 @@ def add_os_version(request):
         option = request.POST['option']
         option_display = request.POST['option_display']
         try:
-            sheet = SheetField.objects.create(sheet_name="os_type_" + sheet_name, field_name="os_version", option=option, option_display=option_display)
+            sheet = SheetField.objects.create(sheet_name="os_type_" + sheet_name, field_name="os_version",
+                                              option=option, option_display=option_display)
         except Exception, e:
             raise e
         else:
-            return JsonResponse({"success":"delete successfull"})
+            return JsonResponse({"success": "delete successfull"})
+
 
 def del_os_version(request):
     if request.method == "POST":
@@ -773,7 +778,7 @@ def del_os_version(request):
         except Exception, e:
             raise e
         else:
-            return JsonResponse({"success":"delete successfull"})
+            return JsonResponse({"success": "delete successfull"})
 
 def datamanager(request):
     return my_render('datamanager.html', locals(), request)

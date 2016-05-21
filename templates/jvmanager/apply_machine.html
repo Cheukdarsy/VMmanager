@@ -57,8 +57,9 @@
                                 <div class="form-group" style="margin-bottom:5px">
                                     <label class="col-sm-2 control-label">主机类型:&nbsp;</label>
                                     <div class="btn-group col-sm-10" data-toggle="buttons">
-                                         <label class="btn btn-sm btn-success normal-type active">
-                                            <input type="radio" name="fun_type"  autocomplete="off" value="normal" checked>普通型</label>
+                                        <label class="btn btn-sm btn-success normal-type active">
+                                            <input type="radio" name="fun_type" autocomplete="off" value="normal"
+                                                   checked>普通型</label>
                                         <label class="btn btn-sm btn-success was-type">
                                             <input type="radio" name="fun_type"  autocomplete="off" value="was">WAS</label>
                                          <label class="btn btn-sm btn-success database-type">
@@ -69,7 +70,8 @@
                                     <label class="col-sm-2 control-label">CPU:&nbsp;</label>
                                     <div class ="btn-group col-sm-10" data-toggle="buttons">
                                         <label class="btn btn-sm  btn-success active">
-                                            <input type="radio" name="cpu" class="2C" autocomplete="off" checked value="2">2C</label>
+                                            <input type="radio" name="cpu" class="2C" autocomplete="off" checked
+                                                   value="2">2C</label>
                                         <label class="btn btn-sm  btn-success">
                                             <input type="radio" name="cpu" class="4C" autocomplete="off" value="4">4C</label>
 
@@ -82,7 +84,7 @@
                                             <input type="radio" name="memory" class="2G" autocomplete="off" value="2">2G</label>
                                         <label class="btn btn-sm  btn-success active">
                                             <input type="radio" name="memory" class="4G" autocomplete="off" checked value="4">4G</label>
-                                            <label class="btn btn-sm  btn-success">
+                                        <label class="btn btn-sm  btn-success">
                                             <input type="radio" name="memory" class="8G" autocomplete="off" value="8">8G</label>
                                             <label class="btn btn-sm  btn-success">
                                             <input type="radio" name="memory" class="16G" autocomplete="off" value="16">16G</label>
@@ -94,7 +96,7 @@
                                     <div class="dropdown col-sm-10">
                                      <input type="text" name="os_type" class="os_type" style="display:none" value="WIN">
                                         <button class="btn btn-sm  btn-success dropdown-toggle dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"　name="os_type">
-                                           选择
+                                            选择
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2" style="font-size:13px;">
@@ -188,7 +190,13 @@
   }
   #slider .ui-slider-range { background: #2496DE; }
   #slider .ui-slider-handle { border-color: #729fcf; }
-  #slider1 .ui-slider-range { background: #2496DE; }
-  #slider1 .ui-slider-handle { border-color: #729fcf; }
+
+  #slider1 .ui-slider-range {
+      background: #2496DE;
+  }
+
+  #slider1 .ui-slider-handle {
+      border-color: #729fcf;
+  }
 </style>
 {% endblock %}
