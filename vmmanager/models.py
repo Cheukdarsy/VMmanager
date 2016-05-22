@@ -20,6 +20,21 @@ class SheetField(models.Model):
     option = models.CharField(max_length=50, null=True)
     option_display = models.CharField(max_length=200, null=True)
 
+    def get_sheet_brand(self):
+        sheet_full = str(self.sheet_name)
+        for i in range(1, len(sheet_full) - 1)[::-1]:
+            if sheet_full[i] == '_':
+                tail = sheet_full[i + 1:]
+                head = sheet_full[:i]
+                qset = type(self).objects.filter(field_name=head, option=tail)
+                if qset.exists():
+                    brand_display = str(qset[0].option_display)
+                    return tail, brand_display
+        else:
+            return '', ''
+
+    sheet_brand = property(get_sheet_brand)
+
     @classmethod
     def get_options(cls, field, sheet='global'):
         if not sheet:
@@ -48,7 +63,7 @@ class SheetField(models.Model):
             return new_opt
 
     def __str__(self):
-        return self.option_display.encode('utf-8')
+        return self.option_display
 
 
 _sis = {}
@@ -109,6 +124,10 @@ class VCenter(models.Model):
             return str(last_sync_from_now.days / 30) + " 个月前"
         elif last_sync_from_now.days > 0:
             return str(last_sync_from_now.days) + " 天前"
+        elif last_sync_from_now.seconds > 3600:
+            return str(last_sync_from_now.seconds / 3600) + " 小时前"
+        elif last_sync_from_now.seconds > 60:
+            return str(last_sync_from_now.seconds / 60) + " 分钟前"
         else:
             return str(last_sync_from_now.seconds) + " 秒前"
 
@@ -850,6 +869,12 @@ class VirtualMachine(VMObject):
 class Template(models.Model):
     virtualmachine = models.OneToOneField(VirtualMachine)
     env_type = models.CharField(max_length=200)
+
+    def get_env_type(self):
+        envs_map = json.loads(self.env_type)
+        return [k for k, v in envs_map.items() if v]
+
+    env_type_list = property(get_env_type)
 
     @classmethod
     def match(cls, env_type=None, os_type=None, os_version=None):

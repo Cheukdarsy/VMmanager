@@ -289,10 +289,11 @@ def submit_saving_resource(request):
 @require_role('admin')
 def set_vm(request):
     vcenter = VCenter.objects.all()
+    uninit_nets = Network.objects.filter(ipusage__isnull=True)
     ipusage = IPUsage.objects.filter(used_manage="1").order_by("-id")
     templates = Template.objects.all()
     envs = SheetField.get_options("env_type")
-    os = SheetField.objects.all()
+    os_versions = SheetField.get_options("os_version", sheet=None)
     return my_render('jvmanager/set_vm.html', locals(), request)
 
 
@@ -750,33 +751,32 @@ def ajax_add_ip(request):
 
 def ajax_add_env(request):
     if request.method == 'POST':
-
         env_option = request.POST['env_option']
         env_type = request.POST['env_type']
-        logger.debug(request.POST)
         try:
-            sheetfield = SheetField(sheet_name="global", field_name="env_type", option=env_option,
-                                    option_display=env_type)
-            sheetfield.save()
+            new_opt = SheetField.add_option(env_option, env_type, 'env_type')
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return JsonResponse({"success": "ok"})
+            return JsonResponse({"status": "success", "result": new_opt.id})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
 
 
 def ajax_update_env(request):
     if request.method == 'POST':
-        logger.debug(request.POST)
         id = request.POST['id']
-        env_option = request.POST['env_option']
         env_type = request.POST['env_type']
-
         try:
-            SheetField.objects.filter(id=id).update(option=env_type, option_display=env_option)
+            SheetField.objects.filter(id=id).update(option_display=env_type)
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return JsonResponse({"success": "ok"})
+            return JsonResponse({"status": "success", "result": env_type})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
 
 
 def ajax_delete_env(request):
@@ -787,9 +787,12 @@ def ajax_delete_env(request):
             del_env = SheetField.objects.filter(id=id)
             del_env.delete()
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return JsonResponse({"success": "delete successfull"})
+            return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
 
 
 def get_sheetfield(request):
@@ -804,31 +807,44 @@ def get_sheetfield(request):
         return JsonResponse(result_list)
 
 
-def get_os_version(request):
+def ajax_get_os_types(request):
     result = []
     try:
-        version = VirtualMachine.objects.all().values('guestos_shortname').distinct()
+        os_types = list(SheetField.get_options("os_type").values())
+        for os_type in os_types:
+            result.append(os_type)
+    except Exception, e:
+        raise e
+    else:
+        return JsonResponse(os_types)
+
+
+def ajax_get_os_version(request):
+    result = []
+    try:
+        version = list(VirtualMachine.objects.all().values('guestos_shortname', 'guestos_fullname').distinct())
         for ver in version:
             result.append(ver)
     except Exception, e:
         raise e
     else:
-        return JsonResponse(result)
+        return JsonResponse(version)
 
 
 def add_os_version(request):
     if request.method == "POST":
-        logger.debug(request.POST)
-        sheet_name = request.POST['sheet_name']
-        option = request.POST['option']
-        option_display = request.POST['option_display']
+        os_type = request.POST['os_type']
+        version = request.POST['version']
+        version_display = request.POST['version_display']
         try:
-            sheet = SheetField.objects.create(sheet_name="os_type_" + sheet_name, field_name="os_version",
-                                              option=option, option_display=option_display)
+            new_opt = SheetField.add_option(version, version_display, "os_version", "os_type_" + os_type)
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return JsonResponse({"success": "delete successfull"})
+            return JsonResponse({"status": "success", "result": new_opt.id})
+    else:
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
 
 
 def del_os_version(request):
