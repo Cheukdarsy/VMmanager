@@ -15,59 +15,86 @@
                         </a>
                     </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">已申请列表：</div>
-                        <div class="panel-body">
-                            <table class="table table-striped table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">序号</th>
-                                        <th class="text-center">环境类型</th>
-                                        <th class="text-center">主机类型</th>
-                                        <th class="text-center">系统类型</th>
-                                        <th class="text-center">CPU</th>
-                                        <th class="text-center">memory</th>
-                                        <th class="text-center">数量</th>
-                                        <th class="text-center">处理结果</th>
-                                        <th class="text-center">返回信息</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for key in applys %}
-                                    <tr>
-                                        <td class="text-center">{{ key.id}}</td>
-                                        <td class="text-center">{% ifequal key.env_type "DRCV"%} 灾备环境 {% endifequal %} {% ifequal key.env_type "TEST" %} 测试环境 {% endifequal %} {% ifequal key.env_type "DEVP" %} 开发环境 {% endifequal %}</td>
-                                        <td class="text-center">{% ifequal key.fun_type "normal" %} 普通型 {% endifequal %} {% ifequal key.fun_type "was" %} WAS型 {% endifequal %} {% ifequal key.fun_type "database" %} 数据库型 {% endifequal %}</td>
-                                        <td class="text-center">{% ifequal key.os_type "WIN"%} WINDOWS {% endifequal %} {% ifequal key.os_type "LUX" %} LINUX {% endifequal %} </td>
-                                        <td class="text-center">{{ key.cpu}}</td>
-                                        <td class="text-center">{{ key.memory_gb}}</td>
-                                        <td class="text-center">{{ key.request_vm_num}}</td>
-                                        {% ifequal key.apply_status "SM" %} {% for appro in approvel %} {% ifequal key.id appro.application.id %}
-                                        <td class="text-center">已生成</td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-xs btn-info" data-toggle="popover" data-placement="top" title="IP及机器用户密码" data-content="{% for vm in vmorder %}
-                            {% ifequal key.id vm.approvel.application_id %}{{vm.loc_ip.ipaddress}}用户信息:(admin/无密码){% endifequal %}
-                          {% endfor %}">详细</button>
-                                        </td>
-                                        {% endifequal %} {% endfor %} {% for w_appro in w_approvel %} {% ifequal key.id w_appro.application.id%}
-                                        <td class="text-center">待审核&nbsp;</td>
-                                        <td class="text-center"></td>
-                                        {% endifequal %} {% endfor %} {% endifequal %} {% ifequal key.apply_status "RB" %}
-                                        <td class="text-center">被退回&nbsp;</td>
-                                        <td class="text-center">{{key.apply_reason}}</td>
-                                        {% endifequal %}
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="dataTables_info" id="editable_info" role="status" aria-live="polite">
-                                        Showing {{ applys.start_index }} to {{ applys.end_index }} of {{ p.count }} entries
-                                    </div>
-                                </div>
-                                {% include 'paginator.html' %}
+                 <div class="ibox-content">
+                 <div class="panel panel-default">
+                 <div class="panel-heading">已申请列表：</div>
+                 <div class="panel-body">
+                 	 <table class="table table-striped table-bordered table-hover" >
+                    <thead>
+                      <tr>
+                    
+
+                  <th class="text-center">序号</th>
+                  <th class="text-center">环境类型</th>
+                  <th class="text-center">主机类型</th>
+                  <th class="text-center">系统类型</th>
+                  <th class="text-center">CPU</th>
+                  <th class="text-center">memory</th>
+                  <th class="text-center">数量</th>
+                  <th class="text-center">处理结果</th> 
+                  <th class="text-center">返回信息</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     {% for key in applys %}
+                      <tr>
+                        <td class="text-center">{{ key.id}}</td>
+                          <td class="text-center">{% ifequal  key.env_type  "DRCV" %}
+                              灾备环境
+                          {% endifequal %} {% ifequal key.env_type "TEST" %}
+                              测试环境
+                          {% endifequal %} {% ifequal key.env_type "DEVP" %}
+                              开发环境
+                          {% endifequal %}</td>
+                        <td class="text-center">{% ifequal key.fun_type "normal"  %}
+                          普通型
+                        {% endifequal %} {% ifequal key.fun_type "was" %}
+                          WAS型
+                        {% endifequal %} {% ifequal key.fun_type "database" %}
+                          数据库型
+                        {% endifequal %}</td>
+                          <td class="text-center">{% ifequal  key.os_type  "WIN" %}
+                              WINDOWS
+                          {% endifequal %} {% ifequal key.os_type "LUX" %}
+                              LINUX
+                          {% endifequal %} </td>
+                        <td class="text-center">{{ key.cpu}}</td>
+                        <td class="text-center">{{ key.memory_gb}}</td>
+                          <td class="text-center">{{ key.request_vm_num }}</td>
+                          {% ifequal key.apply_status "SM" %}
+                              {% for appro in approvel %}
+                                  {% ifequal key.id appro.application.id %}
+                                      <td class="text-center">已生成</td>
+                                      <td class="text-center">
+                                          <button type="button" class="btn btn-xs btn-info" data-toggle="popover"
+                                                  data-placement="top" title="IP及机器用户密码"
+                                                  data-content="{% for vm in vmorder %}
+
+
+                                                      {% ifequal key.id vm.approvel.application_id %}{{ vm.loc_ip.ipaddress }}用户信息:(admin/无密码){% endifequal %}
+                          {% endfor %}">详细
+                                          </button>
+                                      </td>
+                                  {% endifequal %}
+                              {% endfor %}
+                              {% for w_appro in w_approvel %}
+                                  {% ifequal key.id  w_appro.application.id %}
+                                      <td class="text-center">待审核&nbsp;</td>
+                                      <td class="text-center"></td>
+                                  {% endifequal %}
+                              {% endfor %}
+                        {% endifequal %} {% ifequal key.apply_status "RB"  %}
+                          <td class="text-center">被退回&nbsp;</td>
+                          <td class="text-center">{{ key.apply_reason }}</td>
+                      {% endifequal %}
+                        
+                    </tr>
+                     {% endfor %} 
+                </tbody></table>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="dataTables_info" id="editable_info" role="status" aria-live="polite">
+                                Showing {{ applys.start_index }} to {{ applys.end_index }} of {{ p.count }} entries
                             </div>
                         </div>
                     </div>

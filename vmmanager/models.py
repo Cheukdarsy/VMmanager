@@ -20,6 +20,21 @@ class SheetField(models.Model):
     option = models.CharField(max_length=50, null=True)
     option_display = models.CharField(max_length=200, null=True)
 
+    def get_sheet_brand(self):
+        sheet_full = str(self.sheet_name)
+        for i in range(1, len(sheet_full) - 1)[::-1]:
+            if sheet_full[i] == '_':
+                tail = sheet_full[i + 1:]
+                head = sheet_full[:i]
+                qset = type(self).objects.filter(field_name=head, option=tail)
+                if qset.exists():
+                    brand_display = str(qset[0].option_display)
+                    return tail, brand_display
+        else:
+            return '', ''
+
+    sheet_brand = property(get_sheet_brand)
+
     @classmethod
     def get_options(cls, field, sheet='global'):
         if not sheet:
@@ -48,7 +63,7 @@ class SheetField(models.Model):
             return new_opt
 
     def __str__(self):
-        return self.option_display.encode('utf-8')
+        return self.option_display
 
 
 _sis = {}
@@ -95,6 +110,29 @@ class VCenter(models.Model):
     last_connect = models.DateTimeField(null=True)
     last_sync = models.DateTimeField(null=True)
 
+    def get_env_type(self):
+        envs_map = json.loads(self.env_type)
+        return [k for k, v in envs_map.items() if v]
+
+    env_type_list = property(get_env_type)
+
+    def get_last_sync(self):
+        if not self.last_sync:
+            return "未同步"
+        last_sync_from_now = datetime.now() - self.last_sync
+        if last_sync_from_now.days > 30:
+            return str(last_sync_from_now.days / 30) + " 个月前"
+        elif last_sync_from_now.days > 0:
+            return str(last_sync_from_now.days) + " 天前"
+        elif last_sync_from_now.seconds > 3600:
+            return str(last_sync_from_now.seconds / 3600) + " 小时前"
+        elif last_sync_from_now.seconds > 60:
+            return str(last_sync_from_now.seconds / 60) + " 分钟前"
+        else:
+            return str(last_sync_from_now.seconds) + " 秒前"
+
+    last_sync_from_now = property(get_last_sync)
+
     @classmethod
     def discover(cls, ip='localhost', port=443, env_type=None, user='root', pwd='vmware'):
         si = SmartConnect(host=ip, user=user, pwd=pwd, port=port)
@@ -109,6 +147,36 @@ class VCenter(models.Model):
         vc.save()
         SetSiByVCid(vc.id, si)
         return vc
+
+    def modify(self, ip=None, port=None, env_type=None, user=None, pwd=None):
+        logger.debug("begin modeify")
+        if env_type:
+            self.env_type = env_type2json(env_type)
+        re_check = ip or port or user or pwd
+        if not re_check:
+            self.save(update_fields=['env_type'])
+            return True
+        ip = ip or str(self.ip)
+        port = port or self.port
+        user = user or str(self.user)
+        pwd = pwd or str(self.password)
+        logger.debug("begin connect")
+        si = SmartConnect(host=ip, user=user, pwd=pwd, port=port)
+        logger.debug(si)
+        if not si:
+            logger.warning('Cannot connect to the new instance after change, vc is left unchanged!')
+            return False
+        content = si.RetrieveContent()
+        new_uuid = content.about.instanceUuid
+        if new_uuid != self.uuid:
+            logger.warning('New instance\'s uuid differs from the old one, vc is left unchanged!')
+            return False
+        self.ip = ip
+        self.port = port
+        self.user = user
+        self.password = pwd
+        self.save()
+        return True
 
     def connect(self):
         si = GetSiByVCid(self.id)
@@ -802,6 +870,12 @@ class Template(models.Model):
     virtualmachine = models.OneToOneField(VirtualMachine)
     env_type = models.CharField(max_length=200)
 
+    def get_env_type(self):
+        envs_map = json.loads(self.env_type)
+        return [k for k, v in envs_map.items() if v]
+
+    env_type_list = property(get_env_type)
+
     @classmethod
     def match(cls, env_type=None, os_type=None, os_version=None):
         env_match_set = cls.objects.none()
@@ -889,7 +963,6 @@ class Approvel(models.Model):
     appro_status = models.CharField(max_length=20, choices=APPROVE_STATUS)
     appro_date = models.DateTimeField()
 
-    # approving_des = models.ForeignKey(computerresource)
     def __unicode__(self):
         return self.appro_env_type
 
@@ -901,13 +974,13 @@ class VMOrder(models.Model):
         ('SUCCESS', 'success'),
         ('RUNNING', 'running')
     )
-    approvel = models.ForeignKey('Approvel')
-    src_template = models.ForeignKey('Template')
+    approvel = models.ForeignKey('Approvel', null=True, on_delete=models.SET_NULL)
+    src_template = models.ForeignKey('Template', null=True, on_delete=models.SET_NULL)
     loc_hostname = models.CharField(max_length=20)
-    loc_ip = models.ForeignKey('IPUsage')
-    loc_cluster = models.ForeignKey('ComputeResource')
-    loc_resp = models.ForeignKey('ResourcePool', null=True)
-    loc_storage = models.ForeignKey('Datastore')
+    loc_ip = models.ForeignKey('IPUsage', null=True, on_delete=models.SET_NULL)
+    loc_cluster = models.ForeignKey('ComputeResource', null=True, on_delete=models.SET_NULL)
+    loc_resp = models.ForeignKey('ResourcePool', null=True, on_delete=models.SET_NULL)
+    loc_storage = models.ForeignKey('Datastore', null=True, on_delete=models.SET_NULL)
     gen_status = models.CharField(max_length=20, choices=GEN_STATUS, null=True)
     gen_log = models.TextField(null=True)
     gen_time = models.DateTimeField(null=True)
