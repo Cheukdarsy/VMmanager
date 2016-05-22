@@ -4,3 +4,5 @@
 /method
 /jumpserver.conf
 .gitignore
+/logs/jumpserver.log
+/keys/

@@ -1,12 +1,6 @@
-{% extends 'base.html' %}
-{% load mytags %}
-
-
-{% block content %}
-    {% include 'nav_cat_bar.html' %}
+{% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-    
         <div class="col-sm-10">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
@@ -21,171 +15,198 @@
                         </a>
                     </div>
                 </div>
-                 <div class="ibox-content">
-                 <div class="panel panel-default">
-                 <div class="panel-heading">保存列表：</div>
-                 <div class="panel-body">
-                 	 <table class="table table-striped table-bordered table-hover" >
-                    <thead>
-                      <tr>
-
-                        <th class="text-center">序号</th>
-                        <th class="text-center">环境类型</th>
-                        <th class="text-center">主机类型</th>
-                        <th class="text-center">系统</th>
-                        <th class="text-center">CPU</th>
-                        <th class="text-center">memory</th>
-                        <th class="text-center">数量</th>
-                        <th class="text-center">操作</th>
-
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% for key in s_applys %}
-                      <tr class="detail-table"  id="{{key.id}}tr">
-                        <td class="text-center" id="{{ key.id }}">{{ key.id }}</td>
-                        <td class="text-center">{{ key.env_type }}</td>
-                        <td class="text-center">{% ifequal key.fun_type "normal"  %}
-                          普通类型
-                        {% endifequal %} {% ifequal key.fun_type "database"  %}
-                          数据库类型
-                        {% endifequal %} {% ifequal key.fun_type "was"  %}
-                          WAS类型
-                        {% endifequal %}</td>
-                        <td class="text-center">{{ key.os_type }}</td>
-                        <td class="text-center">{{ key.cpu}}C</td>
-                        <td class="text-center">{{ key.memory_gb}}G</td>
-                        <td class="text-center">{{ key.request_vm_num}}台</td>
-                        <td class="text-center">
-                           <div >
-                            <button class="btn btn-primary btn-xs modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
-                            {% include 'jvmanager/saving_modify_modal.html' %} 
-                             <button class="btn btn-success btn-xs saving-submit-btn" type="submit">提交</button>	
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody></table>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="dataTables_info" id="editable_info" role="status" aria-live="polite">
-                                Showing {{ s_applys.start_index }} to {{ s_applys.end_index }} of {{ s_p.count }} entries
+                <div class="ibox-content">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">保存列表：</div>
+                        <div class="panel-body">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">序号</th>
+                                        <th class="text-center">环境类型</th>
+                                        <th class="text-center">主机类型</th>
+                                        <th class="text-center">系统</th>
+                                        <th class="text-center">CPU</th>
+                                        <th class="text-center">memory</th>
+                                        <th class="text-center">数量</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key in s_applys %}
+                                    <tr class="detail-table" id="{{key.id}}tr">
+                                        <td class="text-center" id="{{ key.id }}">{{ key.id }}</td>
+                                        <td class="text-center">{% ifequal key.env_type "DRCV"%} 灾备环境 {% endifequal %} {% ifequal key.env_type "TEST" %} 测试环境 {% endifequal %} {% ifequal key.env_type "DEVP" %} 开发环境 {% endifequal %}</td>
+                                        <td class="text-center">{% ifequal key.fun_type "normal" %} 普通类型 {% endifequal %} {% ifequal key.fun_type "database" %} 数据库类型 {% endifequal %} {% ifequal key.fun_type "was" %} WAS类型 {% endifequal %}</td>
+                                        <td class="text-center">{% ifequal key.os_type "WIN"%} WINDOWS {% endifequal %} {% ifequal key.os_type "LUX" %} LINUX {% endifequal %}</td>
+                                        <td class="text-center">{{ key.cpu}}C</td>
+                                        <td class="text-center">{{ key.memory_gb}}G</td>
+                                        <td class="text-center">{{ key.request_vm_num}}台</td>
+                                        <td class="text-center">
+                                            <div>
+                                                <button class="btn btn-primary btn-xs modify-btn" type="submit" data-toggle="modal" data-target="#{{ key.id}}modal">修改</button>
+                                                {% include 'jvmanager/saving_modify_modal.html' %}
+                                                <button class="btn btn-success btn-xs saving-submit-btn" type="submit">提交</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="dataTables_info" id="editable_info" role="status" aria-live="polite">
+                                        Showing {{ s_applys.start_index }} to {{ s_applys.end_index }} of {{ s_p.count }} entries
+                                    </div>
+                                </div>
+                                {% include 'paginator.html' %}
+                            </div>
                             </div>
                         </div>
-                        {% include 'paginator.html' %}
                     </div>
-                 </div>
-                   </div>
-                 </div>
+                </div>
             </div>
         </div>
     </div>
-	</div>
-    </div>
-    <style type="text/css">
-  .modifyslider{
+</div>
+<style type="text/css">
+.modifyslider {
     float: left;
     clear: left;
     width: 200px;
     margin: 10px;
-  }
-  .modifyslider .ui-slider-range { background: #2496DE; }
-  .modifyslider .ui-slider-handle { border-color: #729fcf; }
-  .num_type{width:40px; padding-left: 10px;}
-  .text_type{width: 80px;padding-left: 10px;}
-</style>
-    <script>
-$(function(){
-var request_id,id;
-$(".modify-btn").click(function(event) {
-     request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
-     $.post('{% url "show_apply_machinedetail" %}', {"id": request_id}, function(data) {
-       var detail_list = eval($.parseJSON(data));
-       //数据获取
-       $(".dropdownMenu1").text(detail_list[0].fields.env_type).append('&nbsp;<span class="caret"></span>');
-       $("#"+request_id+"modal input[value='"+detail_list[0].fields.fun_type+"']").prop("checked",true).parent("label").addClass('active').siblings('label').removeClass('active');
-       $(".dropdownMenu2").text(detail_list[0].fields.os_type).append('&nbsp;<span class="caret"></span>');
-       $("#"+request_id+"modal ."+detail_list[0].fields.cpu+"C").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');
-       $("#"+request_id+"modal ."+detail_list[0].fields.memory_gb+"G").prop('checked',true).parent("label").addClass('active').siblings('label').removeClass('active');   
-       $("#"+request_id+"modal input[name='data_volume']").val(detail_list[0].fields.datadisk_gb);
-       $("#"+request_id+"modal input[name='request_num']").val(detail_list[0].fields.request_vm_num);
-       $("#"+request_id+"modal input[name='app_name']").val(detail_list[0].fields.app_name);
-       $("#"+request_id+"modal input[name='apply_reason']").val(detail_list[0].fields.apply_reason);
-     });
-     var saving_data_disk = $("#"+request_id+"data_volume").val();
-     var saving_request_num = $("#"+request_id+"request_num").val();
+}
 
-     $("#"+request_id+"modifyslider").slider({
-            range:"min",
-            min:0,
-            max:100,
-            value:parseInt(saving_data_disk),
-            slide:function(event,ui){
-                $("#"+request_id+"data_volume").val(ui.value);
+.modifyslider .ui-slider-range {
+    background: #2496DE;
+}
+
+.modifyslider .ui-slider-handle {
+    border-color: #729fcf;
+}
+
+.num_type {
+    width: 40px;
+    padding-left: 10px;
+}
+
+.text_type {
+    width: 80px;
+    padding-left: 10px;
+}
+</style>
+<script>
+$(function() {
+    var request_id, id;
+    $(".modify-btn").click(function(event) {
+        request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+        $.post('{% url "show_apply_machinedetail" %}', {
+            "id": request_id
+        }, function(data) {
+            var detail_list = eval($.parseJSON(data));
+            //数据获取
+            var env_text = "",os_text = "";
+            if("DEVP"===env){
+                env_text = "开发环境"
+            } else if("TEST"===env) {
+                env_text = "测试环境"
+            } else if("DRCV"===env) {
+                env_text = "灾备环境"
+            } else{ env_text = null }
+
+            $(".dropdownMenu1").text(env_text).append('&nbsp;<span class="caret"></span>');
+            $("#" + request_id + "modal input[value='" + detail_list[0].fields.fun_type + "']").prop("checked", true).parent("label").addClass('active').siblings('label').removeClass('active');
+            if("WIN"===os){
+                os_text = "WINDOWS"
+            } else if("LUX"===os) {
+                os_text = "LINUX"
+            } else {
+                os_text = null
+            }
+            $(".dropdownMenu2").text(os_type).append('&nbsp;<span class="caret"></span>');
+            $("#" + request_id + "modal ." + detail_list[0].fields.cpu + "C").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
+            $("#" + request_id + "modal ." + detail_list[0].fields.memory_gb + "G").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
+            $("#" + request_id + "modal input[name='data_volume']").val(detail_list[0].fields.datadisk_gb);
+            $("#" + request_id + "modal input[name='request_num']").val(detail_list[0].fields.request_vm_num);
+            $("#" + request_id + "modal input[name='app_name']").val(detail_list[0].fields.app_name);
+            $("#" + request_id + "modal input[name='apply_reason']").html(detail_list[0].fields.apply_reason);
+        });
+        var saving_data_disk = $("#" + request_id + "data_volume").val();
+        var saving_request_num = $("#" + request_id + "request_num").val();
+
+        $("#" + request_id + "modifyslider").slider({
+            range: "min",
+            min: 0,
+            max: 100,
+            value: parseInt(saving_data_disk),
+            slide: function(event, ui) {
+                $("#" + request_id + "data_volume").val(ui.value);
             }
         });
-      $("#"+request_id+"modifyslider_num").slider({
-            value:parseInt(saving_request_num),
-            min:0,
-            max:6,
-            step:1,
-            slide:function(event,ui){
-               $("#"+request_id+"request_num").val(ui.value);
+        $("#" + request_id + "modifyslider_num").slider({
+            value: parseInt(saving_request_num),
+            min: 0,
+            max: 6,
+            step: 1,
+            slide: function(event, ui) {
+                $("#" + request_id + "request_num").val(ui.value);
             }
-        }); 
-});
-$(".saving-submit-btn").click(function(event) {
-     id = $(this).parents(".detail-table").children('td:first-child').attr("id");
-});
-$(".modify-save-btn").click(function(event) {    
-      var modify_form = $("#"+request_id+"modalform").serializeArray()
-      $.post('{% url "modify_saving_detail" %}', modify_form, function(data) {
-        alert("保存成功")
-          setTimeout(function(e){
-            location.href = '{% url "saving_resource_view" %}'
-          },200);
-      });
-    });   
-$(".saving-submit-btn").click(function(event) {
-   $.post('{% url "submit_saving_resource" %}', {"id": id}, function(data) {
-  /*optional stuff to do after success */
-      if(data.info == "success"){
+        });
+    });
+    $(".modify-save-btn").click(function(event) {
+        var modify_form = $("#" + request_id + "modalform").serializeArray()
+        $.post('{% url "modify_saving_detail" %}', modify_form, function(data) {
+            alert("保存成功")
+            setTimeout(function(e) {
+                location.href = '{% url "saving_resource_view" %}'
+            }, 200);
+        });
+    });
+    $(".saving-submit-btn").click(function(event) {
+        id = $(this).parents(".detail-table").children('td:first-child').attr("id");
+        var $modify_form = $("#" + id + "modalform").serializeArray();
+        $.post('{% url "submit_saving_resource" %}',$modify_form, function(data,textStatus) {
+            /*optional stuff to do after success */
+            if (textStatus == "success") {
                 alert("提交成功!");
-        setTimeout(function(e){
-            $("#"+id+"tr").remove()
-          },200);
-      } else {
-        alert(data.error)
-      }
+                setTimeout(function(e) {
+                    $("#" + id + "tr").remove()
+                }, 200);
+            } else {
+                alert(data.error)
+            }
 
-});
-});
-function selectMenu(factor,name){
-            factor.next().find("a").click(function(){
+        });
+    });
+
+    function selectMenu(factor, name) {
+        factor.next().find("a").click(function() {
             factor.text($(this).text()).append('&nbsp;<span class="caret"></span>');
             name.val($(this).attr("name"));
-        })}
-        
-selectMenu($(".dropdownMenu1"),$(".env_type"));
-selectMenu($(".dropdownMenu2"),$(".os_type"));
-$("#selectall").click(function () {
-    if($("#selectall").prop("checked")){
-        $("#agree-table :checkbox").prop("checked",true);
-    }else{
-        $("#agree-table :checkbox").prop("checked",false);
+        })
     }
-});
-function select_binding(type,cpu,memory){
-         type.click(function(event) {
-         /* Act on the event */
-             $("."+cpu+"C").parent("label").addClass('active').siblings('label').removeClass('active');
-             $("."+cpu+"C").val(cpu)
-             $("."+memory+"G").parent("label").addClass('active').siblings('label').removeClass('active');
-             $("."+memory+"G").val(memory)
-     });
-}
-select_binding($(".normal-type"),2,4);
-select_binding($(".was-type"),4,8);
-select_binding($(".database-type"),4,16);  
-  })
+
+    selectMenu($(".dropdownMenu1"), $(".env_type"));
+    selectMenu($(".dropdownMenu2"), $(".os_type"));
+    $("#selectall").click(function() {
+        if ($("#selectall").prop("checked")) {
+            $("#agree-table :checkbox").prop("checked", true);
+        } else {
+            $("#agree-table :checkbox").prop("checked", false);
+        }
+    });
+
+    function select_binding(type, cpu, memory) {
+        type.click(function(event) {
+            /* Act on the event */
+            $("." + cpu + "C").parent("label").addClass('active').siblings('label').removeClass('active');
+            $("." + cpu + "C").val(cpu)
+            $("." + memory + "G").parent("label").addClass('active').siblings('label').removeClass('active');
+            $("." + memory + "G").val(memory)
+        });
+    }
+    select_binding($(".normal-type"), 2, 4);
+    select_binding($(".was-type"), 4, 8);
+    select_binding($(".database-type"), 4, 16);
+})
 </script>
-	{% endblock %}
+{% endblock %}

@@ -284,3 +284,112 @@
 2016-05-20 17:34:24,787 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
 2016-05-20 17:43:41,354 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
 2016-05-20 17:53:03,135 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-20 17:56:42,160 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-20 17:59:14,211 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 14:48:31,934 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 14:49:50,933 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 15:00:36,477 - views.py - DEBUG - <QueryDict: {u'env_type': [u'DRCV'], u'env_option': [u'\u707e\u5907\u73af\u5883'], u'id': [u'8']}>
+2016-05-21 15:00:48,194 - views.py - DEBUG - <QueryDict: {u'env_type': [u'test'], u'env_option': [u'etr']}>
+2016-05-21 15:01:22,861 - views.py - DEBUG - <QueryDict: {u'option': [u'winNetEnterpriseGuest'], u'option_display': [u''], u'sheet_name': [u'WIN']}>
+2016-05-21 15:05:07,659 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 15:24:08,830 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 15:24:39,846 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 15:42:58,368 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 15:43:17,820 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 16:10:16,320 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 16:17:45,065 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 16:34:32,173 - user_api.py - DEBUG - 生成ssh key， 并设置authorized_keys
+2016-05-21 17:08:29,956 - views.py - DEBUG - start
+2016-05-21 17:08:29,960 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'dsds'], u'data_disk': [u'0'], u'fun_type': [u'normal'], u'request_num': [u'1'], u'env_type': [u'TEST'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2']}>
+2016-05-21 17:11:30,091 - views.py - DEBUG - start
+2016-05-21 17:11:30,095 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'dfdgdfgfd'], u'data_disk': [u'0'], u'fun_type': [u'normal'], u'request_num': [u'1'], u'env_type': [u'TEST'], u'memory': [u'4'], u'test': [u'434'], u'os_type': [u'WIN'], u'cpu': [u'2']}>
+2016-05-21 17:14:44,974 - views.py - DEBUG - start
+2016-05-21 17:14:44,974 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfdsf'], u'data_disk': [u'0'], u'fun_type': [u'normal'], u'request_num': [u'1'], u'env_type': [u'TEST'], u'tag': [u'save'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2']}>
+2016-05-21 17:14:57,356 - views.py - DEBUG - start
+2016-05-21 17:14:57,359 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfdsf'], u'data_disk': [u'0'], u'fun_type': [u'normal'], u'request_num': [u'1'], u'env_type': [u'TEST'], u'tag': [u'submit'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2']}>
+2016-05-21 17:15:36,596 - views.py - DEBUG - start
+2016-05-21 17:15:36,596 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fddsfds'], u'data_disk': [u'0'], u'fun_type': [u'normal'], u'request_num': [u'1'], u'env_type': [u'TEST'], u'tag': [u'submit'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2']}>
+2016-05-21 17:15:36,697 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 17:18:35,996 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 17:19:45,808 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 17:22:12,527 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 17:40:02,733 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 17:40:10,564 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 17:40:12,964 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 17:40:20,987 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:06:13,858 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:06:31,357 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:20:10,261 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:20:19,048 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:20:22,799 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:20:25,080 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:32:27,627 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:34:15,499 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:34:48,381 - views.py - ERROR - list index out of range
+2016-05-21 18:34:51,401 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:35:11,302 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:35:15,832 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:35:28,119 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-21 18:38:10,496 - views.py - DEBUG - []
+2016-05-21 18:39:27,009 - views.py - DEBUG - []
+2016-05-21 18:54:31,899 - views.py - DEBUG - []
+2016-05-21 18:59:24,762 - views.py - DEBUG - start
+2016-05-21 19:02:07,346 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'etsdtertr'], u'fun_type': [u'normal'], u'request_id': [u'36'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:03:35,275 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'etsdtertr'], u'fun_type': [u'normal'], u'request_id': [u'36'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:04:07,314 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'etsdtertr'], u'fun_type': [u'normal'], u'request_id': [u'36'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:04:07,314 - views.py - DEBUG - start
+2016-05-21 19:04:46,962 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:04:46,963 - views.py - DEBUG - start
+2016-05-21 19:05:14,715 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:06:10,983 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:06:10,983 - views.py - DEBUG - start
+2016-05-21 19:06:28,419 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:06:28,419 - views.py - DEBUG - start
+2016-05-21 19:06:51,744 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:06:51,744 - views.py - DEBUG - start
+2016-05-21 19:07:10,279 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:07:10,279 - views.py - DEBUG - start
+2016-05-21 19:07:31,701 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:08:12,266 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:08:57,441 - views.py - DEBUG - <QueryDict: {u'apply_reason': [u'fdsfd'], u'fun_type': [u'normal'], u'request_id': [u'37'], u'request_num': [u'1'], u'env_type': [u'DEVP'], u'memory': [u'4'], u'os_type': [u'WIN'], u'cpu': [u'2'], u'data_volume': [u'0']}>
+2016-05-21 19:08:57,446 - views.py - DEBUG - start
+2016-05-22 22:24:47,221 - views.py - DEBUG - start
+2016-05-22 22:25:26,753 - views.py - DEBUG - start
+2016-05-22 22:33:01,774 - views.py - DEBUG - start
+2016-05-22 22:35:22,456 - views.py - DEBUG - start
+2016-05-22 22:37:12,253 - views.py - DEBUG - start
+2016-05-22 22:38:07,894 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 22:38:15,041 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 22:42:03,283 - views.py - DEBUG - DEVP
+2016-05-22 22:42:24,620 - views.py - DEBUG - normal
+2016-05-22 22:42:51,831 - views.py - DEBUG - WIN
+2016-05-22 22:43:08,061 - views.py - DEBUG - 2
+2016-05-22 22:43:26,893 - views.py - DEBUG - 4
+2016-05-22 22:43:49,460 - views.py - DEBUG - 0
+2016-05-22 22:44:20,317 - views.py - DEBUG - 1
+2016-05-22 22:45:58,125 - views.py - DEBUG - DEVP
+2016-05-22 22:47:40,630 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 22:49:15,419 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 22:52:17,682 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 22:52:19,294 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 22:52:21,722 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 22:54:53,729 - views.py - DEBUG - [<Application: DEVP>]
+2016-05-22 23:05:39,641 - views.py - DEBUG - DEVP
+2016-05-22 23:09:34,874 - views.py - DEBUG - DEVP
+2016-05-22 23:09:35,794 - views.py - DEBUG - DEVP
+2016-05-22 23:09:35,983 - views.py - DEBUG - DEVP
+2016-05-22 23:09:36,153 - views.py - DEBUG - DEVP
+2016-05-22 23:09:42,855 - views.py - DEBUG - DEVP
+2016-05-22 23:17:37,418 - views.py - DEBUG - DEVP
+2016-05-22 23:19:26,947 - views.py - DEBUG - DEVP
+2016-05-22 23:20:20,673 - views.py - DEBUG - DEVP
+2016-05-22 23:20:20,680 - views.py - DEBUG - end
+2016-05-22 23:20:55,719 - views.py - DEBUG - DEVP
+2016-05-22 23:22:33,375 - views.py - DEBUG - DEVP
+2016-05-22 23:22:33,385 - views.py - DEBUG - end
+2016-05-22 23:24:05,194 - views.py - DEBUG - DEVP
+2016-05-22 23:24:05,205 - views.py - DEBUG - end
+2016-05-22 23:25:30,630 - views.py - DEBUG - DEVP
+2016-05-22 23:25:30,640 - views.py - DEBUG - end
+2016-05-22 23:26:11,067 - views.py - DEBUG - []
+2016-05-22 23:30:16,275 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]

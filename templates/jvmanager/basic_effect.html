@@ -110,7 +110,24 @@ $(function() {
         }, function(data, textStatus) {
             if (textStatus == "success") {
                 var detail_list = eval($.parseJSON(data));
-                var show_list = [detail_list[0].fields.appro_env_type, detail_list[0].fields.appro_fun_type, detail_list[0].fields.appro_cpu, detail_list[0].fields.appro_memory_gb, detail_list[0].fields.appro_datadisk_gb, detail_list[0].fields.appro_vm_num, detail_list[0].fields.appro_os_type];
+                var env = detail_list[0].fields.appro_env_type;
+                var os = detail_list[0].fields.appro_os_type;
+                 var env_text = "",os_text = "";
+            if("DEVP"===env){
+                env_text = "开发环境"
+            } else if("TEST"===env) {
+                env_text = "测试环境"
+            } else if("DRCV"===env) {
+                env_text = "灾备环境"
+            } else{ env_text = null }
+            if("WIN"===os){
+                os_text = "WINDOWS"
+            } else if("LUX"===os) {
+                os_text = "LINUX"
+            } else {
+                os_text = null
+            }
+                var show_list = [env_text, detail_list[0].fields.appro_fun_type, detail_list[0].fields.appro_cpu, detail_list[0].fields.appro_memory_gb, detail_list[0].fields.appro_datadisk_gb, detail_list[0].fields.appro_vm_num, os_text];
                 for (var i = 0; i < show_list.length; i++) {
                     $("#" + id + "AgreeForm em").eq(i).text(show_list[i])
                 }

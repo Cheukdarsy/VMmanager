@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="ibox-content" style="padding:1px 0px 20px">
-                    <form class="form-horizontal" id="userapply" method="POST" action="">
+                    <form class="form-horizontal" name="userapply" id="userapply" method="POST" action="">
                         <div class="panel panel-default">
                             <div class="panel-heading" style="padding:5px 15px">基本配置：</div>
                             <div class="panel-body">
@@ -30,7 +30,7 @@
                                     <label class="col-sm-2 control-label">环境类型:&nbsp;</label>
 
                                     <div class="dropdown col-sm-10">
-                                    <input type="text" name="env_type" class="env_type" style="display:none" value="TEST">
+                                    
                                         <button class="btn btn-sm btn-success dropdown-toggle dropdownMenu1" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="env_list">
                                             选择
                                            <span class="caret"></span>
@@ -51,7 +51,7 @@
                                                 <a href="#" name='DRCV'>灾备环境</a>
                                             </li>
                                         </ul>
-
+                                        <input type="text" name="env_type" class="env_type" style="display:none" value="">
                                     </div>
                                 </div>
                                 <div class="form-group" style="margin-bottom:5px">
@@ -92,7 +92,7 @@
                                 <div class="form-group" style="margin-bottom:5px">
                                     <label class="col-sm-2 control-label">操作系统:&nbsp;</label>
                                     <div class="dropdown col-sm-10">
-                                     <input type="text" name="os_type" class="os_type" style="display:none" value="WIN">
+                                     
                                         <button class="btn btn-sm  btn-success dropdown-toggle dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"　name="os_type">
                                            选择
                                             <span class="caret"></span>
@@ -114,6 +114,7 @@
                                                 <a href="#" name='LUX'>SUSE 10</a>
                                             </li>
                                         </ul>
+                                        <input type="text" name="os_type" class="os_type" style="display:none" value="">
                                     </div>
                                 </div>
                             </div>
@@ -154,16 +155,18 @@
                                 <div class="form-group" style="margin-bottom:5px">
                                     <label class="col-sm-2 control-label">申请原因:&nbsp;</label>
                                     <div class="col-sm-10">
-                                         <textarea name="apply_reason"  cols="50" rows="2"></textarea>
-                                            
-                                       
+                                         <textarea name="apply_reason"  cols="50" rows="2"></textarea> 
+                                         <input type="hidden" name="tag" id="tag" value="save"> 
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                             <input type="text" name="submit" id="submit" style="display:none" value="save">
                                 <div class="col-sm-offset-5 col-sm-7">
-                                    <button type="submit" class="btn btn-default">保存</button>
+                                    {% ifequal user.role 'SU'  %} 
+                                      <button type="reset" class="btn btn-default" id="save_btn">重置</button>  
+                                    {% endifequal %}{% ifequal user.role 'CU'  %} 
+                                      <button type="submit" class="btn btn-default" id="save_btn">保存</button> 
+                                    {% endifequal %}
                                     <button type="submit" class="btn btn-success"  id="submit_btn">提交</button>
                                     
                                 </div>
@@ -191,4 +194,45 @@
   #slider1 .ui-slider-range { background: #2496DE; }
   #slider1 .ui-slider-handle { border-color: #729fcf; }
 </style>
+<script>
+ $("#submit_btn").click(function(){
+            $("#tag").val("submit");
+        })
+ $("#save_btn").click(function(){
+            $("#tag").val("save");
+        })
+    $('#userapply').validator({
+        timely: 2,
+        theme: "yellow_right_effect",
+        fields: {
+            "env_type": {
+                rule: "required;",
+                tip: "请选择环境类型",
+                ok: "",
+                msg: {
+                    required: "环境必选"
+                }
+            },
+            "os_type": {
+                rule: "required;",
+                tip: "请选择系统",
+                ok: "",
+                msg: {
+                    required: "系统必选"
+                }
+            },
+            "apply_reason": {
+                rule: "required;",
+                tip: "输入申请原因",
+                ok: "",
+                msg: {
+                    required: "申请原因不能为空"
+                }
+            }
+        },
+        valid: function(form) {
+            form.submit();
+        }
+    })
+</script>
 {% endblock %}

@@ -177,7 +177,7 @@ def ajax_get_agree_form(request):
     if request.method == 'POST':
         pk = request.POST.get('id', '')
         try:
-            agree_form = Approvel.objects.filter(application_id=pk)
+            agree_form = Approvel.objects.filter(pk=pk)
 
         except Exception, e:
             raise e
@@ -205,7 +205,7 @@ def apply_machine(request):
         data_disk = int(request.POST.get('data_disk', ''))
         request_num = int(request.POST.get('request_num', ''))
         apply_reason = request.POST.get('apply_reason', '')
-        submitt = request.POST.get('submit', '')
+        submitt = request.POST.get('tag', '')
         if submitt == 'submit':
             apply_status = "SM"
             try:
@@ -258,7 +258,9 @@ def resource_view(request):
 
 @require_role('user')
 def saving_resource_view(request):
-    s_apply_list = Application.objects.filter(apply_status="HD")
+    username = request.user.username
+    user=get_object(User,username=username)
+    s_apply_list = Application.objects.filter(apply_status="HD").filter(user=user)
     s_apply_list, p, s_applys, page_range, current_page, show_first, show_end = pages(
         s_apply_list, request)
     return my_render('jvmanager/savingresource_view.html', locals(), request)
@@ -268,9 +270,19 @@ def saving_resource_view(request):
 def submit_saving_resource(request):
     """ajax提交保存资源"""
     if request.method == 'POST':
-        id = int(request.POST.get('id', ''))
+        id = int(request.POST.get('request_id', ''))
+        appro_env_type = request.POST["env_type"]
+        appro_fun_type = request.POST["fun_type"]
+        appro_os_type = request.POST["os_type"]
+        appro_cpu = int(request.POST["cpu"])
+        appro_memory_gb = int(request.POST["memory"])
+        appro_datadisk_gb = int(request.POST["data_volume"])
+        appro_vm_num = int(request.POST["request_num"])
+        apply_reason = request.POST["apply_reason"]
         try:
-            Application.objects.filter(id=id).update(apply_status="SM")
+            application = Application.objects.get(id=id)
+            db_add_approvel(application=application,appro_env_type=appro_env_type,appro_fun_type=appro_fun_type,appro_os_type=appro_os_type,appro_cpu=appro_cpu,appro_memory_gb=appro_memory_gb,appro_datadisk_gb=appro_datadisk_gb,appro_vm_num=appro_vm_num,appro_status="AI",appro_date=datetime.now())
+            Application.objects.filter(pk=id).update(apply_status="SM", apply_reason=apply_reason)
         except Exception, e:
             raise e
         else:

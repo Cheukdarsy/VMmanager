@@ -189,9 +189,7 @@ function selectMenu(factor,name){
         selectMenu($(".dropdownMenu2"),$(".os_type"));
 
         //submit or save
-        $("#submit_btn").click(function(){
-            $("#submit").val("submit");
-        })
+       
 //绑定数据
 function select_binding(type,cpu,memory){
          type.click(function(event) {
