@@ -461,13 +461,12 @@ def ajax_initial_network(request):
             network.update_manual(nw=net_addr, mask=net_mask)
             gw, countip = IPUsage.create(network, gw_addr=gw_addr)
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            return countip
+            return JsonResponse({"status": "success", "result": countip})
     else:
-        error_dict = {"error": "ajax not good"}
-        return JsonResponse(error_dict)
-
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
 
 def ajax_select_IP(request):
     """
@@ -705,22 +704,6 @@ def ajax_delete_vc(request):
 
 
 """网络参数"""
-
-
-def ajax_get_initial_ip(request):
-    if request.method == "POST":
-        net_list = []
-        try:
-            for net in Network.objects.all():
-                net_list.append({
-                    "id": net.id,
-                    "net_name": net.name,
-                    "net": net.net
-                })
-        except Exception, e:
-            raise e
-        else:
-            return JsonResponse(net_list)
 
 
 def ajax_add_ip(request):

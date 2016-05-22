@@ -101,6 +101,8 @@
                                                             </div>
                                                             <div class="modal-body" style="padding-bottom:10px">
                                                                 <div class="ibox-content form-horizontal">
+                                                                    <label id="ippool-init-waiting"
+                                                                           style="display: none">正在初始化网络，请稍后...</label>
                                                                     <form method="post" action=""
                                                                           id="ippool-initial-form">
                                                                         {% csrf_token %}
@@ -114,8 +116,10 @@
                                                                                     <div class="dropdown col-sm-9">
                                                                                         <select name="network"
                                                                                                 id="network">
+                                                                                            <option></option>
                                                                                             {% for net in uninit_nets %}
-                                                                                                <option value="{{ net.net }}">{{ net.name }}</option>
+                                                                                                <option name="{{ net.id }}"
+                                                                                                        value="{{ net.net }}">{{ net.name }}</option>
                                                                                             {% endfor %}
                                                                                         </select>
                                                                                     </div>
@@ -126,7 +130,7 @@
                                                                                     <div class="dropdown col-sm-9">
                                                                                         <input type="text"
                                                                                                name="netgate"
-                                                                                               id="netgate" 　value=""
+                                                                                               id="netgate" value=""
                                                                                                placeholder="请选择网络">
                                                                                     </div>
                                                                                 </div>
@@ -136,9 +140,7 @@
                                                                                     <div class="dropdown col-sm-9">
                                                                                         <input type="text"
                                                                                                name="net_mask"
-                                                                                               id="net_mask"
-                                                                                               　value="255.255.255.0"
-                                                                                               placeholder="255.255.255.0">
+                                                                                               id="net_mask" value="24">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -583,38 +585,24 @@
         $("#network").change(function (event) {
             $("#net_id").val($(this).find("option:selected").attr('name'));
             var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254";
-
             $("#netgate").val(netgate);
-            $("#netgate").attr('placeholder', netgate);
         });
         $("#initialip-start-btn").click(function (event) {
-            $("#net_mask").val("255.255.255.0");
+            $("#ippool-init-waiting").prop('style', '');
             $ippool_initial_form = $("#ippool-initial-form").serializeArray();
-            alert(JSON.stringify($ippool_initial_form));
             $.post('{% url "ajax_initial_network" %}', $ippool_initial_form, function (data, textStatus) {
+                $("#ippool-init-waiting").prop('style', 'display:none');
                 if (textStatus == "success") {
-                    alert("初始化成功");
+                    data.status == 'success' ? alert("成功生成" + data.result + "个IP地址！") : alert(data.errmsg);
                     setTimeout(function () {
                         location.href = '{% url "set_vm" %}'
                     }, 200)
+                } else {
+                    alert("未知错误")
                 }
-            });
-
+            }, 'json');
         });
 
-        $("#ip-manage-btn").click(function (event) {
-            $.post('{% url "ajax_get_initial_ip" %}', {}, function (data, textStatus) {
-                /*optional stuff to do after success */
-                if (textStatus == "success") {
-                    ip_option = "";
-                    for (var count = 0; count < data.length; count++) {
-                        ip_option += "<option value='" + data[count].net + "' name='" + data[count].id + "'>" + data[count].net_name + "</option>"
-                    }
-                    $("#r-network").append(ip_option)
-                }
-
-            });
-        });
         $("#r-network").change(function (event) {
             var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254";
             $("#ipaddress").val(netgate).focus();
