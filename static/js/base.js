@@ -167,7 +167,7 @@ $("#slider").slider({
         $("#data_volume").val($("#slider").slider("value"));
  $("#slider1").slider({
             value:1,
-            range:"min",
+     range: "min",
             min:1,
             max:6,
             step:1,
@@ -189,9 +189,7 @@ function selectMenu(factor,name){
         selectMenu($(".dropdownMenu2"),$(".os_type"));
 
         //submit or save
-        $("#submit_btn").click(function(){
-            $("#submit").val("submit");
-        })
+       
 //绑定数据
 function select_binding(type,cpu,memory){
          type.click(function(event) {
@@ -204,7 +202,7 @@ function select_binding(type,cpu,memory){
 }
 
      select_binding($(".normal-type"),2,4);
-     select_binding($(".was-type"),4,8);
+     select_binding($(".was-type"),2,8);
      select_binding($(".database-type"),4,16);
 
 //全选

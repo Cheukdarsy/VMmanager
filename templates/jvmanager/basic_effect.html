@@ -34,12 +34,15 @@ $(function() {
         var $pro = $("#agree-table tr").eq(i).children('td:nth-child(6)')
         if($.trim($pro.text())!=="待生成"&&$.trim($pro.text())!=="100%"){
             str += id.text()+ ","
-        }  
+        }else{
+            $("#"+id.text()+"loading").empty().append("<input type='checkbox' name='checkbox' disabled>")
+        } 
     }
     if(str!=""){ 
     $.post('{% url "ajax_get_process" %}', {"id": str.slice(0,-1)}, function(data) {
        for (var i = 0; i < data.length; i++) {
-           $("#"+data[i].id+"process").text(data[i].progress)
+           $("#"+data[i].id+"loading").empty().append("<img src='/static/img/loading.gif' style='width:30px;'>")           
+           $("#"+data[i].id+"process").text(data[i].progress+"%")
            $("#"+data[i].id+"gen_log").text(data[i].log)
        }
     });
@@ -55,19 +58,21 @@ $(function() {
             //数据获取
             var env = detail_list[0].fields.appro_env_type;
             var os = detail_list[0].fields.appro_os_type;
-            var env_text = "",os_text = "";
-            if("DEVP"===env){
+            var env_text = "", os_text = "";
+            if ("DEVP" === env) {
                 env_text = "开发环境"
-            } else if("TEST"===env) {
+            } else if ("TEST" === env) {
                 env_text = "测试环境"
-            } else if("DRCV"===env) {
+            } else if ("DRCV" === env) {
                 env_text = "灾备环境"
-            } else{ env_text = null }
+            } else {
+                env_text = null
+            }
             $(".dropdownMenu1").text(env_text).append('&nbsp;<span class="caret"></span>');
             $("#" + request_id + "modal input[value='" + detail_list[0].fields.appro_fun_type + "']").prop("checked", true).parent("label").addClass('active').siblings('label').removeClass('active');
-            if("WIN"===os){
+            if ("WIN" === os) {
                 os_text = "WINDOWS"
-            } else if("LUX"===os) {
+            } else if ("LUX" === os) {
                 os_text = "LINUX"
             } else {
                 os_text = null
@@ -110,7 +115,24 @@ $(function() {
         }, function(data, textStatus) {
             if (textStatus == "success") {
                 var detail_list = eval($.parseJSON(data));
-                var show_list = [detail_list[0].fields.appro_env_type, detail_list[0].fields.appro_fun_type, detail_list[0].fields.appro_cpu, detail_list[0].fields.appro_memory_gb, detail_list[0].fields.appro_datadisk_gb, detail_list[0].fields.appro_vm_num, detail_list[0].fields.appro_os_type];
+                var env = detail_list[0].fields.appro_env_type;
+                var os = detail_list[0].fields.appro_os_type;
+                 var env_text = "",os_text = "";
+            if("DEVP"===env){
+                env_text = "开发环境"
+            } else if("TEST"===env) {
+                env_text = "测试环境"
+            } else if("DRCV"===env) {
+                env_text = "灾备环境"
+            } else{ env_text = null }
+            if("WIN"===os){
+                os_text = "WINDOWS"
+            } else if("LUX"===os) {
+                os_text = "LINUX"
+            } else {
+                os_text = null
+            }
+                var show_list = [env_text, detail_list[0].fields.appro_fun_type, detail_list[0].fields.appro_cpu, detail_list[0].fields.appro_memory_gb, detail_list[0].fields.appro_datadisk_gb, detail_list[0].fields.appro_vm_num, os_text];
                 for (var i = 0; i < show_list.length; i++) {
                     $("#" + id + "AgreeForm em").eq(i).text(show_list[i])
                 }
@@ -189,7 +211,7 @@ $(function() {
             $.post('{% url "delete_apply" %}', dict, function(data) {
                 alert("删除成功");
                 setTimeout(function(e) {
-                    $("#" + id + "tr").remove()
+                    location.href = '{% url "VM_list" %}'
                 }, 200);
             });
         }
@@ -321,20 +343,10 @@ $(function() {
                 "id": str.slice(0,-1)
             },
             success: function(data) {
-                alert(data)
-                $(".gen-btn").text('正在生成资源');
-                var count = 0;
-                setInterval(function() {
-                    $(".gen-btn").append('<span>.</span>');
-                    count += 1;
-                    if (count == 4) {
-                        $(".gen-btn span").remove();
-                        count = 0;
-                    }
-                }, 200)
+                $(".gen-btn").text('生成资源');
             },
             error: function() {
-                alert("ajax 异常");
+                alert("未正确选择！");
             }
         });
     });
@@ -366,7 +378,7 @@ $(function() {
         });
     }
     select_binding($(".normal-type"), 2, 4);
-    select_binding($(".was-type"), 4, 8);
+    select_binding($(".was-type"), 2, 8);
     select_binding($(".database-type"), 4, 16);
 });
 </script>

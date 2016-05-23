@@ -9,54 +9,57 @@
             </div>
             <div class="modal-body" style="padding-bottom:10px">
                 <div class="ibox-content form-horizontal">
-                    <form method="post" action="" id="vc-setting-form">
+                    <form method="post" action="" class="vc-setting-form vc-add" id="vc-add-form">
                         {% csrf_token %}
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">IP地址:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="text" name="vcip" id="vcip"></div>
+                                        <input type="text" name="vcip" id="vcip" placeholder="请输入VCenter的IPv4地址">
+                                    </div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">端口:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="text" name="vcport" id="vcport" placeholder="43"></div>
+                                        <input type="text" name="vcport" id="vcport" value="443">
+                                    </div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
                                     <div class="col-sm-9 dropdown">
-                                        <input type="checkbox" name="DEVP" >开发环境
-                                        <input type="checkbox" name="TEST">测试环境
-                                        <input type="checkbox" name="DRCV">灾备环境
+                                        {% for env in envs %}
+                                            <input type="checkbox" name="{{ env.option }}">{{ env.option_display }}
+                                        {% endfor %}
                                     </div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">用户名:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="text" name="vcname" id="vcname"></div>
+                                        <input type="text" name="vcname" id="vcname" placeholder="user@domain">
+                                    </div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">密码:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="password"  name="vcpw" id="vcpw"></div>
+                                        <input type="password" name="vcpw" id="vcpw">
+                                    </div>
                                 </div>
                                 <div class="form-group" style="margin-right:-60px;margin-left:40px;">
                                     <label class="col-sm-3 control-label">确认密码:&nbsp;</label>
                                     <div class="dropdown col-sm-9">
-                                        <input type="password" name="vcpw-conf" id="vcpw-conf"></div>
+                                        <input type="password" name="vcpw-conf" id="vcpw-conf">
+                                    </div>
                                 </div>
-
                             </div>
                         </div>
-
-                    </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary" id="vc-add-btn">添加</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" form="vc-add-form">添加</button>
+            </div>
         </div>
     </div>
 </div>
