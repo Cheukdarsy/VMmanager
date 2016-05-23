@@ -156,7 +156,7 @@ def delete_apply(request):
         application_id = int(request.POST.get("application_id", ""))
         reason = request.POST.get("reason", "")
         try:
-            Approvel.objects.filter(id=id).update(approv_status='RB')
+            Approvel.objects.filter(id=id).update(appro_status='RB')
             Application.objects.filter(id=application_id).update(apply_status='RB', apply_reason=reason)
         except Exception, e:
             raise e

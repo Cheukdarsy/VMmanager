@@ -34,12 +34,15 @@ $(function() {
         var $pro = $("#agree-table tr").eq(i).children('td:nth-child(6)')
         if($.trim($pro.text())!=="待生成"&&$.trim($pro.text())!=="100%"){
             str += id.text()+ ","
-        }  
+        }else{
+            $("#"+id.text()+"loading").empty().append("<input type='checkbox' name='checkbox' disabled>")
+        } 
     }
     if(str!=""){ 
     $.post('{% url "ajax_get_process" %}', {"id": str.slice(0,-1)}, function(data) {
        for (var i = 0; i < data.length; i++) {
-           $("#"+data[i].id+"process").text(data[i].progress)
+           $("#"+data[i].id+"loading").empty().append("<img src='/static/img/loading.gif' style='width:30px;'>")           
+           $("#"+data[i].id+"process").text(data[i].progress+"%")
            $("#"+data[i].id+"gen_log").text(data[i].log)
        }
     });
@@ -208,7 +211,7 @@ $(function() {
             $.post('{% url "delete_apply" %}', dict, function(data) {
                 alert("删除成功");
                 setTimeout(function(e) {
-                    $("#" + id + "tr").remove()
+                    location.href = '{% url "VM_list" %}'
                 }, 200);
             });
         }
@@ -340,20 +343,10 @@ $(function() {
                 "id": str.slice(0,-1)
             },
             success: function(data) {
-                alert(data)
                 $(".gen-btn").text('正在生成资源');
-                var count = 0;
-                setInterval(function() {
-                    $(".gen-btn").append('<span>.</span>');
-                    count += 1;
-                    if (count == 4) {
-                        $(".gen-btn span").remove();
-                        count = 0;
-                    }
-                }, 200)
             },
             error: function() {
-                alert("ajax 异常");
+                alert("未正确选择！");
             }
         });
     });

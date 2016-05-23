@@ -122,7 +122,7 @@
                                                 <td class="text-center">{{list.loc_storage.name}}</td>
                                                 <td class="text-center" id="{{list.id}}process">{% if list.gen_status == "AP" %} 待生成 {% else %}{{list.gen_progress}}%{% endif %} </td>
                                                 <td class="text-center" id="{{list}}gen_log">{{list.gen_log}}</td>
-                                                <td class="text-center">
+                                                <td class="text-center" id="{{list.id}}loading">
                                                     <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}" {% ifequal list.gen_progress 100 %}
                                                       disabled 
                                                     {% endifequal %}>
