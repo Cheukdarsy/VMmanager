@@ -1,64 +1,46 @@
-    <style type="text/css">
-        .selectpicker {
-            width: 120px;
-            height: 30px;
-        }
-    </style>
-    <script>
-        //vcenter表单验证提交(新增、修改)
-        $(".vc-setting-form").validator({
-            timely: 2,
-            theme: "yellow_right_effect",
-            rules: {
-                domainuser: [/^\w+@\w+\.\w+$/, 'VC管理员用户: user@domain'],
-                portnum: [/^\d{1,5}$/, '端口号不正确'],
-                ipaddress: [/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, 'IP格式不正确']
-            },
-            fields: {
-                "vcip": {rule: "required;ipaddress", ok: ""},
-                "vcport": {rule: "required;portnum", ok: ""},
-                "vcname": {rule: "required;domainuser", ok: ""},
-                "vcpw": {rule: "required", ok: ""},
-                "vcpw-conf": {rule: "required;match[vcpw]", ok: ""}
-            },
-            valid: function (form) {
-                var vcform = $(form).serializeArray();
-                var vcurl, succ_msg;
-                //添加VC
-                if ($(form).hasClass("vc-add")) {
-                    vcurl = '{% url "ajax_add_vc" %}';
-                    succ_msg = "添加成功"
-                }
-                //修改VC
-                else if ($(form).hasClass("vc-modify")) {
-                    vcurl = '{% url "ajax_modify_vc" %}';
-                    succ_msg = "修改成功"
-                }
-                $.post(vcurl, vcform, function (data, textStatus) {
-                    if (textStatus == "success") {
-                        data.status == 'success' ? alert(succ_msg) : alert(data.errmsg);
-                        setTimeout(function (e) {
-                            location.href = '{% url "set_vm" %}'
-                        }, 200);
-                    } else {
-                        alert("未知错误")
-                    }
-                }, 'json');
+<style type="text/css">
+    .selectpicker {
+        width: 120px;
+        height: 30px;
+    }
+</style>
+<script>
+    //vcenter表单验证提交(新增、修改)
+    $(".vc-setting-form").validator({
+        timely: 2,
+        theme: "yellow_right_effect",
+        rules: {
+            domainuser: [/^\w+@\w+\.\w+$/, 'VC管理员用户: user@domain'],
+            portnum: [/^\d{1,5}$/, '端口号不正确'],
+            ipaddress: [/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, 'IP格式不正确']
+        },
+        fields: {
+            "vcip": {rule: "required;ipaddress", ok: ""},
+            "vcport": {rule: "required;portnum", ok: ""},
+            "vcname": {rule: "required;domainuser", ok: ""},
+            "vcpw": {rule: "required", ok: ""},
+            "vcpw-conf": {rule: "required;match[vcpw]", ok: ""}
+        },
+        valid: function (form) {
+            var vcform = $(form).serializeArray();
+            var vcurl, succ_msg;
+            //添加VC
+            if ($(form).hasClass("vc-add")) {
+                $("#vc-add-waiting").prop('style', '');
+                vcurl = '{% url "ajax_add_vc" %}';
+                succ_msg = "添加成功"
             }
-        });
-        $(".vc-sync-btn").click(function (event) {
-            var $vc_id = $(this).parent("td").siblings('.vc-id').text();
-            var $sync_asset = $(this).siblings('.sync_asset').prop("checked");
-            var $sync_vm = $(this).siblings('.sync_vm').prop("checked");
-            var $sync_related = $(this).siblings('.sync_related').prop("checked");
-            $.post('{% url "ajax_sync_vc" %}', {
-                "id": $vc_id,
-                "sync_asset": $sync_asset,
-                "sync_vm": $sync_vm,
-                "sync_related": $sync_related
-            }, function (data, textStatus) {
+            //修改VC
+            else if ($(form).hasClass("vc-modify")) {
+                $("#vc-modify-waiting").prop('style', '');
+                vcurl = '{% url "ajax_modify_vc" %}';
+                succ_msg = "修改成功"
+            }
+            $.post(vcurl, vcform, function (data, textStatus) {
+                $("#vc-add-waiting").prop('style', 'display:none');
+                $("#vc-modify-waiting").prop('style', 'display:none');
                 if (textStatus == "success") {
-                    data.status == 'success' ? alert("成功触发同步") : alert(data.errmsg);
+                    data.status == 'success' ? alert(succ_msg) : alert(data.errmsg);
                     setTimeout(function (e) {
                         location.href = '{% url "set_vm" %}'
                     }, 200);
@@ -66,243 +48,265 @@
                     alert("未知错误")
                 }
             }, 'json');
+        }
+    });
+    $(".vc-sync-btn").click(function (event) {
+        var $vc_id = $(this).parent("td").siblings('.vc-id').text();
+        var $sync_asset = $(this).siblings('.sync_asset').prop("checked");
+        var $sync_vm = $(this).siblings('.sync_vm').prop("checked");
+        var $sync_related = $(this).siblings('.sync_related').prop("checked");
+        $.post('{% url "ajax_sync_vc" %}', {
+            "id": $vc_id,
+            "sync_asset": $sync_asset,
+            "sync_vm": $sync_vm,
+            "sync_related": $sync_related
+        }, function (data, textStatus) {
+            if (textStatus == "success") {
+                data.status == 'success' ? alert("成功触发同步") : alert(data.errmsg);
+                setTimeout(function (e) {
+                    location.href = '{% url "set_vm" %}'
+                }, 200);
+            } else {
+                alert("未知错误")
+            }
+        }, 'json');
+    });
+    $(".vc-del-btn").click(function (event) {
+        var $vc_id = $(this).parent("td").siblings('.vc-id').text();
+        var $vc_ip = $(this).parent("td").siblings('.vc-ip').text();
+        var cfm_msg = "将删除VCenter: " + $vc_ip + ",请确认.";
+        var succ_msg = "级联删除VCenter: " + $vc_ip + " 成功!.";
+        if (confirm(cfm_msg)) {
+            $.post('{% url "ajax_delete_vc" %}', {
+                "id": $vc_id
+            }, function (data, textStatus) {
+                if (textStatus == "success") {
+                    data.status == 'success' ? alert(succ_msg) : alert(data.errmsg);
+                    setTimeout(function (e) {
+                        location.href = '{% url "set_vm" %}'
+                    }, 200);
+                } else {
+                    alert("未知错误")
+                }
+            }, 'json');
+        }
+    });
+
+    //模板参数
+    $("#add-temp").click(function (event) {
+        $.post('{% url "get_templates" %}', {}, function (data, textStatus) {
+            if (textStatus == "success") {
+                var template_option = "";
+                for (var count = 0; count < data.length; count++) {
+                    template_option += "<option value='" + data[count].vmid + "'>" + data[count].vmname + "</option>"
+                }
+                $("#template").append(template_option)
+            }
         });
-        $(".vc-del-btn").click(function (event) {
-            var $vc_id = $(this).parent("td").siblings('.vc-id').text();
-            var $vc_ip = $(this).parent("td").siblings('.vc-ip').text();
-            var cfm_msg = "将删除VCenter: " + $vc_ip + ",请确认.";
-            var succ_msg = "级联删除VCenter: " + $vc_ip + " 成功!.";
-            if (confirm(cfm_msg)) {
-                $.post('{% url "ajax_delete_vc" %}', {
-                    "id": $vc_id
-                }, function (data, textStatus) {
-                    if (textStatus == "success") {
-                        data.status == 'success' ? alert(succ_msg) : alert(data.errmsg);
-                        setTimeout(function (e) {
-                            location.href = '{% url "set_vm" %}'
-                        }, 200);
+        $.post('{% url "get_sheetfield" %}', {}, function (data, textStatus) {
+            var os_option = '';
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].os_type) {
+                    os_option += "<option>" + data[i].os_type + "</option>"
+                }
+            }
+            $("#tem-os-type").append(os_option)
+        });
+    });
+
+    $("#add-template-btn").click(function (event) {
+        $add_template_form = $("#add-template-form").serializeArray();
+        $.post('{% url "ajax_add_template" %}', $add_template_form, function (data, textStatus) {
+            if (textStatus == "success") {
+                alert("添加成功");
+                setTimeout(function () {
+                    location.href = '{% url "set_vm" %}'
+                }, 200)
+            }
+        });
+    });
+
+    $(".template-del-btn").click(function (event) {
+        var tem_id = $(this).attr("name");
+        if (confirm("确定删除此模板?")) {
+            $.post('{% url "ajax_delete_template" %}', {'id': tem_id}, function (data, textStatus) {
+                if (textStatus == "success") {
+                    location.href = '{% url "set_vm" %}'
+                }
+            });
+        }
+
+    });
+
+    //网络参数
+    $("#network").change(function (event) {
+        $("#net_id").val($(this).find("option:selected").attr('name'));
+        var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254";
+        $("#netgate").val(netgate);
+    });
+    $("#initialip-start-btn").click(function (event) {
+        $("#ippool-init-waiting").prop('style', '');
+        $ippool_initial_form = $("#ippool-initial-form").serializeArray();
+        $.post('{% url "ajax_initial_network" %}', $ippool_initial_form, function (data, textStatus) {
+            $("#ippool-init-waiting").prop('style', 'display:none');
+            if (textStatus == "success") {
+                data.status == 'success' ? alert("成功生成" + data.result + "个IP地址！") : alert(data.errmsg);
+                setTimeout(function () {
+                    location.href = '{% url "set_vm" %}'
+                }, 200)
+            } else {
+                alert("未知错误")
+            }
+        }, 'json');
+    });
+
+    $("#r-network").change(function (event) {
+        var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254";
+        $("#ipaddress").val(netgate).focus();
+        $("#netgate").attr('placeholder', netgate);
+        $("#gw_addr").val(netgate)
+    });
+    $("#add-ip-btn").click(function (event) {
+        $ip_add_form = $("#ip-add-form").serializeArray();
+        alert(JSON.stringify($ip_add_form));
+        $.post('{% url "ajax_add_ip" %}', $ip_add_form, function (data, textStatus) {
+            if (textStatus == "success") {
+                location.href = '{% url "set_vm" %}'
+            }
+        });
+    });
+
+
+    //环境参数
+    var $env_table = $("#env-table");
+    $('#add-env').click(function (event) {
+        $("#add-env").attr('disabled', 'true');
+        html = "<tr id='tr-newenv'><td class='text-center' id='env-option-new'><input type='text' placeholder='标识符' id='inner-option-new' style='width:50px'></td><td class='text-center' id='env-td-new'><input type='text' placeholder='输入环境名称' id='inner-input-new'></td><td class='text-center' id='env-btn-td-new'><button class='btn btn-xs btn-success' id='add-env-new'>确认添加</button></td></tr>";
+        $env_table.append(html);
+        $inner_option = $("#inner-option-new");
+        $inner_display = $("#inner-input-new");
+        $inner_option.focus();
+        $("#add-env-new").click(function (event) {
+            if ($inner_option.val() && $inner_display.val()) {
+                //ajax提交
+                var data = {
+                    "env_option": $inner_option.val(),
+                    "env_type": $inner_display.val()
+                };
+                $.post('{% url "ajax_add_env" %}', data, function (data, textStatus) {
+                    if (textStatus == "success" && data.status == 'success') {
+                        env_id_new = data.result;
+                        $("#add-env").removeAttr('disabled');
+                        $("#tr-newenv").remove();
+                        html = "<tr id='tr" + env_id_new + "'><td class='text-center' id='env-option-" + env_id_new + "'>" + $inner_option.val() + "</td><td class='text-center' id='env-td-" + env_id_new + "'>" + $inner_display.val() + "</td><td class='text-center'><button class='btn btn-xs btn-success' name='" + env_id_new + "'>修改</button><button class='btn btn-xs btn-danger' name='" + env_id_new + "'>删除</button></td></tr>";
+                        $env_table.append(html);
                     } else {
                         alert("未知错误")
                     }
                 }, 'json');
             }
         });
+    });
 
-        //模板参数
-        $("#add-temp").click(function (event) {
-            $.post('{% url "get_templates" %}', {}, function (data, textStatus) {
-                if (textStatus == "success") {
-                    var template_option = "";
-                    for (var count = 0; count < data.length; count++) {
-                        template_option += "<option value='" + data[count].vmid + "'>" + data[count].vmname + "</option>"
+    $env_table.find('tr').each(function (index, el) {
+        $(el).find(':button.btn-success').click(function (event) {
+            var env_id = $(this).attr('name');
+            var $env_display = $("#env-td-" + env_id);
+            $env_display.html("<input type='text' value='" + $env_display.text() + "' id='inner-input" + env_id + "'>");
+            var $env_display_change = $("#inner-input" + env_id);
+            $env_display_change.focus();
+            $env_display_change.blur(function (event) {
+                $.post('{% url "ajax_update_env" %}', {
+                    "id": env_id,
+                    "env_type": $env_display_change.val()
+                }, function (data, textStatus) {
+                    if (textStatus == "success" && data.status == 'success') {
+                        $env_display.html(data.result)
+                    } else {
+                        alert("未知错误")
                     }
-                    $("#template").append(template_option)
-                }
-            });
-            $.post('{% url "get_sheetfield" %}', {}, function (data, textStatus) {
-                var os_option = '';
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].os_type) {
-                        os_option += "<option>" + data[i].os_type + "</option>"
-                    }
-                }
-                $("#tem-os-type").append(os_option)
-            });
-        });
-
-        $("#add-template-btn").click(function (event) {
-            $add_template_form = $("#add-template-form").serializeArray();
-            $.post('{% url "ajax_add_template" %}', $add_template_form, function (data, textStatus) {
-                if (textStatus == "success") {
-                    alert("添加成功");
-                    setTimeout(function () {
-                        location.href = '{% url "set_vm" %}'
-                    }, 200)
-                }
+                }, 'json');
             });
         });
-
-        $(".template-del-btn").click(function (event) {
-            var tem_id = $(this).attr("name");
-            if (confirm("确定删除此模板?")) {
-                $.post('{% url "ajax_delete_template" %}', {'id': tem_id}, function (data, textStatus) {
-                    if (textStatus == "success") {
-                        location.href = '{% url "set_vm" %}'
+        $(el).find(':button.btn-danger').click(function (event) {
+            var env_id = $(this).attr('name');
+            if (confirm("删除环境类型将导致无法关联，确定删除？")) {
+                $.post('{% url "ajax_delete_env" %}', {
+                    "id": env_id
+                }, function (data, textStatus) {
+                    if (textStatus == "success" && data.status == 'success') {
+                        $(el).remove()
+                    } else {
+                        alert("未知错误")
                     }
-                });
+                }, 'json');
             }
+        })
+    });
 
+    $('#add-os').click(function (event) {
+        $("#add-os").attr('disabled', 'true');
+        html = "<tr id='tr-newos'><td class='text-center' id='type-option-new'></td><td class='text-center' id='type-display-new'><select id='os-type-input'></select></td><td class='text-center' style='display:none' id='ver-option-new'></td><td class='text-center' id='ver-display-new'><select id='os-version-input'></select></td><td class='text-center'><button class='btn btn-xs btn-success' id='add-os-new'>确认添加</button></td></tr>";
+        $("#os-table").append(html);
+        $.post('{% url "ajax_get_os_types" %}', {}, function (data, textStatus) {
+            if (textStatus == "success") {
+                var get_os_types = "<option></option>";
+                for (var i = 0; i < data.length; i++) {
+                    get_os_types += "<option value='" + data[i].option + "'>" + data[i].option_display + "</option>"
+                }
+                $("#os-type-input").html(get_os_types)
+            }
         });
-
-        //网络参数
-        $("#network").change(function (event) {
-            $("#net_id").val($(this).find("option:selected").attr('name'));
-            var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254";
-            $("#netgate").val(netgate);
+        $.post('{% url "ajax_get_os_version" %}', {}, function (data, textStatus) {
+            if (textStatus == "success") {
+                var get_os_versions = "<option></option>";
+                for (var i = 0; i < data.length; i++) {
+                    get_os_versions += "<option value='" + data[i].guestos_shortname + "'>" + data[i].guestos_fullname + "</option>"
+                }
+                $("#os-version-input").html(get_os_versions)
+            }
         });
-        $("#initialip-start-btn").click(function (event) {
-            $("#ippool-init-waiting").prop('style', '');
-            $ippool_initial_form = $("#ippool-initial-form").serializeArray();
-            $.post('{% url "ajax_initial_network" %}', $ippool_initial_form, function (data, textStatus) {
-                $("#ippool-init-waiting").prop('style', 'display:none');
-                if (textStatus == "success") {
-                    data.status == 'success' ? alert("成功生成" + data.result + "个IP地址！") : alert(data.errmsg);
-                    setTimeout(function () {
-                        location.href = '{% url "set_vm" %}'
-                    }, 200)
+        $("#os-type-input").focus();
+        $("#os-type-input").change(function (event) {
+            $("#type-option-new").html($(this).val())
+        });
+        $("#os-version-input").change(function (event) {
+            $("#ver-option-new").html($(this).val())
+        });
+        $("#add-os-new").click(function (event) {
+            //ajax提交
+            $os_version_form = {
+                "os_type": $("#type-option-new").html(),
+                "version": $("#ver-option-new").html(),
+                "version_display": $("#os-version-input").find("option:selected").text()
+            };
+            $.post('{% url "add_os_version" %}', $os_version_form, function (data, textStatus) {
+                if (textStatus == "success" && data.status == 'success') {
+                    os_id_new = data.result;
+                    $("#add-os").removeAttr('disabled');
+                    html = "<tr><td class='text-center'>" + $("#type-option-new").html() +
+                            "</td><td class='text-center'>" + $("#os-type-input").find("option:selected").text() +
+                            "</td><td class='text-center'>" + $("#os-version-input").find("option:selected").text() +
+                            "</td><td class='text-center'><button class='btn btn-xs btn-danger os-del-btn' name='" +
+                            os_id_new + "'>删除</button></td></tr>";
+                    $("#tr-newos").remove();
+                    $("#os-table").append(html);
                 } else {
                     alert("未知错误")
                 }
             }, 'json');
         });
+    });
+    $(".os-del-btn").click(function (event) {
+        var os_id = $(this).attr('name');
 
-        $("#r-network").change(function (event) {
-            var netgate = $(this).val().substring(0, $(this).val().lastIndexOf('.0')) + ".254";
-            $("#ipaddress").val(netgate).focus();
-            $("#netgate").attr('placeholder', netgate);
-            $("#gw_addr").val(netgate)
-        });
-        $("#add-ip-btn").click(function (event) {
-            $ip_add_form = $("#ip-add-form").serializeArray();
-            alert(JSON.stringify($ip_add_form));
-            $.post('{% url "ajax_add_ip" %}', $ip_add_form, function (data, textStatus) {
+        if (confirm("确认删除此类型？")) {
+            $.post('{% url "del_os_version" %}', {"id": os_id}, function (data, textStatus) {
                 if (textStatus == "success") {
                     location.href = '{% url "set_vm" %}'
                 }
             });
-        });
+        }
 
-
-        //环境参数
-        var $env_table = $("#env-table");
-        $('#add-env').click(function (event) {
-            $("#add-env").attr('disabled', 'true');
-            html = "<tr id='tr-newenv'><td class='text-center' id='env-option-new'><input type='text' placeholder='标识符' id='inner-option-new' style='width:50px'></td><td class='text-center' id='env-td-new'><input type='text' placeholder='输入环境名称' id='inner-input-new'></td><td class='text-center' id='env-btn-td-new'><button class='btn btn-xs btn-success' id='add-env-new'>确认添加</button></td></tr>";
-            $env_table.append(html);
-            $inner_option = $("#inner-option-new");
-            $inner_display = $("#inner-input-new");
-            $inner_option.focus();
-            $("#add-env-new").click(function (event) {
-                if ($inner_option.val() && $inner_display.val()) {
-                    //ajax提交
-                    var data = {
-                        "env_option": $inner_option.val(),
-                        "env_type": $inner_display.val()
-                    };
-                    $.post('{% url "ajax_add_env" %}', data, function (data, textStatus) {
-                        if (textStatus == "success" && data.status == 'success') {
-                            env_id_new = data.result;
-                            $("#add-env").removeAttr('disabled');
-                            $("#tr-newenv").remove();
-                            html = "<tr id='tr" + env_id_new + "'><td class='text-center' id='env-option-" + env_id_new + "'>" + $inner_option.val() + "</td><td class='text-center' id='env-td-" + env_id_new + "'>" + $inner_display.val() + "</td><td class='text-center'><button class='btn btn-xs btn-success' name='" + env_id_new + "'>修改</button><button class='btn btn-xs btn-danger' name='" + env_id_new + "'>删除</button></td></tr>";
-                            $env_table.append(html);
-                        } else {
-                            alert("未知错误")
-                        }
-                    }, 'json');
-                }
-            });
-        });
-
-        $env_table.find('tr').each(function (index, el) {
-            $(el).find(':button.btn-success').click(function (event) {
-                var env_id = $(this).attr('name');
-                var $env_display = $("#env-td-" + env_id);
-                $env_display.html("<input type='text' value='" + $env_display.text() + "' id='inner-input" + env_id + "'>");
-                var $env_display_change = $("#inner-input" + env_id);
-                $env_display_change.focus();
-                $env_display_change.blur(function (event) {
-                    $.post('{% url "ajax_update_env" %}', {
-                        "id": env_id,
-                        "env_type": $env_display_change.val()
-                    }, function (data, textStatus) {
-                        if (textStatus == "success" && data.status == 'success') {
-                            $env_display.html(data.result)
-                        } else {
-                            alert("未知错误")
-                        }
-                    }, 'json');
-                });
-            });
-            $(el).find(':button.btn-danger').click(function (event) {
-                var env_id = $(this).attr('name');
-                if (confirm("删除环境类型将导致无法关联，确定删除？")) {
-                    $.post('{% url "ajax_delete_env" %}', {
-                        "id": env_id
-                    }, function (data, textStatus) {
-                        if (textStatus == "success" && data.status == 'success') {
-                            $(el).remove()
-                        } else {
-                            alert("未知错误")
-                        }
-                    }, 'json');
-                }
-            })
-        });
-
-        $('#add-os').click(function (event) {
-            $("#add-os").attr('disabled', 'true');
-            html = "<tr id='tr-newos'><td class='text-center' id='type-option-new'></td><td class='text-center' id='type-display-new'><select id='os-type-input'></select></td><td class='text-center' style='display:none' id='ver-option-new'></td><td class='text-center' id='ver-display-new'><select id='os-version-input'></select></td><td class='text-center'><button class='btn btn-xs btn-success' id='add-os-new'>确认添加</button></td></tr>";
-            $("#os-table").append(html);
-            $.post('{% url "ajax_get_os_types" %}', {}, function (data, textStatus) {
-                if (textStatus == "success") {
-                    var get_os_types = "<option></option>";
-                    for (var i = 0; i < data.length; i++) {
-                        get_os_types += "<option value='" + data[i].option + "'>" + data[i].option_display + "</option>"
-                    }
-                    $("#os-type-input").html(get_os_types)
-                }
-            });
-            $.post('{% url "ajax_get_os_version" %}', {}, function (data, textStatus) {
-                if (textStatus == "success") {
-                    var get_os_versions = "<option></option>";
-                    for (var i = 0; i < data.length; i++) {
-                        get_os_versions += "<option value='" + data[i].guestos_shortname + "'>" + data[i].guestos_fullname + "</option>"
-                    }
-                    $("#os-version-input").html(get_os_versions)
-                }
-            });
-            $("#os-type-input").focus();
-            $("#os-type-input").change(function (event) {
-                $("#type-option-new").html($(this).val())
-            });
-            $("#os-version-input").change(function (event) {
-                $("#ver-option-new").html($(this).val())
-            });
-            $("#add-os-new").click(function (event) {
-                //ajax提交
-                $os_version_form = {
-                    "os_type": $("#type-option-new").html(),
-                    "version": $("#ver-option-new").html(),
-                    "version_display": $("#os-version-input").find("option:selected").text()
-                };
-                $.post('{% url "add_os_version" %}', $os_version_form, function (data, textStatus) {
-                    if (textStatus == "success" && data.status == 'success') {
-                        os_id_new = data.result;
-                        $("#add-os").removeAttr('disabled');
-                        html = "<tr><td class='text-center'>" + $("#type-option-new").html() +
-                                "</td><td class='text-center'>" + $("#os-type-input").find("option:selected").text() +
-                                "</td><td class='text-center'>" + $("#os-version-input").find("option:selected").text() +
-                                "</td><td class='text-center'><button class='btn btn-xs btn-danger os-del-btn' name='" +
-                                os_id_new + "'>删除</button></td></tr>";
-                        $("#tr-newos").remove();
-                        $("#os-table").append(html);
-                    } else {
-                        alert("未知错误")
-                    }
-                }, 'json');
-            });
-        });
-        $(".os-del-btn").click(function (event) {
-            var os_id = $(this).attr('name');
-
-            if (confirm("确认删除此类型？")) {
-                $.post('{% url "del_os_version" %}', {"id": os_id}, function (data, textStatus) {
-                    if (textStatus == "success") {
-                        location.href = '{% url "set_vm" %}'
-                    }
-                });
-            }
-
-        });
-    </script>
+    });
+</script>
