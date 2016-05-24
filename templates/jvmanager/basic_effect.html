@@ -26,29 +26,75 @@
 </style>
 <script>
 $(function() {
-    setInterval(function(e){
-    var str = ""
-    var num = $("#agree-table tr").length;
-    for (var i = 0; i < num; i++) {
-        var id = $("#agree-table tr").eq(i).children('td:nth-child(1)')
-        var $pro = $("#agree-table tr").eq(i).children('td:nth-child(6)')
-        if($.trim($pro.text())!=="待生成"&&$.trim($pro.text())!=="100%"){
-            str += id.text()+ ","
-        }else{
-            $("#"+id.text()+"loading").empty().append("<input type='checkbox' name='checkbox' disabled>")
-        } 
-    }
-    if(str!=""){ 
-    $.post('{% url "ajax_get_process" %}', {"id": str.slice(0,-1)}, function(data) {
-       for (var i = 0; i < data.length; i++) {
-           $("#"+data[i].id+"loading").empty().append("<img src='/static/img/loading.gif' style='width:30px;'>")           
-           $("#"+data[i].id+"process").text(data[i].progress+"%")
-           $("#"+data[i].id+"gen_log").text(data[i].log)
-       }
-    });
-    }
-    },5000)
+    setInterval(function(e) {
+        var str = ""
+        var num = $("#agree-table tr").length;
+        for (var i = 0; i < num; i++) {
+            var id = $("#agree-table tr").eq(i).children('td:nth-child(1)')
+            var $pro = $("#agree-table tr").eq(i).children('td:nth-child(6)')
+            if ($.trim($pro.text()) !== "待生成" && $.trim($pro.text()) !== "100%") {
+                str += id.text() + ","
+            } else {
+                $("#" + id.text() + "loading").empty().append("<input type='checkbox' name='checkbox' disabled>")
+            }
+        }
+        if (str != "") {
+            $.post('{% url "ajax_get_process" %}', {
+                "id": str.slice(0, -1)
+            }, function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    $("#" + data[i].id + "loading").empty().append("<img src='/static/img/loading.gif' style='width:30px;'>")
+                    $("#" + data[i].id + "process").text(data[i].progress + "%")
+                    $("#" + data[i].id + "gen_log").text(data[i].log)
+                }
+            });
+        }
+    }, 5000)
     var request_id, id;
+
+    function get_env(env_type) {
+        var env
+        function ajaxGetEnv() {
+            var result;
+            $.ajax({
+                dataType: 'json',
+                url: '{% url "get_env" %}',
+                async: false,
+                success: function(data) {
+                    for (var e = 0; e < data.length; e++) {
+                        if (data[e][env_type]) {
+                            result = data[e][env_type]
+                        }
+                    }
+                }
+            });
+            return result;
+        }
+        env = ajaxGetEnv()
+        return env
+    }
+
+    function get_os(os_type) {
+        var os
+        function ajaxGetOS() {
+            var result;
+            $.ajax({
+                dataType: 'json',
+                url: '{% url "ajax_get_os_types" %}',
+                async: false,
+                success: function(data) {
+                    for (var e = 0; e < data.length; e++) {
+                        if (data[e].option==os_type) {
+                            result = data[e].option_display
+                        }
+                    }
+                }
+            });
+            return result;
+        }
+        os = ajaxGetOS()
+        return os
+    }
     $(".modify-btn").click(function(event) {
         request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
         $.post('{% url "show_approv_machinedetail" %}', {
@@ -58,25 +104,10 @@ $(function() {
             //数据获取
             var env = detail_list[0].fields.appro_env_type;
             var os = detail_list[0].fields.appro_os_type;
-            var env_text = "", os_text = "";
-            if ("DEVP" === env) {
-                env_text = "开发环境"
-            } else if ("TEST" === env) {
-                env_text = "测试环境"
-            } else if ("DRCV" === env) {
-                env_text = "灾备环境"
-            } else {
-                env_text = null
-            }
+            var env_text = get_env(env)
+            var os_text = get_os(os)
             $(".dropdownMenu1").text(env_text).append('&nbsp;<span class="caret"></span>');
             $("#" + request_id + "modal input[value='" + detail_list[0].fields.appro_fun_type + "']").prop("checked", true).parent("label").addClass('active').siblings('label').removeClass('active');
-            if ("WIN" === os) {
-                os_text = "WINDOWS"
-            } else if ("LUX" === os) {
-                os_text = "LINUX"
-            } else {
-                os_text = null
-            }
             $(".dropdownMenu2").text(os_text).append('&nbsp;<span class="caret"></span>');
             $("#" + request_id + "modal ." + detail_list[0].fields.appro_cpu + "C").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
             $("#" + request_id + "modal ." + detail_list[0].fields.appro_memory_gb + "G").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
@@ -118,72 +149,60 @@ $(function() {
                 var env = detail_list[0].fields.appro_env_type;
                 var os = detail_list[0].fields.appro_os_type;
                 var fun = detail_list[0].fields.appro_fun_type;
-                 var env_text = "",os_text = "",fun_text="";
-            if("DEVP"===env){
-                env_text = "开发环境"
-            } else if("TEST"===env) {
-                env_text = "测试环境"
-            } else if("DRCV"===env) {
-                env_text = "灾备环境"
-            } else{ env_text = null }
-            if("WIN"===os){
-                os_text = "WINDOWS"
-            } else if("LUX"===os) {
-                os_text = "LINUX"
-            } else {
-                os_text = null
-            }
-            if("normal"===fun){
-                fun_text = "普通型"
-            } else if("was"===fun) {
-                fun_text = "内存型"
-            } else {
-                fun_text = "I/O高密集型"
-            }
-                var show_list = [env_text,fun_text , detail_list[0].fields.appro_cpu, detail_list[0].fields.appro_memory_gb, detail_list[0].fields.appro_datadisk_gb, detail_list[0].fields.appro_vm_num, os_text];
+                var env_text = get_env(env)
+                var os_text = get_os(os)
+                var fun_text = "";
+                if ("normal" === fun) {
+                    fun_text = "普通型"
+                } else if ("was" === fun) {
+                    fun_text = "内存型"
+                } else {
+                    fun_text = "I/O高密集型"
+                }
+                var show_list = [env_text, fun_text, detail_list[0].fields.appro_cpu, detail_list[0].fields.appro_memory_gb, detail_list[0].fields.appro_datadisk_gb, detail_list[0].fields.appro_vm_num, os_text];
                 for (var i = 0; i < show_list.length; i++) {
                     $("#" + id + "AgreeForm em").eq(i).text(show_list[i])
                 }
                 $.ajax({
-                    url: '{% url "ajax_select_IP" %}',
-                    type: 'post',
-                    dataType: 'json',
-                    data: {
-                        "id": parseInt(id)
-                    },
-                    success: function(data) {
-                        for (var vm_num = 0; vm_num < data.length; vm_num++) {
-                            v_id = vm_num + 1
-                            $("#" + id + v_id + "ipaddress").text(data[vm_num].ipaddress)
-                            $("#" + id + v_id + "machinename").text(data[vm_num].vmname)
-                        }
+                        url: '{% url "ajax_select_IP" %}',
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            "id": parseInt(id)
+                        },
+                        success: function(data) {
+                            for (var vm_num = 0; vm_num < data.length; vm_num++) {
+                                v_id = vm_num + 1
+                                $("#" + id + v_id + "ipaddress").text(data[vm_num].ipaddress)
+                                $("#" + id + v_id + "machinename").text(data[vm_num].vmname)
+                            }
 
-                    },
-                    error: function() {
-                        alert("ajax 异常");
-                    }
-                })
-/*                $(".template").empty().append("<option value=''>请选择</option>");
-                $.ajax({
-                    url: '{% url "ajax_select_template" %}',
-                    type: 'post',
-                    dataType: 'json',
-                    data: {
-                        "id": parseInt(id)
-                    },
-                    success: function(data) {
-                        var select = ""
-                        for (var i = 0; i < data.length; i++) {
-                            select += "<option value='" + data[i].template_id + "'>" + data[i].template_name + "</option>"
+                        },
+                        error: function() {
+                            alert("ajax 异常");
                         }
-                        for (var vm_num = 0; vm_num <= total_num; vm_num++) {
-                            $("#" + id + vm_num + "template").append(select)
-                        }
-                    },
-                    error: function() {
-                        alert("ajax 异常");
-                    }
-                })*/
+                    })
+                    /*                $(".template").empty().append("<option value=''>请选择</option>");
+                                    $.ajax({
+                                        url: '{% url "ajax_select_template" %}',
+                                        type: 'post',
+                                        dataType: 'json',
+                                        data: {
+                                            "id": parseInt(id)
+                                        },
+                                        success: function(data) {
+                                            var select = ""
+                                            for (var i = 0; i < data.length; i++) {
+                                                select += "<option value='" + data[i].template_id + "'>" + data[i].template_name + "</option>"
+                                            }
+                                            for (var vm_num = 0; vm_num <= total_num; vm_num++) {
+                                                $("#" + id + vm_num + "template").append(select)
+                                            }
+                                        },
+                                        error: function() {
+                                            alert("ajax 异常");
+                                        }
+                                    })*/
             } else {
                 alert("ajax出错")
             }
@@ -208,7 +227,7 @@ $(function() {
     $(".delete-btn").click(function(event) {
         id = $(this).parents(".detail-table").children('td:first-child').attr("id");
         application_id = $(this).parents(".detail-table").children('td').eq(1).attr('id');
-   });
+    });
     $(".delete-cof-btn").click(function(event) {
         var reason = $("#return-reason").val()
         if (reason) {
@@ -219,12 +238,14 @@ $(function() {
                 "reason": reason,
             }
             $.post('{% url "delete_apply" %}', dict, function(data) {
-                alert("删除成功");
+                alert("回退成功");
                 setTimeout(function(e) {
                     location.href = '{% url "VM_list" %}'
                 }, 100);
             });
-        }else{$("#return-reason").attr('placeholder', '请输入原因').focus();}
+        } else {
+            $("#return-reason").attr('placeholder', '请输入原因').focus();
+        }
     });
     $(".modify-save-btn").click(function(event) {
         var saving_fun_type = $("#" + request_id + "modal input[name='fun_type']:checked").val();
@@ -350,7 +371,7 @@ $(function() {
             type: 'post',
             dataType: 'json',
             data: {
-                "id": str.slice(0,-1)
+                "id": str.slice(0, -1)
             },
             success: function(data) {
                 $(".gen-btn").text('生成资源');
