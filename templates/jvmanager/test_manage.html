@@ -46,7 +46,7 @@
                                             <tr class="detail-table" id="{{ key.application_id }}tr">
                                                 <td class="text-center" id="{{ key.pk }}" style="display:none">{{ key.pk }}</td>
                                                 <td class="text-center" id="{{ key.application_id }}">{{ key.application_id }}</td>
-                                                <td class="text-center">{{ key.application.user.username}}</td>
+                                                <td class="text-center">{{ key.application.user.name}}</td>
                                                 <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
                                                 <td class="text-center">{% ifequal key.appro_env_type "DEVP" %}
                                                     开发环境 {% endifequal %} {% ifequal key.appro_env_type "TEST" %}
