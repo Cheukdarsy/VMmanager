@@ -153,13 +153,17 @@ $(function() {
         });
     });
     $(".modify-save-btn").click(function(event) {
-        var modify_form = $("#" + request_id + "modalform").serializeArray()
-        $.post('{% url "modify_saving_detail" %}', modify_form, function(data) {
+        var reason = $("#"+request_id+"apply-reason").val()
+        if(reason){
+            var modify_form = $("#" + request_id + "modalform").serializeArray()
+            $.post('{% url "modify_saving_detail" %}', modify_form, function(data) {
             alert("保存成功")
             setTimeout(function(e) {
                 location.href = '{% url "saving_resource_view" %}'
             }, 200);
         });
+        }else{$("#"+request_id+"apply-reason").attr('placeholder', '请输入原因').focus();}
+        
     });
     $(".saving-submit-btn").click(function(event) {
         id = $(this).parents(".detail-table").children('td:first-child').attr("id");

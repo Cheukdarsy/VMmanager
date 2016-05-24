@@ -15,6 +15,8 @@ def VM_list(request):
     apply_confirm_list = Approvel.objects.filter(
         appro_status='AP').order_by('-appro_date')
     vmorder = VMOrder.objects.all()
+    os_version = SheetField.get_options(field='os_version',sheet=None)
+    env_type = SheetField.get_options(field='env_type')
     applylist, p, applys, page_range, current_page, show_first, show_end = pages(applylist, request)
 
     return my_render('jvmanager/test_manage.html', locals(), request)
@@ -157,7 +159,7 @@ def delete_apply(request):
         reason = request.POST.get("reason", "")
         try:
             Approvel.objects.filter(id=id).update(appro_status='RB')
-            Application.objects.filter(id=application_id).update(apply_status='RB', apply_reason=reason)
+            Application.objects.filter(id=application_id).update(apply_status='RB', app_name=reason)
         except Exception, e:
             raise e
         else:
@@ -200,7 +202,9 @@ def apply_machine(request):
     """
     username = request.user.username
     user = get_object(User, username=username)
-
+    os_version = SheetField.get_options(field='os_version',sheet=None)
+    env_type = SheetField.get_options(field='env_type')
+    
     if request.method == 'POST':
         env_type = request.POST.get('env_type', '')
         fun_type = request.POST.get('fun_type', '')
@@ -266,6 +270,8 @@ def saving_resource_view(request):
     username = request.user.username
     user=get_object(User,username=username)
     s_apply_list = Application.objects.filter(apply_status="HD").filter(user=user)
+    os_version = SheetField.get_options(field='os_version',sheet=None)
+    env_type = SheetField.get_options(field='env_type')
     s_apply_list, p, s_applys, page_range, current_page, show_first, show_end = pages(
         s_apply_list, request)
     return my_render('jvmanager/savingresource_view.html', locals(), request)

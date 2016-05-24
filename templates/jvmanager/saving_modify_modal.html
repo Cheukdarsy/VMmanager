@@ -1,3 +1,4 @@
+                            {% load mytags %}
                             <div class="modal fade" id="{{ key.id}}modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                               <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -23,24 +24,16 @@
                                               <div class="dropdown col-sm-9">
                                               <input type="text" name="env_type" class="env_type" style="display:none" value="{{ key.env_type }}">
                                                 <button class="btn  btn-success dropdown-toggle dropdownMenu1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                  {% ifequal key.env_type "DRCV"%} 灾备环境 {% endifequal %} {% ifequal key.env_type "TEST" %} 测试环境 {% endifequal %} {% ifequal key.env_type "DEVP" %} 开发环境 {% endifequal %}
+                                                  {{key.env_type|get_env_type}}
                                                   <span class="caret"></span>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
 
-                                                  <li>
-                                                    <a href="#" name='TEST'>测试环境</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#" name='DEVP'>开发环境</a>
-                                                  </li>
-
-                                                  <li>
-                                                    <a href="#" name='DEVP'>生产环境</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#" name='DRCV'>灾备环境</a>
-                                                  </li>
+                                                  {% for env in env_type %}
+                                               <li>
+                                                <a href="#" name='{{env.option}}'>{{env.option_display}}</a>
+                                            </li>
+                                           {% endfor %}
                                                 </ul>
 
                                               </div>
@@ -126,20 +119,23 @@
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
                                                   <li class="dropdown-header">windows系统</li>
-                                                  <li>
-                                                    <a href="#" name="WIN">WINDOWS 2008 R2</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#" name="WIN">WINDOWS 2003 R2</a>
-                                                  </li>
-                                                  <li role="separator" class="divider"></li>
-                                                  <li class="dropdown-header">linux系统</li>
-                                                  <li>
-                                                    <a href="#" name="LUX">SUSE 11</a>
-                                                  </li>
-                                                  <li>
-                                                    <a href="#" name="LUX">SUSE 10</a>
-                                                  </li>
+                                            {% for os in os_version %}
+                                             
+                                                {% ifequal os.sheet_brand|get_tuple "WIN" %} 
+                                                    <li>
+                                                <a href="#" name='WIN'>{{os.option_display}}</a>
+                                               </li>
+                                                {% endifequal %}
+                                            {% endfor %}
+                                            <li role="separator" class="divider"></li>
+                                                <li class="dropdown-header">linux系统</li>
+                                                {% for os in os_version %}
+                                                {% ifequal os.sheet_brand|get_tuple "LUX" %} 
+                                                    <li>
+                                                <a href="#" name='LUX'>{{os.option_display}}</a>
+                                               </li>
+                                                {% endifequal %}
+                                                {% endfor %}
                                                 </ul>
                                               </div>
                                             </div>
@@ -181,7 +177,7 @@
                                     <label class="col-sm-3 control-label">申请原因:&nbsp;</label>
                                     <div class="col-sm-9">
                                         <ul id="apply_reason" class="list-group">
-                                            <li class='list-group-item'><textarea name='apply_reason' style="width:300px">{{ key.apply_reason }}</textarea></li>
+                                            <li class='list-group-item'><textarea name='apply_reason' style="width:300px" id="{{ key.id }}apply-reason">{{ key.apply_reason }}</textarea></li>
                                         </ul>
                                     </div>
                                 </div>
