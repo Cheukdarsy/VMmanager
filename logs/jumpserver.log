@@ -409,3 +409,4 @@
 2016-05-23 00:08:56,606 - views.py - DEBUG - []
 2016-05-24 00:06:08,225 - views.py - DEBUG - start
 2016-05-24 00:51:27,066 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-24 09:48:23,082 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
