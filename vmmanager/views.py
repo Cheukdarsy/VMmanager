@@ -859,6 +859,17 @@ def del_os_version(request):
         else:
             return JsonResponse({"success": "delete successfull"})
 
-
 def datamanager(request):
-    return my_render('datamanager.html', locals(), request)
+    pass
+
+def get_env(request):
+    result = []
+    try:
+        env_type = list(SheetField.get_options(field='env_type'))
+        for env in env_type:
+            result.append({env.option:env.option_display})
+    except Exception, e:
+        raise e
+    else:
+        logger.debug(result)
+        return JsonResponse(result)
