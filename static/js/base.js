@@ -203,7 +203,7 @@ function select_binding(type,cpu,memory){
 
      select_binding($(".normal-type"),2,4);
      select_binding($(".was-type"),2,8);
-     select_binding($(".database-type"),4,16);
+     select_binding($(".database-type"),4,8);
 
 //全选
 /*$("#selectall").click(function () {//反选  

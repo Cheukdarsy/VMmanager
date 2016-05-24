@@ -8,6 +8,7 @@ from django import template
 from jperm.models import PermPush
 from jumpserver.api import *
 from jperm.perm_api import get_group_user_perm
+from vmmanager.models import *
 
 register = template.Library()
 
@@ -313,3 +314,23 @@ def times(number):
 @register.filter(name="unicode")
 def unicode(str):
     return unicode(str,'utf-8')
+
+
+@register.filter(name="get_tuple")
+def get_tuple(tuple):
+    return tuple[0]
+
+@register.filter(name="get_env_type")
+def get_env_type(env_type):
+    try:
+        env = SheetField.objects.filter(field_name="env_type")
+        e = env.get(option=env_type)
+    except Exception, e:
+        raise e
+    else:
+        return e.option_display
+
+# @register.filter(name="get_os_type")
+# def get_env_type(os_type):
+#     env = SheetField.objects.filter(field_name="env_type").filter(option=env_type)
+#     return str(env.option_display)
