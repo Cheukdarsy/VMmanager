@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5 class="fa fa-coffee">保存资源页面</h5>
@@ -36,7 +36,7 @@
                                     {% for key in s_applys %}
                                     <tr class="detail-table" id="{{key.id}}tr">
                                         <td class="text-center" id="{{ key.id }}">{{ key.id }}</td>
-                                        <td class="text-center">{% ifequal key.env_type "DRCV"%} 灾备环境 {% endifequal %} {% ifequal key.env_type "TEST" %} 测试环境 {% endifequal %} {% ifequal key.env_type "DEVP" %} 开发环境 {% endifequal %}</td>
+                                        <td class="text-center">{{ key.env_type|get_env_type }}</td>
                                         <td class="text-center">{% ifequal key.fun_type "normal" %} 普通类型 {% endifequal %} {% ifequal key.fun_type "database" %} 数据库类型 {% endifequal %} {% ifequal key.fun_type "was" %} WAS类型 {% endifequal %}</td>
                                         <td class="text-center">{% ifequal key.os_type "WIN"%} WINDOWS {% endifequal %} {% ifequal key.os_type "LUX" %} LINUX {% endifequal %}</td>
                                         <td class="text-center">{{ key.cpu}}C</td>
@@ -97,6 +97,49 @@
 <script>
 $(function() {
     var request_id, id;
+        function get_env(env_type) {
+        var env
+        function ajaxGetEnv() {
+            var result;
+            $.ajax({
+                dataType: 'json',
+                url: '{% url "get_env" %}',
+                async: false,
+                success: function(data) {
+                    for (var e = 0; e < data.length; e++) {
+                        if (data[e][env_type]) {
+                            result = data[e][env_type]
+                        }
+                    }
+                }
+            });
+            return result;
+        }
+        env = ajaxGetEnv()
+        return env
+    }
+
+    function get_os(os_type) {
+        var os
+        function ajaxGetOS() {
+            var result;
+            $.ajax({
+                dataType: 'json',
+                url: '{% url "ajax_get_os_types" %}',
+                async: false,
+                success: function(data) {
+                    for (var e = 0; e < data.length; e++) {
+                        if (data[e].option==os_type) {
+                            result = data[e].option_display
+                        }
+                    }
+                }
+            });
+            return result;
+        }
+        os = ajaxGetOS()
+        return os
+    }
     $(".modify-btn").click(function(event) {
         request_id = $(this).parents(".detail-table").children('td:first-child').attr("id");
         $.post('{% url "show_apply_machinedetail" %}', {
@@ -104,25 +147,13 @@ $(function() {
         }, function(data) {
             var detail_list = eval($.parseJSON(data));
             //数据获取
-            var env_text = "",os_text = "";
-            if("DEVP"===env){
-                env_text = "开发环境"
-            } else if("TEST"===env) {
-                env_text = "测试环境"
-            } else if("DRCV"===env) {
-                env_text = "灾备环境"
-            } else{ env_text = null }
-
+            var env = detail_list[0].fields.env_type;
+            var os = detail_list[0].fields.os_type;
+            var env_text = get_env(env)
+            var os_text = get_os(os)
             $(".dropdownMenu1").text(env_text).append('&nbsp;<span class="caret"></span>');
             $("#" + request_id + "modal input[value='" + detail_list[0].fields.fun_type + "']").prop("checked", true).parent("label").addClass('active').siblings('label').removeClass('active');
-            if("WIN"===os){
-                os_text = "WINDOWS"
-            } else if("LUX"===os) {
-                os_text = "LINUX"
-            } else {
-                os_text = null
-            }
-            $(".dropdownMenu2").text(os_type).append('&nbsp;<span class="caret"></span>');
+            $(".dropdownMenu2").text(os_text).append('&nbsp;<span class="caret"></span>');
             $("#" + request_id + "modal ." + detail_list[0].fields.cpu + "C").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
             $("#" + request_id + "modal ." + detail_list[0].fields.memory_gb + "G").prop('checked', true).parent("label").addClass('active').siblings('label').removeClass('active');
             $("#" + request_id + "modal input[name='data_volume']").val(detail_list[0].fields.datadisk_gb);
@@ -153,13 +184,17 @@ $(function() {
         });
     });
     $(".modify-save-btn").click(function(event) {
-        var modify_form = $("#" + request_id + "modalform").serializeArray()
-        $.post('{% url "modify_saving_detail" %}', modify_form, function(data) {
+        var reason = $("#"+request_id+"apply-reason").val()
+        if(reason){
+            var modify_form = $("#" + request_id + "modalform").serializeArray()
+            $.post('{% url "modify_saving_detail" %}', modify_form, function(data) {
             alert("保存成功")
             setTimeout(function(e) {
                 location.href = '{% url "saving_resource_view" %}'
             }, 200);
         });
+        }else{$("#apply-reason").attr('placeholder', '请输入原因').focus();}
+        
     });
     $(".saving-submit-btn").click(function(event) {
         id = $(this).parents(".detail-table").children('td:first-child').attr("id");

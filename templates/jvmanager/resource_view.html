@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5 class="fa fa-road">资源概览页面</h5>
@@ -38,7 +38,7 @@
                                     {% for key in applys %}
                                     <tr>
                                         <td class="text-center">{{ key.id}}</td>
-                                        <td class="text-center">{% ifequal key.env_type "DRCV" %} 灾备环境 {% endifequal %} {% ifequal key.env_type "TEST" %} 测试环境 {% endifequal %} {% ifequal key.env_type "DEVP" %} 开发环境 {% endifequal %}</td>
+                                        <td class="text-center">{{ key.env_type|get_env_type }}</td>
                                         <td class="text-center">{% ifequal key.fun_type "normal" %} 普通型 {% endifequal %} {% ifequal key.fun_type "was" %} WAS型 {% endifequal %} {% ifequal key.fun_type "database" %} 数据库型 {% endifequal %}</td>
                                         <td class="text-center">{% ifequal key.os_type "WIN" %} WINDOWS {% endifequal %} {% ifequal key.os_type "LUX" %} LINUX {% endifequal %} </td>
                                         <td class="text-center">{{ key.cpu}}</td>
@@ -51,7 +51,7 @@
                                             <button type="button" class="btn btn-xs btn-info" data-toggle="popover" data-placement="top" title="IP及机器用户密码" data-content="{% for vm in vmorder %}
 
 
-                                                      {% ifequal key.id vm.approvel.application_id %}{{ vm.loc_ip.ipaddress }}用户信息:(admin/无密码){% endifequal %}
+                                                      {% ifequal key.id vm.approvel.application_id %}{{ vm.loc_ip.ipaddress }}用户信息:　{% ifequal key.os_type 'WIN'%}(administrator/Qwer1234){% endifequal %}{% ifequal key.os_type 'LUX'%}(user/Qwer1234){% endifequal %}{% endifequal %}
                           {% endfor %}">详细
                                             </button>
                                         </td>
@@ -60,7 +60,7 @@
                                         <td class="text-center"></td>
                                         {% endifequal %} {% endfor %} {% endifequal %} {% ifequal key.apply_status "RB" %}
                                         <td class="text-center">被退回&nbsp;</td>
-                                        <td class="text-center">{{ key.apply_reason }}</td>
+                                        <td class="text-center">{{ key.app_name }}</td>
                                         {% endifequal %}
                                     </tr>
                                     {% endfor %}

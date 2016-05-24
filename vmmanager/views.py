@@ -10,11 +10,14 @@ from .vc_api import *
 
 @require_role('admin')
 def VM_list(request):
+    path1, path2 = '资源管理', '资源审批'
     username = request.user.username
     applylist = Approvel.objects.filter(appro_status='AI').order_by('-id')
     apply_confirm_list = Approvel.objects.filter(
         appro_status='AP').order_by('-appro_date')
     vmorder = VMOrder.objects.all()
+    os_version = SheetField.get_options(field='os_version', sheet=None)
+    env_type = SheetField.get_options(field='env_type')
     applylist, p, applys, page_range, current_page, show_first, show_end = pages(applylist, request)
 
     return my_render('jvmanager/test_manage.html', locals(), request)
@@ -157,7 +160,7 @@ def delete_apply(request):
         reason = request.POST.get("reason", "")
         try:
             Approvel.objects.filter(id=id).update(appro_status='RB')
-            Application.objects.filter(id=application_id).update(apply_status='RB', apply_reason=reason)
+            Application.objects.filter(id=application_id).update(apply_status='RB', app_name=reason)
         except Exception, e:
             raise e
         else:
@@ -200,6 +203,9 @@ def apply_machine(request):
     """
     username = request.user.username
     user = get_object(User, username=username)
+    os_types_list = SheetField.get_options('os_type')
+    os_versions_list = SheetField.get_options(field='os_version', sheet=None)
+    env_types_list = SheetField.get_options('env_type')
 
     if request.method == 'POST':
         env_type = request.POST.get('env_type', '')
@@ -248,6 +254,7 @@ def resource_view(request):
     """
     用户资源概览
     """
+    path1, path2 = '资源管理', '资源概览'
     username = request.user.username
     user = get_object(User, username=username)
     application = Application.objects.exclude(apply_status="HD").filter(user=user)
@@ -261,11 +268,15 @@ def resource_view(request):
     return my_render('jvmanager/resource_view.html', locals(), request)
 
 
-@require_role('user')
+
 def saving_resource_view(request):
+    path1, path2 = '资源管理', '已保存资源'
     username = request.user.username
-    user=get_object(User,username=username)
+    user = get_object(User, username=username)
     s_apply_list = Application.objects.filter(apply_status="HD").filter(user=user)
+    os_types_list = SheetField.get_options('os_type')
+    os_versions_list = SheetField.get_options(field='os_version', sheet=None)
+    env_types_list = SheetField.get_options('env_type')
     s_apply_list, p, s_applys, page_range, current_page, show_first, show_end = pages(
         s_apply_list, request)
     return my_render('jvmanager/savingresource_view.html', locals(), request)
@@ -286,7 +297,10 @@ def submit_saving_resource(request):
         apply_reason = request.POST["apply_reason"]
         try:
             application = Application.objects.get(id=id)
-            db_add_approvel(application=application,appro_env_type=appro_env_type,appro_fun_type=appro_fun_type,appro_os_type=appro_os_type,appro_cpu=appro_cpu,appro_memory_gb=appro_memory_gb,appro_datadisk_gb=appro_datadisk_gb,appro_vm_num=appro_vm_num,appro_status="AI",appro_date=datetime.now())
+            db_add_approvel(application=application, appro_env_type=appro_env_type, appro_fun_type=appro_fun_type,
+                            appro_os_type=appro_os_type, appro_cpu=appro_cpu, appro_memory_gb=appro_memory_gb,
+                            appro_datadisk_gb=appro_datadisk_gb, appro_vm_num=appro_vm_num, appro_status="AI",
+                            appro_date=datetime.now())
             Application.objects.filter(pk=id).update(apply_status="SM", apply_reason=apply_reason)
         except Exception, e:
             raise e
@@ -300,12 +314,17 @@ def submit_saving_resource(request):
 
 @require_role('admin')
 def set_vm(request):
+    path1, path2 = '资源管理', '初始化配置'
     vcenter = VCenter.objects.all()
     uninit_nets = Network.objects.filter(ipusage__isnull=True)
     ipusage = IPUsage.objects.filter(used_manage="1").order_by("-id")
     templates = Template.objects.all()
     envs = SheetField.get_options("env_type")
     os_versions = SheetField.get_options("os_version", sheet=None)
+    version_list = [ver.option for ver in os_versions]
+    candidate_templs = (
+        VirtualMachine.objects.filter(istemplate=True) | VirtualMachine.objects.filter(name__icontains='templ')
+    ).filter(guestos_shortname__in=version_list).filter(templates__isnull=True)
     return my_render('jvmanager/set_vm.html', locals(), request)
 
 
@@ -480,6 +499,7 @@ def ajax_initial_network(request):
     else:
         return JsonResponse({"status": "error", "errmsg": "request illegal"})
 
+
 def ajax_select_IP(request):
     """
     选取IP和VMNAME
@@ -578,30 +598,17 @@ def ajax_add_template(request):
     if request.method == 'POST':
         vmid = int(request.POST['vmid'])
         virtualmachine = VirtualMachine.objects.get(pk=vmid)
-        os_type = str(request.POST['os_type'])
-        env_type = str(request.POST['env_type'])
+        # os_type = str(request.POST['os_type'])
+        env_type = [env.option for env in SheetField.get_options("env_type") if env.option in request.POST.keys()]
         try:
-            template = Template(virtualmachine=virtualmachine, env_type=env_type)
-            os_versions = SheetField.get_options(field='os_version', sheet='os_type_' + str(os_type))
-            if os_versions.exists():
-                try:
-                    SheetField.add_option(virtualmachine.guestos_shortname, virtualmachine.guestos_fullname,
-                                          field='os_version', sheet='os_type_' + str(os_type))
-                except:
-                    pass
-            else:
-                raise Exception("os_type not exist, please add it first!")
-            template.save()
-
+            Template.add(vm=virtualmachine, env_type=env_type)
         except Exception, e:
-            raise e
+            logger.error(e)
+            return JsonResponse({"status": "error", "errmsg": str(e)})
         else:
-            # Return all templates
-            return get_templates()
+            return JsonResponse({"status": "success"})
     else:
-        error_dict = {"error": "ajax not good"}
-        return JsonResponse(error_dict)
-
+        return JsonResponse({"status": "error", "errmsg": "request illegal"})
 
 def ajax_delete_template(request):
     if request.method == "POST":
@@ -855,4 +862,17 @@ def del_os_version(request):
 
 
 def datamanager(request):
-    return my_render('datamanager.html', locals(), request)
+    pass
+
+
+def get_env(request):
+    result = []
+    try:
+        env_type = list(SheetField.get_options(field='env_type'))
+        for env in env_type:
+            result.append({env.option: env.option_display})
+    except Exception, e:
+        raise e
+    else:
+        logger.debug(result)
+        return JsonResponse(result)

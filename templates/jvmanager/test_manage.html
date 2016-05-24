@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>审批页面</h5>
@@ -48,13 +48,12 @@
                                                 <td class="text-center" id="{{ key.application_id }}">{{ key.application_id }}</td>
                                                 <td class="text-center">{{ key.application.user.name}}</td>
                                                 <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
-                                                <td class="text-center">{% ifequal key.appro_env_type "DEVP" %}
-                                                    开发环境 {% endifequal %} {% ifequal key.appro_env_type "TEST" %}
-                                                    测试环境 {% endifequal %} {% ifequal key.appro_env_type "DRCV" %}
-                                                    数据库型 {% endifequal %}/{% ifequal key.appro_fun_type "normal" %}
-                                                    普通型 {% endifequal %} {% ifequal key.appro_fun_type "was" %}
-                                                    WAS型 {% endifequal %} {% ifequal key.appro_fun_type "database" %}
-                                                    数据库型 {% endifequal %}</td>
+                                                <td class="text-center">{{ key.appro_env_type|get_env_type }}/
+                                                    {% ifequal key.appro_fun_type "normal" %} 普通型 {% endifequal %}
+                                                    {% ifequal key.appro_fun_type "was" %} 内存型 {% endifequal %}
+                                                    {% ifequal key.appro_fun_type "database" %} I/O密集型 {% endifequal %}/
+                                                    {% ifequal key.appro_os_type "WIN" %} WINDOWS {% endifequal %}
+                                                    {% ifequal key.appro_os_type "LUX" %} LINUX {% endifequal %}</td>
                                                 <td class="text-center">{{ key.appro_vm_num}}台</td>
                                                 <td class="text-center">{{ key.application.apply_reason}}</td>
                                                 <td class="text-center">
@@ -63,7 +62,29 @@
                                                         {% include 'jvmanager/modify_modal.html' %}
                                                         <button class="btn btn-success btn-xs agree-btn" type="submit" id="{{ key.application_id }}approved" data-toggle="modal" data-target="#{{ key.id}}AGModal">同意</button>
                                                         {% include 'jvmanager/agree_modal.html' %}
-                                                        <button class="btn btn-danger btn-xs delete-btn" type="submit" id="delete">删除</button>
+                                                        <button class="btn btn-danger btn-xs delete-btn" type="submit" id="delete" data-toggle="modal" data-target="#{{key.application_id}}delmodal">回退</button>
+                                                        <div class="modal fade" id="{{key.application_id}}delmodal" tabindex="-1" role="dialog">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                                        <h4 class="modal-title">回退申请</h4>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <form>
+                                                                            <div class="form-group">
+                                                                                <label for="message-text" class="control-label">回退原因:</label>
+                                                                                <textarea class="form-control" id="return-reason"></textarea>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                                        <button type="button" class="btn btn-primary delete-cof-btn">退回</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -123,9 +144,7 @@
                                                 <td class="text-center" id="{{list.id}}process">{% if list.gen_status == "AP" %} 待生成 {% else %}{{list.gen_progress}}%{% endif %} </td>
                                                 <td class="text-center" id="{{list}}gen_log">{{list.gen_log}}</td>
                                                 <td class="text-center" id="{{list.id}}loading">
-                                                    <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}" {% ifequal list.gen_progress 100 %}
-                                                      disabled 
-                                                    {% endifequal %}>
+                                                    <input type="checkbox" name="checkbox" id="{{list.id}}check" value="{{list.id}}" {% ifequal list.gen_progress 100 %} disabled {% endifequal %}>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -143,6 +162,4 @@
         </div>
     </div>
 </div>
-{% endblock %} {% block self_footer_js %}
-{% include 'jvmanager/basic_effect.html' %}
-{% endblock %}
+{% endblock %} {% block self_footer_js %} {% include 'jvmanager/basic_effect.html' %} {% endblock %}

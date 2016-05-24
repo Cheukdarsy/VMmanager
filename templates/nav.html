@@ -52,6 +52,7 @@
                     <li class="apply"><a href="{% url 'apply_machine' %}">资源申请</a></li>
                     <li class="list"><a href="{% url 'VM_list' %}">申请审批</a></li>
                      <li class="resource"><a href="{% url 'resource_view' %}">资源概览</a></li>
+                     <li id="vmmanagersaving_resource"><a href={% url 'saving_resource_view' %}><span class="nav-label">未提交申请</span></a></li>
                     <li class="set_vm"><a href={% url 'set_vm' %}>初始化配置</a></li>
                 </ul>
             </li>
@@ -85,11 +86,11 @@
                <a href="{% url 'user_detail' %}"><i class="fa fa-dashboard"></i> <span class="nav-label">仪表盘</span><span class="label label-info pull-right"></span></a>
             </li>
             <li id="vmmanager">
-                   <a href="#"><i class="fa fa-vimeo-square"></i> <span class="nav-label">VM管理</span><span class="fa arrow"></span></a>
+                   <a href="#"><i class="fa fa-vimeo-square"></i> <span class="nav-label">资源管理</span><span class="fa arrow"></span></a>
                    <ul class="nav nav-second-level">
                     <li id="vmmanagerapply"><a href={% url 'apply_machine' %}><i class="fa fa-cloud"></i><span class="nav-label">资源申请</span></a></li>
                     <li id="vmmanagerresource"><a href={% url 'resource_view' %}><i class="fa fa-th"></i><span class="nav-label">资源概览</span></a></li>
-                     <li id="vmmanagersaving_resource"><a href={% url 'saving_resource_view' %}><i class="fa fa-save"></i><span class="nav-label">已保存资源</span></a></li>
+                     <li id="vmmanagersaving_resource"><a href={% url 'saving_resource_view' %}><i class="fa fa-save"></i><span class="nav-label">未提交申请</span></a></li>
                 </ul>
             </li>
         </ul>
