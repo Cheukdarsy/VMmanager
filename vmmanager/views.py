@@ -10,6 +10,7 @@ from .vc_api import *
 
 @require_role('admin')
 def VM_list(request):
+    path1, path2 = '资源管理', '资源审批'
     username = request.user.username
     applylist = Approvel.objects.filter(appro_status='AI').order_by('-id')
     apply_confirm_list = Approvel.objects.filter(
@@ -252,6 +253,7 @@ def resource_view(request):
     """
     用户资源概览
     """
+    path1, path2 = '资源管理', '资源概览'
     username = request.user.username
     user = get_object(User, username=username)
     application = Application.objects.exclude(apply_status="HD").filter(user=user)
@@ -265,8 +267,9 @@ def resource_view(request):
     return my_render('jvmanager/resource_view.html', locals(), request)
 
 
-@require_role('user')
+
 def saving_resource_view(request):
+    path1, path2 = '资源管理', '已保存资源'
     username = request.user.username
     user=get_object(User,username=username)
     s_apply_list = Application.objects.filter(apply_status="HD").filter(user=user)
@@ -306,6 +309,7 @@ def submit_saving_resource(request):
 
 @require_role('admin')
 def set_vm(request):
+    path1, path2 = '资源管理', '初始化配置'
     vcenter = VCenter.objects.all()
     uninit_nets = Network.objects.filter(ipusage__isnull=True)
     ipusage = IPUsage.objects.filter(used_manage="1").order_by("-id")
