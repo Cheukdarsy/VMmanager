@@ -29,6 +29,7 @@
                                         <th class="text-center">CPU</th>
                                         <th class="text-center">memory</th>
                                         <th class="text-center">数量</th>
+                                        <th class="text-center">申请原因</th>
                                         <th class="text-center">处理结果</th>
                                         <th class="text-center">返回信息</th>
                                     </tr>
@@ -43,6 +44,7 @@
                                         <td class="text-center">{{ key.cpu}}</td>
                                         <td class="text-center">{{ key.memory_gb}}</td>
                                         <td class="text-center">{{ key.request_vm_num }}</td>
+                                        <td class="text-center">{{ key.apply_reason }}</td>
                                         {% ifequal key.apply_status "SM" %} {% for appro in approvel %} {% ifequal key.id appro.application.id %}
                                         <td class="text-center">已生成</td>
                                         <td class="text-center">
