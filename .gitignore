@@ -3,6 +3,5 @@
 *.pyc
 /method
 /jumpserver.conf
-.gitignore
 /logs/
 /keys/

@@ -69,14 +69,30 @@ class BackupFile(models.Model):
         self.md5=md5
         self.app_id=app_id
         self.backup_date_id=backup_date_id
-        self.backup_date_id=backup_date_id
+        self.backup_time=backup_time
         self.save()
+
+    @classmethod
+    def delete_obj(self, size, mtime, ctime, atime, md5, app_id, backup_date_id, backup_time):
+        self.size = size
+        self.mtime = mtime
+        self.ctime = ctime
+        self.atime = atime
+        self.md5 = md5
+        self.app_id = app_id
+        self.backup_date_id = backup_date_id
+        self.backup_time = backup_time
+        self.save()
+
 
 class BackupFile_DataSource(models.Model):
     file = models.ForeignKey('BackupFile', null=True)
-    datasorce = models.ForeignKey('DataSource', null=True)
-    file_state = models.IntegerField()
+    datasource = models.ForeignKey('DataSource', null=True)
+    file_state = models.IntegerField(default = 1)
 
+    def update_file_state(cls, file_state):
+        cls.file_state = file_state
+        cls.save()
 
 class DataSource(models.Model):
     name = models.CharField(max_length=256)
@@ -85,3 +101,12 @@ class DataSource(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def get_obj(self, ip, hostname):
+        dsobj = self.objects.filter(ip=ip)
+        if dsobj.exists():
+            return dsobj[0]
+        else:
+            dsobj = self.objects.create(ip=ip, hostname=hostname)
+            return dsobj
