@@ -782,7 +782,6 @@ class VirtualMachine(VMObject):
             raise e
 
     def update_by_vim(self, vimobj, related=False):
-        stamp = datetime.now()
         vc = self.vcenter
         self.name = vimobj.name
         vm_config = vimobj.config
@@ -798,8 +797,6 @@ class VirtualMachine(VMObject):
         vm_sumcfg = vm_sum.config
         self.guestos_shortname = vm_sumcfg.guestId
         self.guestos_fullname = vm_sumcfg.guestFullName
-        print("Stage 1 during: " + str(datetime.now() - stamp))
-        stamp = datetime.now()
         if related:
             # update hostsystem
             host = vimobj.runtime.host
@@ -816,8 +813,6 @@ class VirtualMachine(VMObject):
                 except Exception, e:
                     raise e
         self.save()
-        print("Stage 2 during: " + str(datetime.now() - stamp))
-        stamp = datetime.now()
         if not related:
             return True
         # update networks
@@ -846,11 +841,8 @@ class VirtualMachine(VMObject):
                 self.datastores.remove(*old_ds)
         except:
             pass
-        print("Stage 3 during: " + str(datetime.now() - stamp))
-        stamp = datetime.now()
         # update ipusage_set
         self.update_ipusage(vimobj)
-        print("Stage 4 during: " + str(datetime.now() - stamp))
 
     @classmethod
     def create_or_update_by_vim(cls, vimobj, vc, related=False):

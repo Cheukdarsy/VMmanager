@@ -324,7 +324,7 @@ def set_vm(request):
     version_list = [ver.option for ver in os_versions]
     candidate_templs = (
         VirtualMachine.objects.filter(istemplate=True) | VirtualMachine.objects.filter(name__icontains='templ')
-    ).filter(guestos_shortname__in=version_list).filter(templates__isnull=True)
+    ).filter(guestos_shortname__in=version_list).filter(template__isnull=True)
     return my_render('jvmanager/set_vm.html', locals(), request)
 
 
@@ -489,6 +489,7 @@ def ajax_initial_network(request):
         gw_addr = request.POST['netgate']
         try:
             network = Network.objects.get(pk=net_id)
+            # TODO DunkleQiu:需要添加处理网络env_type,os_type参数
             network.update_manual(nw=net_addr, mask=net_mask)
             gw, countip = IPUsage.create(network, gw_addr=gw_addr)
         except Exception, e:
