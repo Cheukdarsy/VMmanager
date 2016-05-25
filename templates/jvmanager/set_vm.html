@@ -288,19 +288,14 @@
                                                                             <div class="panel-body">
                                                                                 <div class="form-group"
                                                                                      style="margin-right:-60px;margin-left:40px;">
-                                                                                    <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
-                                                                                    <div class="dropdown col-sm-9">
-                                                                                        <select name="os_type"
-                                                                                                id="tem-os-type">
-                                                                                        </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="form-group"
-                                                                                     style="margin-right:-60px;margin-left:40px;">
                                                                                     <label class="col-sm-3 control-label">模板:&nbsp;</label>
                                                                                     <div class="dropdown col-sm-9">
                                                                                         <select name="vmid"
                                                                                                 id="template">
+                                                                                            <option>请选择</option>
+                                                                                            {% for vm in candidate_templs %}
+                                                                                                <option value="{{ vm.id }}">{{ vm.name }}</option>
+                                                                                            {% endfor %}
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
