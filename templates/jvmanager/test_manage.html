@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load mytags %} {% block content %} {% include 'nav_cat_bar.html' %}
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>审批页面</h5>
@@ -48,7 +48,7 @@
                                                 <td class="text-center" id="{{ key.application_id }}">{{ key.application_id }}</td>
                                                 <td class="text-center">{{ key.application.user.name}}</td>
                                                 <td class="text-center">{{ key.appro_cpu}}C/{{ key.appro_memory_gb}}G/{{key.appro_datadisk_gb}}G</td>
-                                                <td class="text-center">{{key.appro_env_type|get_env_type}}/{% ifequal key.appro_fun_type "normal" %} 普通型 {% endifequal %} {% ifequal key.appro_fun_type "was" %} WAS型 {% endifequal %} {% ifequal key.appro_fun_type "database" %} 数据库型 {% endifequal %}/{% ifequal key.appro_os_type "WIN" %} WINDOWS {% endifequal %} {% ifequal key.appro_os_type "LUX" %} LINUX {% endifequal %}</td>
+                                                <td class="text-center">{{key.appro_env_type|get_env_type}}/{% ifequal key.appro_fun_type "normal" %} 普通型 {% endifequal %} {% ifequal key.appro_fun_type "was" %} 内存型 {% endifequal %} {% ifequal key.appro_fun_type "database" %} I/O密集型 {% endifequal %}/{% ifequal key.appro_os_type "WIN" %} WINDOWS {% endifequal %} {% ifequal key.appro_os_type "LUX" %} LINUX {% endifequal %}</td>
                                                 <td class="text-center">{{ key.appro_vm_num}}台</td>
                                                 <td class="text-center">{{ key.application.apply_reason}}</td>
                                                 <td class="text-center">
