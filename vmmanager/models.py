@@ -224,6 +224,9 @@ class VMObject(models.Model):
             hash(self.vcenter_id) + hash(self.moid) + hash(self.name)
         )
 
+    def __str__(self):
+        return self.moid + " : " + self.name
+
     def save(self, *args, **kwargs):
         if not self.hash_value:
             hash_old = 0
@@ -875,6 +878,12 @@ class Template(models.Model):
         return [k for k, v in envs_map.items() if v]
 
     env_type_list = property(get_env_type)
+
+    @classmethod
+    def add(cls, vm, env_type):
+        if not isinstance(env_type, list):
+            raise Exception("arguments type error: env_type must be list")
+        return cls.objects.create(virtualmachine=vm, env_type=env_type2json(env_type))
 
     @classmethod
     def match(cls, env_type=None, os_type=None, os_version=None):

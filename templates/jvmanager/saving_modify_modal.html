@@ -1,197 +1,210 @@
-                            {% load mytags %}
-                            <div class="modal fade" id="{{ key.id}}modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    <h4 class="modal-title" id="myModalLabel">修改配置</h4>
-                                  </div>
-                                  <div class="modal-body">
-                                    <!-- 用户表单 -->
+{% load mytags %}
+<div class="modal fade" id="{{ key.id }}modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">修改配置</h4>
+            </div>
+            <div class="modal-body">
+                <!-- 用户表单 -->
 
-                                    <div class="ibox-content">
-                                      <form class="form-horizontal" method="POST" action="" id="{{ key.id}}modalform">
-                                      {% csrf_token %}
-                                      <input type="hidden" name='request_id' value="{{key.id}}">
-                                        <div class="panel panel-default">
-                                          <div class="panel-heading">基本配置：</div>
-                                          <div class="panel-body">
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
+                <div class="ibox-content">
+                    <form class="form-horizontal" method="POST" action="" id="{{ key.id }}modalform">
+                        {% csrf_token %}
+                        <input type="hidden" name='request_id' value="{{ key.id }}">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">基本配置：</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">环境类型:&nbsp;</label>
 
-                                              <div class="dropdown col-sm-9">
-                                              <input type="text" name="env_type" class="env_type" style="display:none" value="{{ key.env_type }}">
-                                                <button class="btn  btn-success dropdown-toggle dropdownMenu1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                  {{key.env_type|get_env_type}}
-                                                  <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                    <div class="dropdown col-sm-9">
+                                        <input type="text" name="env_type" class="env_type" style="display:none"
+                                               value="{{ key.env_type }}">
+                                        <button class="btn  btn-success dropdown-toggle dropdownMenu1" type="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            {{ key.env_type|get_env_type }}
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
 
-                                                  {% for env in env_type %}
-                                               <li>
-                                                <a href="#" name='{{env.option}}'>{{env.option_display}}</a>
-                                            </li>
-                                           {% endfor %}
-                                                </ul>
-
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
-                                              <div class="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success normal-type {% ifequal key.fun_type  "normal" %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="fun_type" autocomplete="off" {% ifequal key.fun_type "normal"  %}
-                                                    checked
-                                                  {% endifequal %} value="normal">普通型</label>
-                                                <label class="btn btn-success was-type {% ifequal key.fun_type "was" %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="fun_type" iautocomplete="off" {% ifequal key.fun_type "was"  %}
-                                                    checked 
-                                                  {% endifequal %} value="was">WAS</label>
-                                                <label class="btn btn-success database-type {% ifequal key.fun_type "database" %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="fun_type" autocomplete="off" {% ifequal key.fun_type "database" %}
-                                                    checked 
-                                                  {% endifequal %} value="database">数据库型</label>
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">CPU:&nbsp;</label>
-                                              <div class ="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success {% ifequal key.cpu 2  %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="cpu" class="2C" value="2" autocomplete="off" {% ifequal key.cpu 2  %}
-                                                    checked 
-                                                  {% endifequal %}　>2C</label>
-                                                <label class="btn btn-success {% ifequal key.cpu 4 %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="cpu" class="4C" value="4" autocomplete="off" {% ifequal key.cpu 4  %}
-                                                    checked
-                                                  {% endifequal %}　>4C</label>
-
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">内存:&nbsp;</label>
-                                              <div class ="btn-group col-sm-9" data-toggle="buttons">
-                                                <label class="btn btn-success {% ifequal key.memory_gb 2 %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="memory" class="2G" value="2" autocomplete="off" {% ifequal key.memory_gb 2 %}
-                                                    checked 
-                                                  {% endifequal %} >2G</label>
-                                                <label class="btn btn-success {% ifequal key.memory_gb 4 %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="memory" class="4G"  value="4" autocomplete="off" {% ifequal key.memory_gb 4 %}
-                                                    checked 
-                                                  {% endifequal %} >4G</label>
-                                                <label class="btn btn-success {% ifequal key.memory_gb 8 %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="memory" class="8G" value="8" autocomplete="off" {% ifequal key.memory_gb 8 %}
-                                                    checked 
-                                                  {% endifequal %} >8G</label>
-                                                <label class="btn btn-success {% ifequal key.memory_gb 16  %}
-                                                  active
-                                                {% endifequal %}">
-                                                  <input type="radio" name="memory" class="16G" value="16" autocomplete="off" {% ifequal key.memory_gb 16 %}
-                                                    checked 
-                                                  {% endifequal %} >16G</label>
-
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
-                                              <div class="dropdown col-sm-9">
-                                              <input type="text" name="os_type" class="os_type" style="display:none" value="{{ key.os_type }}">
-                                                <button class="btn btn-success dropdown-toggle dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                  {% ifequal key.os_type "WIN"%} WINDOWS {% endifequal %} {% ifequal key.os_type "LUX" %} LINUX {% endifequal %}
-                                                  <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
-                                                  <li class="dropdown-header">windows系统</li>
-                                            {% for os in os_version %}
-                                             
-                                                {% ifequal os.sheet_brand|get_tuple "WIN" %} 
-                                                    <li>
-                                                <a href="#" name='WIN'>{{os.option_display}}</a>
-                                               </li>
-                                                {% endifequal %}
+                                            {% for env in env_type %}
+                                                <li>
+                                                    <a href="#" name='{{ env.option }}'>{{ env.option_display }}</a>
+                                                </li>
                                             {% endfor %}
-                                            <li role="separator" class="divider"></li>
-                                                <li class="dropdown-header">linux系统</li>
-                                                {% for os in os_version %}
-                                                {% ifequal os.sheet_brand|get_tuple "LUX" %} 
-                                                    <li>
-                                                <a href="#" name='LUX'>{{os.option_display}}</a>
-                                               </li>
-                                                {% endifequal %}
+                                        </ul>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">主机类型:&nbsp;</label>
+                                    <div class="btn-group col-sm-9" data-toggle="buttons">
+                                        <label class="btn btn-success normal-type {% ifequal key.fun_type  "normal" %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="fun_type" autocomplete="off"
+                                                    {% ifequal key.fun_type "normal" %}
+                                                   checked
+                                                    {% endifequal %} value="normal">普通型</label>
+                                        <label class="btn btn-success was-type {% ifequal key.fun_type "was" %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="fun_type" iautocomplete="off"
+                                                    {% ifequal key.fun_type "was" %}
+                                                   checked
+                                                    {% endifequal %} value="was">WAS</label>
+                                        <label class="btn btn-success database-type {% ifequal key.fun_type "database" %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="fun_type" autocomplete="off"
+                                                    {% ifequal key.fun_type "database" %}
+                                                   checked
+                                                    {% endifequal %} value="database">数据库型</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">CPU:&nbsp;</label>
+                                    <div class="btn-group col-sm-9" data-toggle="buttons">
+                                        <label class="btn btn-success {% ifequal key.cpu 2 %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="cpu" class="2C" value="2" autocomplete="off"
+                                                    {% ifequal key.cpu 2 %}
+                                                   checked
+                                                    {% endifequal %}　>2C</label>
+                                        <label class="btn btn-success {% ifequal key.cpu 4 %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="cpu" class="4C" value="4" autocomplete="off"
+                                                    {% ifequal key.cpu 4 %}
+                                                   checked
+                                                    {% endifequal %}　>4C</label>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">内存:&nbsp;</label>
+                                    <div class="btn-group col-sm-9" data-toggle="buttons">
+                                        <label class="btn btn-success {% ifequal key.memory_gb 2 %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="memory" class="2G" value="2" autocomplete="off"
+                                                    {% ifequal key.memory_gb 2 %}
+                                                   checked
+                                                    {% endifequal %} >2G</label>
+                                        <label class="btn btn-success {% ifequal key.memory_gb 4 %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="memory" class="4G" value="4" autocomplete="off"
+                                                    {% ifequal key.memory_gb 4 %}
+                                                   checked
+                                                    {% endifequal %} >4G</label>
+                                        <label class="btn btn-success {% ifequal key.memory_gb 8 %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="memory" class="8G" value="8" autocomplete="off"
+                                                    {% ifequal key.memory_gb 8 %}
+                                                   checked
+                                                    {% endifequal %} >8G</label>
+                                        <label class="btn btn-success {% ifequal key.memory_gb 16 %}
+                                                  active
+                                                {% endifequal %}">
+                                            <input type="radio" name="memory" class="16G" value="16" autocomplete="off"
+                                                    {% ifequal key.memory_gb 16 %}
+                                                   checked
+                                                    {% endifequal %} >16G</label>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">操作系统:&nbsp;</label>
+                                    <div class="dropdown col-sm-9">
+                                        <input type="text" name="os_type" class="os_type" style="display:none"
+                                               value="{{ key.os_type }}">
+                                        <button class="btn btn-success dropdown-toggle dropdownMenu2" type="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            {% ifequal key.os_type "WIN" %} WINDOWS {% endifequal %}
+                                            {% ifequal key.os_type "LUX" %} LINUX {% endifequal %}
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+                                            {% for os_type in os_types_list %}
+                                                <li role="separator" class="divider"></li>
+                                                <li class="dropdown-header">{{ os_type.option_display }}系统</li>
+                                                {% for os_version in os_versions_list %}
+                                                    {% ifequal os_version.sheet_brand.0 os_type.option %}
+                                                        <li>
+                                                            <a href="#"
+                                                               name='{{ os_type.option }}'>{{ os_version.option_display }}</a>
+                                                        </li>
+                                                    {% endifequal %}
                                                 {% endfor %}
-                                                </ul>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="panel-heading">磁盘配置：</div>
-                                          <div class="panel-body">
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">系统盘:&nbsp;</label>
-                                              <div class="col-sm-9">
-                                                <p style="margin:5px">
-                                                  <label for="amount">&nbsp;50G</label>
-                                                </p>
-                                              </div>
-                                            </div>
-                                            <div class="form-group">
-                                              <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
-                                              <div class="col-sm-9">
-                                                <div id="{{ key.id }}modifyslider" class="modifyslider"></div>
-                                                <p>
-                                                  <input type="text" id="{{ key.id }}data_volume" style="width:30px;" name="data_volume" value="{{ key.datadisk_gb }}">
-                                                  <label for="data_volume">&nbsp;G</label>
-                                                </p>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="panel-heading">参数配置：</div>
-                                          <div class="panel-body">
-                                          <div class="form-group">
-                                            <label class="col-sm-3 control-label">数量:&nbsp;</label>
-                                            <div class="col-sm-9">
-                                            <div id="{{ key.id }}modifyslider_num" class="modifyslider"></div>
-                                            <p style="float:left">
-                                            <input type="text" style="width:30px;" id="{{ key.id }}request_num" name="request_num" value="{{ key.request_vm_num }}">
-                                            <label for="amount">&nbsp;台</label>
-                                        </p>
-                                          </div>
-                                        </div>
-                                        <div class="form-group" style="margin-bottom:5px">
-                                    <label class="col-sm-3 control-label">申请原因:&nbsp;</label>
-                                    <div class="col-sm-9">
-                                        <ul id="apply_reason" class="list-group">
-                                            <li class='list-group-item'><textarea name='apply_reason' style="width:300px" id="{{ key.id }}apply-reason">{{ key.apply_reason }}</textarea></li>
+                                            {% endfor %}
                                         </ul>
                                     </div>
                                 </div>
-                                          </div>
-                                        </div>
-                                      </form>
-                                    </div>
-
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary modify-save-btn">保存</button>
-                                  </div>
-                                </div>
-                              </div>
                             </div>
+                            <div class="panel-heading">磁盘配置：</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">系统盘:&nbsp;</label>
+                                    <div class="col-sm-9">
+                                        <p style="margin:5px">
+                                            <label for="amount">&nbsp;50G</label>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">数据盘:&nbsp;</label>
+                                    <div class="col-sm-9">
+                                        <div id="{{ key.id }}modifyslider" class="modifyslider"></div>
+                                        <p>
+                                            <input type="text" id="{{ key.id }}data_volume" style="width:30px;"
+                                                   name="data_volume" value="{{ key.datadisk_gb }}">
+                                            <label for="data_volume">&nbsp;G</label>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-heading">参数配置：</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">数量:&nbsp;</label>
+                                    <div class="col-sm-9">
+                                        <div id="{{ key.id }}modifyslider_num" class="modifyslider"></div>
+                                        <p style="float:left">
+                                            <input type="text" style="width:30px;" id="{{ key.id }}request_num"
+                                                   name="request_num" value="{{ key.request_vm_num }}">
+                                            <label for="amount">&nbsp;台</label>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom:5px">
+                                    <label class="col-sm-3 control-label">申请原因:&nbsp;</label>
+                                    <div class="col-sm-9">
+                                        <ul id="apply_reason" class="list-group">
+                                            <li class='list-group-item'><textarea name='apply_reason'
+                                                                                  style="width:300px"
+                                                                                  id="{{ key.id }}apply-reason">{{ key.apply_reason }}</textarea>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary modify-save-btn">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
  
