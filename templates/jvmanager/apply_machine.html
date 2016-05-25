@@ -7,27 +7,27 @@
     <div class="wrapper wrapper-content animated fadeInRight" style="margin-top:1px">
         <div class="row">
 
-        <div class="col-sm-8">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>申请页面</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
-                        </a>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
+            <div class="col-sm-8">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>申请页面</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"> <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-wrench"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="ibox-content" style="padding:1px 0px 20px">
-                    <form class="form-horizontal" name="userapply" id="userapply" method="POST" action="">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" style="padding:5px 15px">基本配置：</div>
-                            <div class="panel-body">
-                                <div class="form-group" style="margin-bottom:5px"> 
-                                    <label class="col-sm-2 control-label">环境类型:&nbsp;</label>
+                    <div class="ibox-content" style="padding:1px 0px 20px">
+                        <form class="form-horizontal" name="userapply" id="userapply" method="POST" action="">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="padding:5px 15px">基本配置：</div>
+                                <div class="panel-body">
+                                    <div class="form-group" style="margin-bottom:5px">
+                                        <label class="col-sm-2 control-label">环境类型:&nbsp;</label>
 
                                         <div class="dropdown col-sm-10">
 
@@ -214,41 +214,41 @@
         $("#save_btn").click(function () {
             $("#tag").val("save");
         })
-    $('#userapply').validator({
-        timely: 2,
-        theme: "yellow_right_effect",
-        rules:{
-            check_reason:[/^.{2,40}$/i,'请输入2-40个字符的原因！'],
-        },
-        fields: {
-            "env_type": {
-                rule: "required;",
-                tip: "请选择环境类型",
-                ok: "",
-                msg: {
-                    required: "环境必选"
+        $('#userapply').validator({
+            timely: 2,
+            theme: "yellow_right_effect",
+            rules: {
+                check_reason: [/^.{2,40}$/i, '请输入2-40个字符的原因！'],
+            },
+            fields: {
+                "env_type": {
+                    rule: "required;",
+                    tip: "请选择环境类型",
+                    ok: "",
+                    msg: {
+                        required: "环境必选"
+                    }
+                },
+                "os_type": {
+                    rule: "required;",
+                    tip: "请选择系统",
+                    ok: "",
+                    msg: {
+                        required: "系统必选"
+                    }
+                },
+                "apply_reason": {
+                    rule: "required;check_reason",
+                    tip: "输入申请原因",
+                    ok: "",
+                    msg: {
+                        required: "申请原因不能为空"
+                    }
                 }
             },
-            "os_type": {
-                rule: "required;",
-                tip: "请选择系统",
-                ok: "",
-                msg: {
-                    required: "系统必选"
-                }
-            },
-            "apply_reason": {
-                rule: "required;check_reason",
-                tip: "输入申请原因",
-                ok: "",
-                msg: {
-                    required: "申请原因不能为空"
-                }
+            valid: function (form) {
+                form.submit();
             }
-        },
-        valid: function(form) {
-            form.submit();
-        }
-    })
-</script>
+        })
+    </script>
 {% endblock %}
