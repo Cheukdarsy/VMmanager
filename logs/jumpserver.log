@@ -589,3 +589,5 @@
 2016-05-25 11:09:09,177 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
 2016-05-25 11:09:11,542 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
 2016-05-25 11:09:17,073 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-25 11:14:36,227 - views.py - DEBUG - [<VMOrder: VMOrder object>, <VMOrder: VMOrder object>, <VMOrder: VMOrder object>]
+2016-05-25 11:15:21,385 - views.py - DEBUG - []
