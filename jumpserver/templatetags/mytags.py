@@ -2,6 +2,7 @@
 
 import re
 import ast
+from datetime import datetime, timedelta
 import time
 
 from django import template
@@ -329,6 +330,26 @@ def get_env_type(env_type):
         raise e
     else:
         return e.option_display
+
+
+@register.filter(name="get_till_now")
+def get_till_now(dt):
+    if not dt:
+        return "从未"
+    dt_from_now = datetime.now() - dt
+    if dt_from_now.days > 365:
+        return str(dt_from_now.days / 365) + " 年前"
+    elif dt_from_now.days > 30:
+        return str(dt_from_now.days / 30) + " 个月前"
+    elif dt_from_now.days > 0:
+        return str(dt_from_now.days) + " 天前"
+    elif dt_from_now.seconds > 3600:
+        return str(dt_from_now.seconds / 3600) + " 小时前"
+    elif dt_from_now.seconds > 60:
+        return str(dt_from_now.seconds / 60) + " 分钟前"
+    else:
+        return str(dt_from_now.seconds) + " 秒前"
+
 
 # @register.filter(name="get_os_type")
 # def get_env_type(os_type):
