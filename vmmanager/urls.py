@@ -5,7 +5,6 @@ from vmmanager.views import *
 urlpatterns = patterns('',
                        url(r'^list/$', VM_list, name='VM_list'),
                        url(r'^apply/$', apply_machine, name='apply_machine'),
-                       url(r'^datamanager/$', datamanager, name='datamanager'),
                        url(r'^resource/$', resource_view, name='resource_view'),
                        url(r'^saving_resource/$', saving_resource_view,
                            name='saving_resource_view'),
